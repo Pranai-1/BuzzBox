@@ -10,7 +10,7 @@ const userInput = z.object({
   password: z.string().min(8).max(25),
   numberKey: z.string().min(6).max(6),
 });
-const prisma = new PrismaClient();
+//const prisma = new PrismaClient();
 export default async function Handler(req: NextApiRequest, res: NextApiResponse) {
     
     const body: signupBody = req.body;
