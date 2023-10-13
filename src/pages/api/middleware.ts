@@ -1,12 +1,11 @@
-// middleware/cors.js
+
 import Cors from 'cors';
 
-// Initialize the cors middleware
 const cors = Cors({
-  methods: ['GET', 'HEAD', 'POST'], // Add the HTTP methods you want to allow
+  methods: ['GET', 'HEAD', 'POST'], 
 });
 
-// Helper function to promisify the CORS middleware
+
 function initMiddleware(middleware: (arg0: any, arg1: any, arg2: (result: any) => void) => void) {
   return (req: any, res: any) =>
     new Promise((resolve, reject) => {
