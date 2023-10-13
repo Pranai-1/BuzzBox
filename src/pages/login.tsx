@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useRouter } from "next/router";
 import { useState } from "react"
 
@@ -17,7 +18,7 @@ export default function Login(){
       }
     }
 
-    const HandleSubmit=()=>{
+    const HandleSubmit=async()=>{
      
      if(email.length==0)
         setIsEmptyEmail(true);
@@ -27,7 +28,7 @@ export default function Login(){
         setIsEmptyPassword(true);
       else
       setIsEmptyPassword(false);
-    
+  await axios.post("https://buzz-box.vercel.app/pages/api/signup")
       
     }
     return(
