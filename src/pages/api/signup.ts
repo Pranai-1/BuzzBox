@@ -26,6 +26,7 @@ export default async function Handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const hashedPassword = await bcrypt.hash(password, saltRounds);
+    console.log(hashedPassword)
     const user = await prisma.user.findFirst({ where: { email } });
 
     if (user) {

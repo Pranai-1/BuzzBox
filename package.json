@@ -7,7 +7,6 @@
     "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint"
-   
   },
   "dependencies": {
     "@fortawesome/fontawesome-common-types": "^6.4.2",
@@ -20,6 +19,7 @@
     "cors": "^2.8.5",
     "font-awesome": "^4.7.0",
     "next": "13.5.4",
+    "next-auth": "^4.23.2",
     "prisma": "^5.4.2",
     "react": "^18",
     "react-dom": "^18",
@@ -37,6 +37,4 @@
     "tailwindcss": "^3",
     "typescript": "^5"
   }
-  
-  
 }

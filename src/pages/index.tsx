@@ -1,5 +1,7 @@
 import { useRouter } from "next/router";
 import image2 from "../../public/image.png"
+import { GetServerSideProps } from "next";
+import { getServerAuthSession } from "./api/auth/authoptions";
 
 
 export default function Home() {
@@ -14,4 +16,13 @@ export default function Home() {
      
     </div>
   )
+}
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = await getServerAuthSession(ctx);
+  console.log(session?.user)
+  
+  
+  return {
+    props: {}
+  };
 }

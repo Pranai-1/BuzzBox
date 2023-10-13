@@ -1,14 +1,25 @@
 import axios from "axios";
+import { GetServerSideProps } from "next";
+import Credentials from "next-auth/providers/credentials";
+import { signIn } from "next-auth/react";
 import { useRouter } from "next/router";
 import { useState } from "react"
 import { toast } from "react-toastify";
-
+import {z} from "zod"
+import { getServerAuthSession } from "./api/auth/authoptions";
 export default function Login(){
     const[email,setEmail]=useState<string>("");
     const[password,setPassword]=useState<string>("");
     const[isEmptyEmail,setIsEmptyEmail]=useState<boolean>(false);
     const[isEmptyPassword,setIsEmptyPassword]=useState<boolean>(false);
     const router=useRouter();
+
+    const userInput = z.object({
+      email: z.string().min(11).max(40).email(),
+      password: z.string().min(8).max(25)
+    });
+
+
     const handleChange=(value:any,type:string)=>{
       switch(type){
         case("Email"):
@@ -21,21 +32,47 @@ export default function Login(){
 
     const HandleSubmit=async()=>{
      
-     if(email.length==0)
+      if (email.length === 0) {
         setIsEmptyEmail(true);
-     else
-      setIsEmptyEmail(false);
-    if(password.length==0)
-        setIsEmptyPassword(true);
-      else
-      setIsEmptyPassword(false);
-    try{
-      await axios.post("/api/login")
-     toast.success("success")
-    }catch{
-      router.push("/")
-    }
+      } else {
+        setIsEmptyEmail(false);
+      }
       
+      if (password.length === 0) {
+        setIsEmptyPassword(true);
+      } else {
+        setIsEmptyPassword(false);
+      }
+      
+      if (!isEmptyEmail && !isEmptyPassword) {
+        const body = {
+          email,
+          password,
+        };
+      
+        const parsedInput = userInput.safeParse(body);
+      
+        if (!parsedInput.success) {
+          toast.error("Login failed");
+        } else {
+          const { email: parsedEmail, password: parsedPassword } = parsedInput.data;
+      
+          const response = await signIn("credentials", {
+            email: parsedEmail,
+            password: parsedPassword,
+            redirect:false
+          });
+      if(response?.status==200){
+          console.log(response);
+          toast.success("Login success");
+          router.push("/");
+      }else{
+        toast.error("Login failed");
+      }
+        }
+      
+  
+  }
     }
     return(
         <div className=" h-[650px] w-full bg-slate-100 absolute flex justify-center items-center">
@@ -77,4 +114,22 @@ export default function Login(){
         </div>
         </div>
     )
+}
+
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = await getServerAuthSession(ctx);
+
+  if (session) {
+    
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {}
+  };
 }

@@ -1,11 +1,15 @@
 import axios from "axios";
+import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 import { useState } from "react"
 import {  toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { getServerAuthSession } from "./api/auth/authoptions";
 
 
 
 export default function Signup(){
+  const router=useRouter();
     const[email,setEmail]=useState<string>("");
     const[password,setPassword]=useState<string>("");
     const[numberKey,setNumberKey]=useState<number>(0);
@@ -59,6 +63,7 @@ export default function Signup(){
         const response = await axios.post("/api/signup", body);
 
           toast.success("signup successful")
+          router.push("/login")
       }catch{
         toast.error("signup failed")
       }
@@ -131,4 +136,21 @@ export default function Signup(){
         </div>
         </div>
     )
+}
+
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const session = await getServerAuthSession(ctx);
+  if (session) {
+   
+    return {
+      redirect: {
+        destination: "/",
+        permanent: false,
+      },
+    };
+  }
+  return {
+    props: {}
+  };
 }
