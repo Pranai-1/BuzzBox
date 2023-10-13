@@ -12,47 +12,44 @@ const userInput = z.object({
 });
 
 export default async function Handler(req: NextApiRequest, res: NextApiResponse) {
-    const body: signupBody = req.body;
-    const parsedInput = userInput.safeParse(body);
-  
-    if (!parsedInput.success) {
-      return res.status(422).json({ message: "Validation failed" });
+    if (req.method === 'POST') {
+  const prisma = new PrismaClient();
+  const body: signupBody = req.body;
+  const parsedInput = userInput.safeParse(body);
+
+  if (!parsedInput.success) {
+    return res.status(422).json({ message: "Validation failed" });
+  }
+
+  const { email, name, password, numberKey } = parsedInput.data;
+  const saltRounds = 10;
+
+  try {
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+    const user = await prisma.user.findFirst({ where: { email } });
+
+    if (user) {
+      return res.status(409).json({ message: "User with this email already exists" });
     }
-   const prisma=new PrismaClient()
-  
-    res.status(200).json({message:"success"})
 
-    }
+    const number = parseInt(numberKey, 10);
 
-//   const { email, name, password, numberKey } = parsedInput.data;
-//   const saltRounds = 10;
+    const result = await prisma.user.create({
+      data: {
+        name: name,
+        email: email,
+        password: hashedPassword,
+        numberKey: number,
+      },
+    });
 
-//   try {
-//     const hashedPassword = await bcrypt.hash(password, saltRounds);
-//     const user = await prisma.user.findFirst({ where: { email } });
-
-//     if (user) {
-//       return res.status(409).json({ message: "User with this email already exists" });
-//     }
-
-//     const number = parseInt(numberKey, 10);
-
-//     const result = await prisma.user.create({
-//       data: {
-//         name: name,
-//         email: email,
-//         password: hashedPassword,
-//         numberKey: number,
-//       },
-//     });
-
-//     res.status(201).json({ message: "User created successfully" });
-//   } catch (error) {
-//     console.error("Error creating user:", error);
-//     return res.status(500).json({ message: "Error creating user" });
-//   } finally {
-//     await prisma.$disconnect(); 
-//   }
-// }
-// res.status(407).end()
-// }
+    res.status(201).json({ message: "User created successfully" });
+  } catch (error) {
+    console.error("Error creating user:", error);
+    return res.status(500).json({ message: "Error creating user" });
+  } finally {
+    await prisma.$disconnect(); 
+  }
+}
+res.status(407).end()
+}
