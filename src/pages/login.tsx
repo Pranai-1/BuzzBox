@@ -28,7 +28,12 @@ export default function Login(){
         setIsEmptyPassword(true);
       else
       setIsEmptyPassword(false);
-  await axios.post("/api/signup")
+    try{
+      await axios.get("/api/login")
+ 
+    }catch{
+      router.push("/")
+    }
       
     }
     return(
