@@ -10,15 +10,15 @@ const userInput = z.object({
   password: z.string().min(8).max(25),
   numberKey: z.string().min(6).max(6),
 });
-//const prisma = new PrismaClient();
+
 export default async function Handler(req: NextApiRequest, res: NextApiResponse) {
-    
     const body: signupBody = req.body;
     const parsedInput = userInput.safeParse(body);
   
     if (!parsedInput.success) {
       return res.status(422).json({ message: "Validation failed" });
     }
+    const prisma = new PrismaClient();
   
     res.status(200).json({message:"success"})
 
