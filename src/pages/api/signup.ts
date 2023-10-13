@@ -3,6 +3,7 @@ import { z } from "zod";
 import { signupBody } from "./types";
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt"
+import useCors from '@/pages/api/middleware';
 const userInput=z.object({
     name :z.string().min(3).max(25),
     email:z.string().min(11).max(40).email(),
@@ -11,7 +12,7 @@ const userInput=z.object({
 })
 
 export default async function Handler(req:NextApiRequest,res:NextApiResponse){
-
+    await useCors(req, res);
     const prisma=new PrismaClient();
    const body:signupBody=await req.body;
    const parsedInput=userInput.safeParse(body)
