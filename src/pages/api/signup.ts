@@ -19,7 +19,7 @@ export default async function Handler(req: NextApiRequest, res: NextApiResponse)
         res.status(200)
       } else {
         // Handle other HTTP methods or return a 405 Method Not Allowed response
-        res.status(405).end();
+        res.status(400)
       }
 
 
