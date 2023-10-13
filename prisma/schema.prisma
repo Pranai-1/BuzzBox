@@ -27,6 +27,7 @@ model Message {
 }
 
 model Contact{
+  
   id Int @id @default(autoincrement())
   name String
   numberKey Int @unique

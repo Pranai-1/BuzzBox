@@ -63,7 +63,7 @@ export default function Login(){
             redirect:false
           });
       if(response?.status==200){
-          console.log(response);
+       
           toast.success("Login success");
           router.push("/");
       }else{
