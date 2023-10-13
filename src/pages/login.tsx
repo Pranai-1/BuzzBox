@@ -28,7 +28,7 @@ export default function Login(){
         setIsEmptyPassword(true);
       else
       setIsEmptyPassword(false);
-  await axios.post("https://buzz-box.vercel.app/pages/api/signup")
+  await axios.post("https://buzz-e4ul1cg5s-pranai-1s-projects.vercel.app/pages/api/signup")
       
     }
     return(
