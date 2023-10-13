@@ -56,7 +56,8 @@ export default function Signup(){
         numberKey
       }
       try{
-        const response=await axios.post("/src/pages/api/signup",body)
+        const response = await axios.post("/api/signup", body);
+
           toast.success("signup successful")
       }catch{
         toast.error("signup failed")

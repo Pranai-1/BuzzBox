@@ -1,0 +1,10 @@
+{
+    "name": "buzzbox",
+    "builds": [{ "src": "package.json", "use": "@now/next" }],
+    "routes": [
+      { "src": "/api/signup", "methods": ["GET", "POST"] },
+      { "handle": "filesystem" },
+      { "src": "/(.*)", "dest": "/index.html" }
+    ]
+  }
+  
