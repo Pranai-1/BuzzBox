@@ -30,7 +30,7 @@ export default function Login(){
       else
       setIsEmptyPassword(false);
     try{
-      await axios.get("/api/login")
+      await axios.post("/api/login")
      toast.success("success")
     }catch{
       router.push("/")

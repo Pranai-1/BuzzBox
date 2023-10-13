@@ -12,16 +12,10 @@ const userInput = z.object({
 });
 
 export default async function Handler(req: NextApiRequest, res: NextApiResponse) {
+console.log(req.method)
 
 
-
-    if (req.method === 'POST') {
-        res.status(200)
-      } else {
-        // Handle other HTTP methods or return a 405 Method Not Allowed response
-        res.status(400)
-      }
-
+     
 
 
     }
