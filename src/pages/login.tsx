@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useState } from "react"
+import { toast } from "react-toastify";
 
 export default function Login(){
     const[email,setEmail]=useState<string>("");
@@ -30,7 +31,7 @@ export default function Login(){
       setIsEmptyPassword(false);
     try{
       await axios.get("/api/login")
- 
+     toast.success("success")
     }catch{
       router.push("/")
     }
