@@ -12,7 +12,7 @@ const userInput = z.object({
 });
 
 export default async function Handler(req: NextApiRequest, res: NextApiResponse) {
-    const prisma = new PrismaClient();
+   // const prisma = new PrismaClient();
     const body: signupBody = req.body;
     // const parsedInput = userInput.safeParse(body);
   
