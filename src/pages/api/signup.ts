@@ -18,7 +18,12 @@ export default async function Handler(req: NextApiRequest, res: NextApiResponse)
     if (!parsedInput.success) {
       return res.status(422).json({ message: "Validation failed" });
     }
-    const prisma = new PrismaClient();
+    try{
+        const prisma = new PrismaClient();
+    }catch{
+        res.status(404).json({message:"success"})
+    }
+   
   
     res.status(200).json({message:"success"})
 
