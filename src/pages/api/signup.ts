@@ -12,7 +12,7 @@ const userInput = z.object({
 });
 
 export default async function Handler(req: NextApiRequest, res: NextApiResponse) {
-console.log(req.method)
+    res.status(200).json({message:"success"})
 
 
      
