@@ -12,7 +12,7 @@ const userInput = z.object({
 });
 
 export default async function Handler(req: NextApiRequest, res: NextApiResponse) {
-
+    if (req.method === 'POST') {
   const prisma = new PrismaClient();
   const body: signupBody = req.body;
   const parsedInput = userInput.safeParse(body);
@@ -50,4 +50,6 @@ export default async function Handler(req: NextApiRequest, res: NextApiResponse)
   } finally {
     await prisma.$disconnect(); 
   }
+}
+res.status(407).end()
 }
