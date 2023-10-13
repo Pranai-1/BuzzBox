@@ -1,4 +1,9 @@
+import axios from "axios";
 import { useState } from "react"
+import {  toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+
 
 export default function Signup(){
     const[email,setEmail]=useState<string>("");
@@ -25,7 +30,7 @@ export default function Signup(){
       }
     }
 
-    const HandleSubmit=()=>{
+    const  HandleSubmit=async()=>{
       if(name.length==0)
         setIsEmptyName(true);
       else
@@ -42,6 +47,23 @@ export default function Signup(){
         setIsEmptyNumberKey(true);
       else
       setIsEmptyNumberKey(false);
+ 
+    if(!isEmptyName && !isEmptyEmail && !isEmptyPassword && !isEmptyNumberKey){
+      const body={
+        name,
+        email,
+        password,
+        numberKey
+      }
+      try{
+        const response=await axios.post("api/signup",body)
+          toast.success("signup successful")
+      }catch{
+        toast.error("signup failed")
+      }
+     
+    }
+
       
     }
     return(
