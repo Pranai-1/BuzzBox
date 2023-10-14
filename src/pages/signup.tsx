@@ -68,6 +68,8 @@ export default function Signup(){
         toast.error("signup failed")
       }
      
+    }else{
+      toast.error("Invalid Credentials")
     }
 
       
@@ -119,12 +121,14 @@ export default function Signup(){
         <label className="block text-gray-700 text-sm font-bold mb-2 w-full">
            NumberKey<span className="text-red-500">*</span>
                 <input title="NumberKey"
+                  type="number"
                 required
                 placeholder="Enter Your 6 Digit NumberKey" 
                 onChange={(e)=>handleChange(e.target.value,"NumberKey")}
                 className="block w-full p-3 border rounded mt-1"
                 />
         </label>
+        
         {isEmptyNumberKey && (
             <p className="text-red-500 text-sm">NumberKey is required*</p>
          )}

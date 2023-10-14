@@ -3,9 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
-
-// Import User, assuming it's defined in your "types" module.
-import { User } from "../types";
+import { ContactType, MessageType, User } from "../types";
 
 const prisma = new PrismaClient();
 declare module "next-auth" {
@@ -17,6 +15,7 @@ declare module "next-auth" {
         contacts: ContactType[];
         messages: MessageType[];
         password: string;
+        numberKey:number;
       } & DefaultSession["user"];
     }
   
@@ -27,20 +26,10 @@ declare module "next-auth" {
       contacts: ContactType[];
       messages: MessageType[];
       password: string;
+      numberKey:number;
     }
   }
-  type ContactType = {
-  id: number;
-  name: string;
-  numberKey: number;
-  userId: number;
-};
 
-type MessageType = {
-  id: number;
-  content: string;
-  senderId: number;
-};
   
 export const authOptions: NextAuthOptions = {
   session: {
@@ -54,6 +43,7 @@ export const authOptions: NextAuthOptions = {
         token.email = user.email;
         token.contacts = user.contacts;
         token.messages = user.messages;
+        token.numberKey=user.numberKey
       }
       return token;
     },
@@ -64,6 +54,7 @@ export const authOptions: NextAuthOptions = {
         session.user.email = token.email as string;
         session.user.contacts = token.contacts as ContactType[];
         session.user.messages = token.messages as MessageType[];
+        session.user.numberKey=token.numberKey as number
       }
       return session;
     }
@@ -87,7 +78,8 @@ export const authOptions: NextAuthOptions = {
               email: true,
               password: true,
               messages: true,
-              contacts: true
+              contacts: true,
+              numberKey:true
             }
           });
 
@@ -107,7 +99,8 @@ export const authOptions: NextAuthOptions = {
             email: user.email,
             contacts: user.contacts,
             messages: user.messages,
-            password: user.password
+            password: user.password,
+            numberKey:user.numberKey
           };
 
           return session;

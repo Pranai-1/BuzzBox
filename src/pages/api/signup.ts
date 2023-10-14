@@ -8,16 +8,25 @@ const userInput = z.object({
   name: z.string().min(3).max(25),
   email: z.string().min(11).max(40).email(),
   password: z.string().min(8).max(25),
-  numberKey: z.string().min(6).max(6),
+  numberKey: z.number().min(100000).max(999999),
 });
 
 export default async function Handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
   const prisma = new PrismaClient();
-  const body: signupBody = req.body;
-  const parsedInput = userInput.safeParse(body);
+  let body: any = req.body;
+  let x=Number(body.numberKey)
+ let signupBody:signupBody={
+   name: body.name,
+   email: body.email,
+   password:body.password,
+   numberKey: x
+ }
+
+  const parsedInput = userInput.safeParse(signupBody);
 
   if (!parsedInput.success) {
+
     return res.status(422).json({ message: "Validation failed" });
   }
 
@@ -32,15 +41,14 @@ export default async function Handler(req: NextApiRequest, res: NextApiResponse)
     if (user) {
       return res.status(409).json({ message: "User with this email already exists" });
     }
-
-    const number = parseInt(numberKey, 10);
-
     const result = await prisma.user.create({
       data: {
         name: name,
         email: email,
         password: hashedPassword,
-        numberKey: number,
+        numberKey: numberKey,
+        contacts:{},
+        messages:{}
       },
     });
 

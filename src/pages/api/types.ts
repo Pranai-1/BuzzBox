@@ -4,7 +4,7 @@ export interface signupBody{
     name :string,
     email:string,
     password:string,
-     numberKey:string
+     numberKey:number
 }
 
 export interface loginBody{
@@ -18,7 +18,8 @@ export type User = {
     email: string;
     password: string;
     messages: Message[];
-    contacts:Contact[] 
+    contacts:Contact[] ;
+    numberKey:number;
     
   };
 
@@ -29,4 +30,22 @@ export type User = {
     email: string;
     contacts: Message[];
     messages: Contact[] ; 
+  };
+
+ export type ContactType = {
+    id: number;
+    name: string;
+    numberKey: number;
+    userId: number;
+  };
+  
+ export type MessageType = {
+    id: number;
+    content: string;
+    senderId: number;
+  };
+
+  export type addContact = {
+    name: string;
+    numberKey: number;
   };

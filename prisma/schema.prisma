@@ -30,7 +30,7 @@ model Contact{
   
   id Int @id @default(autoincrement())
   name String
-  numberKey Int @unique
+  numberKey Int 
   userId Int
   user User @relation(fields: [userId],references: [id])
 }

@@ -20,9 +20,17 @@ export default function Home() {
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
 
-  
-  
+  if (session) {
+    return {
+      redirect: {
+        destination: "/contacts",
+        permanent: false,
+      },
+    };
+  }
   return {
     props: {}
   };
+  
+ 
 }
