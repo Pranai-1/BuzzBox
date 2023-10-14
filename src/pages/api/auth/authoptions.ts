@@ -96,7 +96,6 @@ export const authOptions: NextAuthOptions = {
             password: user.password,
             numberKey:user.numberKey
           };
-
           return session;
         } finally {
           await prisma.$disconnect();
