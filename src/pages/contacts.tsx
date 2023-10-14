@@ -54,13 +54,14 @@ async function HandleSubmit(){
           const response = await axios.post("/api/contacts", body);
             toast.success("Chat added")
         }catch(error){
+            console.log(error)
           toast.error("Chat may be already present or numberkey is wrong")
         }
       }else{
         toast.error("Invalid Credentials")
       }
 
-    setAddNewChat(false)
+   // setAddNewChat(false)
 }
 function handleNameChange(value:string){
     setContactName(value)

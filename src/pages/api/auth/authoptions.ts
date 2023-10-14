@@ -3,7 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import { PrismaClient } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
-import { ContactType, MessageType, User } from "../types";
+import { ContactType, ContactUserType, User } from "../types";
 
 const prisma = new PrismaClient();
 declare module "next-auth" {
@@ -12,8 +12,7 @@ declare module "next-auth" {
         id: string;
         name: string;
         email: string;
-        contacts: ContactType[];
-        messages: MessageType[];
+        contacts: ContactUserType[];
         password: string;
         numberKey:number;
       } & DefaultSession["user"];
@@ -23,8 +22,7 @@ declare module "next-auth" {
       id: number;
       name: string;
       email: string;
-      contacts: ContactType[];
-      messages: MessageType[];
+      contacts: ContactUserType[];
       password: string;
       numberKey:number;
     }
@@ -42,7 +40,6 @@ export const authOptions: NextAuthOptions = {
         token.name = user.name;
         token.email = user.email;
         token.contacts = user.contacts;
-        token.messages = user.messages;
         token.numberKey=user.numberKey
       }
       return token;
@@ -52,8 +49,7 @@ export const authOptions: NextAuthOptions = {
         session.user.id = token.id as string;
         session.user.name = token.name as string;
         session.user.email = token.email as string;
-        session.user.contacts = token.contacts as ContactType[];
-        session.user.messages = token.messages as MessageType[];
+        session.user.contacts = token.contacts as ContactUserType[];
         session.user.numberKey=token.numberKey as number
       }
       return session;
@@ -77,7 +73,6 @@ export const authOptions: NextAuthOptions = {
               name: true,
               email: true,
               password: true,
-              messages: true,
               contacts: true,
               numberKey:true
             }
@@ -98,7 +93,6 @@ export const authOptions: NextAuthOptions = {
             name: user.name,
             email: user.email,
             contacts: user.contacts,
-            messages: user.messages,
             password: user.password,
             numberKey:user.numberKey
           };

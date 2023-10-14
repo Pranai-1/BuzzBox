@@ -10,27 +10,35 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 model User {
-  id    Int      @id @default(autoincrement())
-  name  String
-  email String   @unique
- password String
- numberKey Int  @unique
- contacts Contact[]
- messages Message[]
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  numberKey Int      @unique
+  contacts  ContactUser[]
 }
 
-model Message {
-  id      Int      @id @default(autoincrement())
-  content   String
-  senderId  Int
-  user    User     @relation(fields: [senderId], references: [id])
+model Contact {
+  id        Int      @id @default(autoincrement())
+  name      String
+  numberKey Int
+  users     ContactUser[]
 }
 
-model Contact{
-  
-  id Int @id @default(autoincrement())
-  name String
-  numberKey Int 
-  userId Int
-  user User @relation(fields: [userId],references: [id])
+model ContactUser {
+  contact   Contact @relation(fields: [contactId], references: [id])
+  user      User    @relation(fields: [userId], references: [id])
+
+  contactId Int
+  userId    Int
+
+  @@id([contactId, userId])
 }
+
+// model Message {
+//   id      Int      @id @default(autoincrement())
+//   content   String
+//   senderId  Int
+//   user    User     @relation(fields: [senderId], references: [id])
+// }
+

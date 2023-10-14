@@ -47,8 +47,8 @@ export default async function Handler(req: NextApiRequest, res: NextApiResponse)
         email: email,
         password: hashedPassword,
         numberKey: numberKey,
-        contacts:{},
-        messages:{}
+      // contacts:{},
+        //messages:{}
       },
     });
 
