@@ -65,7 +65,7 @@ export default function Login(){
       if(response?.status==200){
        
           toast.success("Login success");
-          router.push("/");
+          router.push("/profile");
       }else{
         toast.error("Login failed");
       }
@@ -124,7 +124,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     
     return {
       redirect: {
-        destination: "/",
+        destination: "/Home",
         permanent: false,
       },
     };

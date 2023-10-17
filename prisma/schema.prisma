@@ -15,14 +15,17 @@ model User {
   email     String   @unique
   password  String
   numberKey Int      @unique
-  contacts  ContactUser[]
+  contacts  ContactUser[]  //A relationship field that associates a user with their contacts. 
+  //It's defined as an array of ContactUser records, meaning a user can have multiple contacts.
 }
 
 model Contact {
   id        Int      @id @default(autoincrement())
   name      String
   numberKey Int
-  users     ContactUser[]
+  users     ContactUser[]  // A relationship field that associates contacts with the users who have them as contacts. 
+  //It's defined as an array of ContactUser records, meaning a contact can be associated with multiple users.
+
 }
 
 model ContactUser {
@@ -33,6 +36,9 @@ model ContactUser {
   userId    Int
 
   @@id([contactId, userId])
+
+  // /The @@id([contactId, userId]) directive defines a composite primary key based on the contactId and userId fields. 
+  //This enforces uniqueness in the combination of these two fields, ensuring that a user cannot have the same contact multiple times.
 }
 
 // model Message {

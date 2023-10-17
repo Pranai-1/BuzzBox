@@ -1,11 +1,13 @@
 import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router"
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+
 
 export default function Navbar(){
     const router=useRouter();
     const{data:sessionData}=useSession()
-    console.log(sessionData?.user)
+
     return(
         <div className=" w-full h-[50px] overflow-hidden flex justify-between items-center">
             <div>
@@ -15,7 +17,9 @@ export default function Navbar(){
             </div>
             {sessionData?.user!=null ?(
                  <button className="p-2 font-medium text-xl bg-orange-500 rounded-xl text-white h-max pt-1 items-center"
-                 onClick={()=>signOut()}
+                 onClick={()=>{void signOut()
+                    toast.success("Logged out successfully")
+                }}
                  >
                      Logout</button>
             ):(
