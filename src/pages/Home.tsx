@@ -10,7 +10,7 @@ import { PrismaClient } from "@prisma/client";
 import { ContactType } from "./api/types";
 import Contacts from "@/components/Contacts";
 import Profile from "@/components/profile";
-import AddChat from "@/components/addChat";
+import AddChat from "@/components/AddChat";
 
 
 
