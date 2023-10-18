@@ -31,11 +31,18 @@ export default function AddChat({
         numberKey,
       };
       try {
-        const response = await axios.post("/api/profile", body);
-        toast.success("Chat added");
+      await axios.post("/api/profile", body);
+       
         setAddNewChat(false);
-        const data = await getContacts(numberKey);
-        setChats(data);
+
+       const response=await axios.get("/api/getcontactsaftersubmit",{
+        headers:{
+          numberKey
+        }
+       })
+         setChats(response.data.chats);
+
+          toast.success("Chat added");
       } catch (error) {
         console.log(error);
         toast.error("Error occured");

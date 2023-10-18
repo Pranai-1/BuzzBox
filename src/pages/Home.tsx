@@ -1,6 +1,6 @@
 import { GetServerSideProps } from "next";
 import { getServerAuthSession } from "./api/auth/authoptions";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import getContacts from "./api/getContacts";
 import { ContactType } from "./api/types";
 import Contacts from "@/components/Contacts";
@@ -20,7 +20,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
   const data = await getContacts(session.user.numberKey);
-  console.log(data);
+
   return {
     props: {
       name: session.user.name,
@@ -44,7 +44,9 @@ export default function Home({
 }) {
   const [addNewChat, setAddNewChat] = useState(false);
   const [chats, setChats] = useState(contacts);
-
+useEffect(()=>{
+setChats(chats)
+},[chats,setChats])
   return (
     <div className=" h-[655px] w-screen bg-slate-50 flex ">
       <div className="h-full w-[350px] flex flex-col bg-slate-100 items-center p-2 pt-0">

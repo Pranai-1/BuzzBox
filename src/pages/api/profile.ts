@@ -17,7 +17,7 @@ export default async function handler(
   if (req.method === "POST") {
     try {
       const body = req.body;
-      console.log(body);
+
       const parsedInput = userInput.safeParse(body);
       if (!parsedInput.success) {
         return res.status(422).json({ message: "Validation failed" });
@@ -33,7 +33,7 @@ export default async function handler(
       if (user && findUserToAdd) {
         let present = false;
 
-        console.log(user);
+
 
         try {
           const existingContact = await prisma.contact.findFirst({

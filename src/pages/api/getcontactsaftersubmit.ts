@@ -1,6 +1,9 @@
 import { PrismaClient } from "@prisma/client";
+import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(numberKey: number) {
+export default async function handler(req:NextApiRequest,res:NextApiResponse) {
+
+ const numberKey=Number(req.headers["numberkey"])
 
   const prisma = new PrismaClient();
   let arr = [];
@@ -12,7 +15,6 @@ export default async function handler(numberKey: number) {
           userId: user?.id,
         },
       });
-
       if (contactUser) {
         for (const obj of contactUser) {
           const contacts = await prisma.contact.findFirst({
@@ -26,8 +28,8 @@ export default async function handler(numberKey: number) {
     }
   } catch(error) {
     console.log(error)
-    let arr = [];
+    res.status(404).json({message:"failed"})
   }
 
-  return arr;
+  res.status(200).json({chats:arr})
 }
