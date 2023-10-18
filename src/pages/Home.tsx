@@ -1,16 +1,11 @@
 import { GetServerSideProps } from "next";
 import { getServerAuthSession } from "./api/auth/authoptions";
-import BuzzBox from "../../public/BuzzBox.png";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import router from "next/router";
-import { toast } from "react-toastify";
+import { useState } from "react";
 import getContacts from "./api/getContacts";
-import { PrismaClient } from "@prisma/client";
 import { ContactType } from "./api/types";
 import Contacts from "@/components/Contacts";
-import Profile from "@/components/profile";
 import AddChat from "@/components/AddChat";
+import Profile from "@/components/Profile";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -51,7 +46,7 @@ export default function Home({
 
   return (
     <div className=" h-[655px] w-screen bg-slate-50 flex ">
-      <div className="h-full w-[350px] flex flex-col bg-slate-200 items-center p-2">
+      <div className="h-full w-[350px] flex flex-col bg-slate-100 items-center p-2 pt-0">
         <div>
           <Profile name={name} numberKey={numberKey} />
         </div>
