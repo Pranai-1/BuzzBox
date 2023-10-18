@@ -5,7 +5,8 @@ import getContacts from "./api/getContacts";
 import { ContactType } from "./api/types";
 import Contacts from "@/components/Contacts";
 import AddChat from "@/components/AddChat";
-import Profile from "@/components/Profile";
+import Profile from "../components/profile";
+
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);

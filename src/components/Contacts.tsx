@@ -1,4 +1,4 @@
-import { ContactType } from "@/pages/api/types";
+
 
 export default function Handler({
   id,
