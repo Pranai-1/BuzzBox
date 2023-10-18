@@ -12,12 +12,12 @@ const userInput = z.object({
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse,
 ) {
   if (req.method === "POST") {
     try {
       const body = req.body;
-      console.log(body)
+      console.log(body);
       const parsedInput = userInput.safeParse(body);
       if (!parsedInput.success) {
         return res.status(422).json({ message: "Validation failed" });
@@ -104,5 +104,4 @@ export default async function handler(
       res.status(500).json({ message: "Error" });
     }
   }
-  
 }

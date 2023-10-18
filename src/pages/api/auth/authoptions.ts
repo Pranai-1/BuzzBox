@@ -7,31 +7,30 @@ import { ContactType, ContactUserType, User } from "../types";
 
 const prisma = new PrismaClient();
 declare module "next-auth" {
-    interface Session extends DefaultSession {
-      user: {
-        id: string;
-        name: string;
-        email: string;
-        contacts: ContactUserType[];
-        password: string;
-        numberKey:number;
-      } & DefaultSession["user"];
-    }
-  
-    interface User {
-      id: number;
+  interface Session extends DefaultSession {
+    user: {
+      id: string;
       name: string;
       email: string;
       contacts: ContactUserType[];
       password: string;
-      numberKey:number;
-    }
+      numberKey: number;
+    } & DefaultSession["user"];
   }
 
-  
+  interface User {
+    id: number;
+    name: string;
+    email: string;
+    contacts: ContactUserType[];
+    password: string;
+    numberKey: number;
+  }
+}
+
 export const authOptions: NextAuthOptions = {
   session: {
-    strategy: 'jwt'
+    strategy: "jwt",
   },
   callbacks: {
     async jwt({ token, user }) {
@@ -40,7 +39,7 @@ export const authOptions: NextAuthOptions = {
         token.name = user.name;
         token.email = user.email;
         token.contacts = user.contacts;
-        token.numberKey=user.numberKey
+        token.numberKey = user.numberKey;
       }
       return token;
     },
@@ -50,14 +49,14 @@ export const authOptions: NextAuthOptions = {
         session.user.name = token.name as string;
         session.user.email = token.email as string;
         session.user.contacts = token.contacts as ContactUserType[];
-        session.user.numberKey=token.numberKey as number
+        session.user.numberKey = token.numberKey as number;
       }
       return session;
-    }
+    },
   },
   providers: [
     CredentialsProvider({
-      type: 'credentials',
+      type: "credentials",
       credentials: {},
       async authorize(credentials) {
         const { email, password } = credentials as {
@@ -74,8 +73,8 @@ export const authOptions: NextAuthOptions = {
               email: true,
               password: true,
               contacts: true,
-              numberKey:true
-            }
+              numberKey: true,
+            },
           });
 
           if (!user) {
@@ -94,14 +93,14 @@ export const authOptions: NextAuthOptions = {
             email: user.email,
             contacts: user.contacts,
             password: user.password,
-            numberKey:user.numberKey
+            numberKey: user.numberKey,
           };
           return session;
         } finally {
           await prisma.$disconnect();
         }
-      }
-    })
+      },
+    }),
   ],
   pages: {
     signIn: "/login",
@@ -110,7 +109,7 @@ export const authOptions: NextAuthOptions = {
     // verifyRequest: '/auth/verify-request', // (used for check email message)
     // newUser: '/auth/new-user' // New users will be directed here on the first sign-in (leave the property out if not of interest)
   },
-  secret:" process.env.NEXTAUTH_SECRET"
+  secret: " process.env.NEXTAUTH_SECRET",
 };
 
 export const getServerAuthSession = (ctx: {

@@ -1,15 +1,13 @@
-
-
-export interface signupBody{
-    name :string,
-    email:string,
-    password:string,
-     numberKey:number
+export interface signupBody {
+  name: string;
+  email: string;
+  password: string;
+  numberKey: number;
 }
 
-export interface loginBody{
-    email:string,
-    password:string
+export interface loginBody {
+  email: string;
+  password: string;
 }
 
 export type User = {
@@ -32,22 +30,21 @@ export type ContactUserType = {
   userId: number;
 };
 
-  
- export type MessageType = {
-    id: number;
-    content: string;
-    senderId: number;
-  };
+export type MessageType = {
+  id: number;
+  content: string;
+  senderId: number;
+};
 
-  export type addContact = {
-    name: string;
-    numberKey: number;
-  };
+export type addContact = {
+  name: string;
+  numberKey: number;
+};
 
-  export type CustomToken = {
-    id: number;
-    name: string;
-    password: string;
-    email: string;
-    messages: ContactType[] ; 
-  };
+export type CustomToken = {
+  id: number;
+  name: string;
+  password: string;
+  email: string;
+  messages: ContactType[];
+};
