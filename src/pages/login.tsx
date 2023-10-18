@@ -65,7 +65,7 @@ export default function Login(){
       if(response?.status==200){
        
           toast.success("Login success");
-          router.push("/profile");
+          router.push("/Home");
       }else{
         toast.error("Login failed");
       }
