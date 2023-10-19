@@ -52,8 +52,13 @@ export default function Home({
 
 useEffect(()=>{
 setChats(chats)
-},[chats,setChats,openChat,openedChatName,openedChatNumberKey])
+},[chats,setChats,openedChatName,openedChatNumberKey])
 
+function handleClick(clicked: boolean){
+  console.log(clicked)
+  setOpenChat(clicked)
+  alert("connected")
+}
 
 function HandleSend(){
   if(textToSend.length!=0){
@@ -85,7 +90,7 @@ function HandleSend(){
               id={contact.id}
               name={contact.name}
               numberKey={contact.numberKey}
-              setOpenChat={setOpenChat}
+              handleClick={() => handleClick(true)}
               setOpenedChatName={setOpenedChatName}
               setOpenedChatNumberKey={setOpenedChatNumberKey}
             />

@@ -5,21 +5,21 @@ export default function Handler({
   id,
   name,
   numberKey,
-  setOpenChat,
+  handleClick,
   setOpenedChatName,
   setOpenedChatNumberKey,
 }: {
   id: number;
   name: string;
   numberKey: number;
-  setOpenChat:Dispatch<SetStateAction<boolean>>;
+  handleClick(x: boolean):any
   setOpenedChatName:Dispatch<SetStateAction<string>>;
   setOpenedChatNumberKey:Dispatch<SetStateAction<number>>
 }) {
   const char=name.charAt(0).toLocaleUpperCase()
   return (
     <div className="h-[50px] bg-white w-full cursor-pointer rounded-lg flex items-center p-2" onClick={()=>{
-      setOpenChat(true)
+      handleClick(true)
       setOpenedChatName(name)
       setOpenedChatNumberKey(numberKey)
     }}>
