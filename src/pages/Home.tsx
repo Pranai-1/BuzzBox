@@ -20,7 +20,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
   const data = await getContacts(session.user.numberKey);
-
+console.log(data)
   return {
     props: {
       name: session.user.name,
@@ -81,7 +81,9 @@ setChats(chats)
           setChats={setChats}
         />
       ) : (
-        <div></div>
+        <div>
+          {/* establish a socket connection between users after i select a particular contact here */}
+        </div>
       )}
     </div>
   );

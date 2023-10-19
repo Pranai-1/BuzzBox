@@ -17,35 +17,26 @@ export default async function handler(
   if (req.method === "POST") {
     try {
       const body = req.body;
-
       const parsedInput = userInput.safeParse(body);
       if (!parsedInput.success) {
         return res.status(422).json({ message: "Validation failed" });
       }
-
       const { contactNumberKey, contactName, numberKey } = parsedInput.data;
-
       const user = await prisma.user.findFirst({ where: { numberKey } });
       const findUserToAdd = await prisma.user.findFirst({
         where: { numberKey: contactNumberKey },
       });
-
       if (user && findUserToAdd) {
         let present = false;
-
-
-
         try {
           const existingContact = await prisma.contact.findFirst({
             where: {
               numberKey: contactNumberKey,
             },
           });
-
           if (existingContact) {
             present = true;
           }
-
           if (!present) {
             const contact = await prisma.contact.create({
               data: {
@@ -53,7 +44,6 @@ export default async function handler(
                 numberKey: contactNumberKey,
               },
             });
-
             if (contact) {
               const contactUser = await prisma.contactUser.create({
                 data: {
@@ -61,7 +51,6 @@ export default async function handler(
                   userId: user.id,
                 },
               });
-
               if (contactUser) {
                 res.status(201).json({ message: "Chat Added" });
               } else {
@@ -78,8 +67,7 @@ export default async function handler(
                   userId: user.id,
                 },
               });
-
-              if (alreadyInList) {
+             if (alreadyInList) {
                 res.status(412).json({ message: "Failed" });
               } else {
                 await prisma.contactUser.create({
