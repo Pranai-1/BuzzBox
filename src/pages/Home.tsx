@@ -1,6 +1,6 @@
 import { GetServerSideProps } from "next";
 import { getServerAuthSession } from "./api/auth/authoptions";
-import { SetStateAction, useEffect, useState } from "react";
+import { JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactNode, ReactPortal, SetStateAction, useEffect, useState } from "react";
 import getContacts from "./api/getContacts";
 import { ContactType } from "./api/types";
 import Contacts from "@/components/Contacts";
@@ -57,10 +57,9 @@ export default function Home({
   const[userIdOfOpenedChat,setUserIdOfOpenedChat]=useState(0)
   const [textToSend, setTextToSend] = useState("");
   const[onlineUsers,setOnlineUsers]=useState<[]>([])
-  const[messages,setMessages]=useState<string[]>([])
+  const[messages,setMessages]=useState<any>([])
 
   const [socket, setSocket] = useState<any>(null);
-
 
   
   useEffect(() => {
@@ -99,7 +98,16 @@ export default function Home({
       });
 
       socket.on("getMessage", (res: string) => {
-        setMessages((prev) => [...prev, res]);
+        console.log(res)
+        setMessages((prev: any)=>({
+          ...prev,
+          [openedChatId]: [
+            ...(prev[openedChatId] || []),
+            res 
+          ]
+          
+        }));
+   
       });
 
       return () => {
@@ -107,9 +115,24 @@ export default function Home({
         socket.off("getMessage");
       };
     }
-  }, [socket]);
+  }, [socket,openedChatId]);
 
+  console.log(messages)
 
+  const renderMessages = () => {
+    const currentChatMessages = messages[openedChatId] || [];
+    
+    return currentChatMessages.map((message: any, index: number) => {
+      const isSentByYou = message.senderId === id;
+      const messageClass = isSentByYou ? 'text-orange-600 ml-auto ' : 'text-blue-600 '; 
+      return (
+        <p key={index} className={`font-medium ${messageClass} bg-slate-200 h-max w-max rounded-xl p-2  mb-2`}>
+          {message.text}
+        </p>
+      );
+    });
+  };
+  
 
 useEffect(() => {
   setChats(chats);
@@ -121,10 +144,21 @@ function handleClick(clicked: boolean) {
 }
 
 const HandleSend = () => {
-  if (textToSend.length !== 0) {
-    socket.emit("sendMessage",{messagetosend:textToSend,userIdOfOpenedChat})
+  if (textToSend.length !== 0 && userIdOfOpenedChat!=0) {
+    const message={
+      senderId:id,
+      receiverId:userIdOfOpenedChat,
+      text:textToSend
+    }
+    setMessages((prev: any)=>({
+      ...prev,
+      [openedChatId]: [
+        ...(prev[openedChatId] || []),
+        message 
+      ]
+    }));
+    socket.emit("sendMessage",{messagetosend:message,userIdOfOpenedChat})
     setTextToSend("");
-    setMessages((prev)=>[...prev,textToSend])
   }
 }
 
@@ -174,10 +208,11 @@ const HandleSend = () => {
               <p className="p-2 ml-2 text-blue-500 font-medium">{openedChatName}</p>
               <p className="p-2 ml-2 text-red-500 font-medium">Key-{openedChatNumberKey}</p>
             </div>
-            <div className="h-[550px] w-full bg-orange-200" style={{ maxHeight: '550px', overflowY: 'auto' }}>
-              {messages.map((message)=>(
-                 <p className="text-xl font-bold text-red-600">{message}</p>
-              ))}
+            <div className="h-[550px] w-full flex flex-col " style={{ maxHeight: '550px', overflowY: 'auto' }}>
+          
+              {renderMessages()}
+        
+             
             </div>
             <div className="h-[50px] w-full bg-gray-200 rounded  absolute bottom-0 flex justify-center items-center ">
               <label className="bg-white h-[40px] w-2/3 rounded-lg p-2 flex items-center justify-between">
