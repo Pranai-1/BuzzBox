@@ -56,76 +56,64 @@ export default function Home({
   const [openedChatId, setOpenedChatId] = useState(0);
   const[userIdOfOpenedChat,setUserIdOfOpenedChat]=useState(0)
   const [textToSend, setTextToSend] = useState("");
-  const[onlineUsers,setOnlineUsers]=useState([])
+  const[onlineUsers,setOnlineUsers]=useState<[]>([])
   const[messages,setMessages]=useState<string[]>([])
 
   const [socket, setSocket] = useState<any>(null);
 
 
-  useEffect(()=>{
-    const helper=async()=>{
-      if(openedChatId!=0){
-  const response=await axios.get("/api/getUserId",{
-    headers:{
-      openedChatId
-    }
-  })
-  setUserIdOfOpenedChat(response.data.id)
-}
-}
-helper()
-  },[openedChatId])
-
-console.log(userIdOfOpenedChat)
+  
+  useEffect(() => {
+    const helper = async () => {
+      if (openedChatId !== 0) {
+        try {
+          const response = await axios.get("/api/getUserId", {
+            headers: {
+              openedChatId,
+            },
+          });
+          setUserIdOfOpenedChat(response.data.id);
+        } catch (error) {
+          console.error("Error getting user ID:", error);
+        }
+      }
+    };
+    helper();
+  }, [openedChatId]);
 
   useEffect(() => {
-    const newSocket = io(ENDPOINT, { transports: ["websocket" ]});
+    const newSocket = io(ENDPOINT, { transports: ["websocket"] });
     setSocket(newSocket);
 
     return () => {
       newSocket.disconnect();
     };
-  }, [name]);
+  }, [id]);
 
-useEffect(()=>{
-  if(socket==null)return
-socket.emit("addNewUser",id)
-socket.on("getOnlineUsers",(res: any)=>{
-  setOnlineUsers(res)
-})
-return ()=>{
-  socket.off("getOnlineUsers")
-}
-},[socket])
+  useEffect(() => {
+    if (socket) {
+      socket.emit("addNewUser", id);
 
-// useEffect(()=>{
-//   if(socket==null)return
-//   console.log("Inside useEffect")
-//   console.log(messages+"iuhiuh")
-// socket.emit("sendMessage",{messages:messages[messages.length-1],userIdOfOpenedChar})
-// },[messages])
+      socket.on("getOnlineUsers", (res: any) => {
+        setOnlineUsers(res);
+      });
 
+      socket.on("getMessage", (res: string) => {
+        setMessages((prev) => [...prev, res]);
+      });
 
-useEffect(()=>{
-  
-  if(socket==null)return
-socket.on("getMessage",(res: any)=>{
-  console.log("inside getmessages")
-  console.log(res)  //This is getting called multiple times fix this please
-console.log(messages)
-  setMessages((prev)=>[...prev,res])
-
-})
-
-  
-},[messages])
-
+      return () => {
+        socket.off("getOnlineUsers");
+        socket.off("getMessage");
+      };
+    }
+  }, [socket]);
 
 
 
 useEffect(() => {
   setChats(chats);
-}, [chats, setChats, openedChatName, openedChatNumberKey,openedChatId]);
+}, [chats, openedChatName, openedChatNumberKey,openedChatId]);
 
 function handleClick(clicked: boolean) {
   setOpenChat(clicked);
@@ -141,8 +129,8 @@ const HandleSend = () => {
 }
 
   return (
-    <div className=" h-[655px] w-screen bg-slate-50 flex ">
-      <div className="h-full w-[350px] flex flex-col bg-slate-100 items-center p-2 pt-0">
+    <div className=" h-full w-screen bg-slate-50 flex ">
+      <div className="h-[655px] w-[350px] flex flex-col bg-slate-100 items-center p-2 pt-0">
         <div>
           <Profile name={name} numberKey={numberKey} />
         </div>
@@ -179,19 +167,19 @@ const HandleSend = () => {
           setChats={setChats}
         />
       ) : (
-        <div className="w-full h-full" style={{ maxHeight: '655px', overflowY: 'auto' }}>
+        <div className="w-full h-[650px]" >
          {openChat?(
            <div className="h-full w-full relative">
             <div className="h-[50px] w-full bg-gray-200 rounded flex justify-between">
               <p className="p-2 ml-2 text-blue-500 font-medium">{openedChatName}</p>
               <p className="p-2 ml-2 text-red-500 font-medium">Key-{openedChatNumberKey}</p>
             </div>
-            <div className="h-[550px] w-full bg-orange-200">
+            <div className="h-[550px] w-full bg-orange-200" style={{ maxHeight: '550px', overflowY: 'auto' }}>
               {messages.map((message)=>(
                  <p className="text-xl font-bold text-red-600">{message}</p>
               ))}
             </div>
-            <div className="h-[50px] w-full bg-gray-200 rounded  absolute bottom-2 flex justify-center items-center">
+            <div className="h-[50px] w-full bg-gray-200 rounded  absolute bottom-0 flex justify-center items-center ">
               <label className="bg-white h-[40px] w-2/3 rounded-lg p-2 flex items-center justify-between">
                 <input className="h-[40px] w-full p-2 border-orange-500"
                  title="message"
@@ -217,3 +205,12 @@ const HandleSend = () => {
     </div>
   );
 }
+
+
+
+// useEffect(()=>{
+//   if(socket==null)return
+//   console.log("Inside useEffect")
+//   console.log(messages+"iuhiuh")
+// socket.emit("sendMessage",{messages:messages[messages.length-1],userIdOfOpenedChar})
+// },[messages])

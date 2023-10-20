@@ -30,9 +30,9 @@ io.on("connection", (socket) => {
 
   socket.on("sendMessage",(message)=>{
     console.log(message)
-    console.log(message.userIdOfOpenedChar+" ")
+    console.log(message.userIdOfOpenedChat+" ")
     console.log(onlineUsers)
-    const user=onlineUsers.find((user)=>user.userId==message.userIdOfOpenedChar)
+    const user=onlineUsers.find((user)=>user.userId==message.userIdOfOpenedChat)
     console.log(user)
     if(user){
         socket.to(user.socketId).emit("getMessage",message.messagetosend)
