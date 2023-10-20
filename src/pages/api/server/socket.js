@@ -1,32 +1,59 @@
-const http=require("http")
-const express=require("express")
-const cors=require("cors")
-const socketIO=require("socket.io")
+const http = require("http");
+const express = require("express");
+const cors = require("cors");
+const socketIO = require("socket.io");
 
-const app=express()
-const port=4000
-const server=http.createServer(app)  
-const io=socketIO(server)
-app.use(cors())
+const app = express();
+const port = 4000;
+const server = http.createServer(app);
+const io = socketIO(server);
+app.use(cors());
 
+let users = [];
+let onlineUsers=[]
 
-io.on("connection",()=>{
-    console.log("connection established")
-})
+io.on("connection", (socket) => {
+  console.log(`connection established with id-${socket.id}`);
 
+  socket.on("addNewUser", (userId) => {
+    !onlineUsers.some((user)=>user.userId==userId)&&
+    onlineUsers.push({
+        userId,
+        socketId:socket.id
+    })
+    console.log(userId);
+    console.log(`You have joined with ${userId}`);
+    console.log(onlineUsers)
+    socket.emit("getOnlineUsers",onlineUsers)
+  
+  });
 
+  socket.on("sendMessage",(message)=>{
+    console.log(message)
+    console.log(message.userIdOfOpenedChar+" ")
+    console.log(onlineUsers)
+    const user=onlineUsers.find((user)=>user.userId==message.userIdOfOpenedChar)
+    console.log(user)
+    if(user){
+        socket.to(user.socketId).emit("getMessage",message.messagetosend)
+    }
+  })
 
+  socket.on("disconnect",()=>{
+    onlineUsers=onlineUsers.filter((user)=>user.socketId!==socket.id)
+    socket.emit("getOnlineUsers",onlineUsers)
+  })
 
-app.get("/",(req,res)=>{
-    res.send("Starting")
-})
+});
 
+app.get("/", (req, res) => {
+  res.send("Starting");
+});
 
+server.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
+});
 
-
-server.listen(port,()=>{
-    console.log(`server is running on port http://localhost:${port}`)
-})
 
 
 // Read about the diff between http and express servers with code

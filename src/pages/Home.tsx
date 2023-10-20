@@ -1,16 +1,19 @@
 import { GetServerSideProps } from "next";
 import { getServerAuthSession } from "./api/auth/authoptions";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import getContacts from "./api/getContacts";
 import { ContactType } from "./api/types";
 import Contacts from "@/components/Contacts";
 import AddChat from "@/components/AddChat";
 import Profile from "../components/profile";
 import sendIcon from "../../public/send.png"
+import { io } from "socket.io-client";
+import axios from "axios";
+
+const ENDPOINT="http://localhost:4000"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
-  console.log(session?.user.numberKey);
   if (!session) {
     return {
       redirect: {
@@ -20,9 +23,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
     };
   }
   const data = await getContacts(session.user.numberKey);
-console.log(data)
   return {
     props: {
+      id:session.user.id,
       name: session.user.name,
       numberKey: session.user.numberKey,
       email: session.user.email,
@@ -36,11 +39,13 @@ export default function Home({
   numberKey,
   email,
   contacts,
+  id
 }: {
   name: string;
   numberKey: number;
   email: string;
   contacts: ContactType[];
+  id:number
 }) {
 
   const [addNewChat, setAddNewChat] = useState(false);
@@ -48,23 +53,91 @@ export default function Home({
   const [openChat, setOpenChat] = useState(false);
   const [openedChatName, setOpenedChatName] = useState("");
   const [openedChatNumberKey, setOpenedChatNumberKey] = useState(0);
+  const [openedChatId, setOpenedChatId] = useState(0);
+  const[userIdOfOpenedChat,setUserIdOfOpenedChat]=useState(0)
   const [textToSend, setTextToSend] = useState("");
+  const[onlineUsers,setOnlineUsers]=useState([])
+  const[messages,setMessages]=useState<string[]>([])
+
+  const [socket, setSocket] = useState<any>(null);
+
+
+  useEffect(()=>{
+    const helper=async()=>{
+      if(openedChatId!=0){
+  const response=await axios.get("/api/getUserId",{
+    headers:{
+      openedChatId
+    }
+  })
+  setUserIdOfOpenedChat(response.data.id)
+}
+}
+helper()
+  },[openedChatId])
+
+console.log(userIdOfOpenedChat)
+
+  useEffect(() => {
+    const newSocket = io(ENDPOINT, { transports: ["websocket" ]});
+    setSocket(newSocket);
+
+    return () => {
+      newSocket.disconnect();
+    };
+  }, [name]);
 
 useEffect(()=>{
-setChats(chats)
-},[chats,setChats,openedChatName,openedChatNumberKey])
+  if(socket==null)return
+socket.emit("addNewUser",id)
+socket.on("getOnlineUsers",(res: any)=>{
+  setOnlineUsers(res)
+})
+return ()=>{
+  socket.off("getOnlineUsers")
+}
+},[socket])
 
-function handleClick(clicked: boolean){
-  console.log(clicked)
-  setOpenChat(clicked)
-  alert("connected")
+// useEffect(()=>{
+//   if(socket==null)return
+//   console.log("Inside useEffect")
+//   console.log(messages+"iuhiuh")
+// socket.emit("sendMessage",{messages:messages[messages.length-1],userIdOfOpenedChar})
+// },[messages])
+
+
+useEffect(()=>{
+  
+  if(socket==null)return
+socket.on("getMessage",(res: any)=>{
+  console.log("inside getmessages")
+  console.log(res)  //This is getting called multiple times fix this please
+console.log(messages)
+  setMessages((prev)=>[...prev,res])
+
+})
+
+  
+},[messages])
+
+
+
+
+useEffect(() => {
+  setChats(chats);
+}, [chats, setChats, openedChatName, openedChatNumberKey,openedChatId]);
+
+function handleClick(clicked: boolean) {
+  setOpenChat(clicked);
+  alert("clicked");
 }
 
-function HandleSend(){
-  if(textToSend.length!=0){
-    console.log(textToSend)
+const HandleSend = () => {
+  if (textToSend.length !== 0) {
+    socket.emit("sendMessage",{messagetosend:textToSend,userIdOfOpenedChat})
+    setTextToSend("");
+    setMessages((prev)=>[...prev,textToSend])
   }
-  setTextToSend('');
 }
 
   return (
@@ -93,6 +166,8 @@ function HandleSend(){
               handleClick={() => handleClick(true)}
               setOpenedChatName={setOpenedChatName}
               setOpenedChatNumberKey={setOpenedChatNumberKey}
+              setOpenedChatId={setOpenedChatId}
+              
             />
           ))}
         </div>
@@ -110,6 +185,11 @@ function HandleSend(){
             <div className="h-[50px] w-full bg-gray-200 rounded flex justify-between">
               <p className="p-2 ml-2 text-blue-500 font-medium">{openedChatName}</p>
               <p className="p-2 ml-2 text-red-500 font-medium">Key-{openedChatNumberKey}</p>
+            </div>
+            <div className="h-[550px] w-full bg-orange-200">
+              {messages.map((message)=>(
+                 <p className="text-xl font-bold text-red-600">{message}</p>
+              ))}
             </div>
             <div className="h-[50px] w-full bg-gray-200 rounded  absolute bottom-2 flex justify-center items-center">
               <label className="bg-white h-[40px] w-2/3 rounded-lg p-2 flex items-center justify-between">
