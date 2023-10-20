@@ -87,6 +87,7 @@ export default function Home({
     setSocket(newSocket);
 
     return () => {
+    
       newSocket.disconnect();
     };
   }, [id]);
@@ -94,6 +95,7 @@ export default function Home({
   useEffect(() => {
     if (socket) {
       socket.emit("addNewUser", id);
+     
      console.log(socket.id)
       socket.on("getOnlineUsers", (res: any) => {
         setOnlineUsers(res);
@@ -136,9 +138,35 @@ export default function Home({
   };
   
 
+//   async function disconnectusers(socketId: string){
+//     try{
+//       const response=await axios.put("/api/onlineUsers",{
+//         socketId,
+//         id
+//       })
+//       setOnlineUsers(response.data.onlineUsers)
+//     }catch(error){
+//       console.log(error)
+//     }
+    
+//   }
+
+// async function usersonline(socketId: any){
+//   try{
+//   const response=await axios.post("/api/onlineUsers",{
+//     socketId,
+//     id
+//   })
+//   setOnlineUsers(response.data.onlineUsers)
+// }catch(error){
+//   console.log(error)
+// }
+
+// }
+
 useEffect(() => {
   setChats(chats);
-}, [chats, openedChatName, openedChatNumberKey,openedChatId]);
+}, [chats]);
 
 function handleClick(clicked: boolean) {
   setOpenChat(clicked);
