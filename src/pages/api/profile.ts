@@ -8,6 +8,7 @@ const userInput = z.object({
   contactName: z.string().min(3).max(25),
   contactNumberKey: z.number().min(100000).max(999999),
   numberKey: z.number().min(100000).max(999999),
+  id:z.number()
 });
 
 export default async function handler(
@@ -21,7 +22,7 @@ export default async function handler(
       if (!parsedInput.success) {
         return res.status(422).json({ message: "Validation failed" });
       }
-      const { contactNumberKey, contactName, numberKey } = parsedInput.data;
+      const { contactNumberKey, contactName, numberKey,id } = parsedInput.data;
       const user = await prisma.user.findFirst({ where: { numberKey } });
       const findUserToAdd = await prisma.user.findFirst({
         where: { numberKey: contactNumberKey },
@@ -32,6 +33,7 @@ export default async function handler(
           const existingContact = await prisma.contact.findFirst({
             where: {
               numberKey: contactNumberKey,
+              userId:id
             },
           });
           if (existingContact) {
@@ -42,6 +44,7 @@ export default async function handler(
               data: {
                 name: contactName,
                 numberKey: contactNumberKey,
+                userId:id
               },
             });
             if (contact) {
@@ -59,29 +62,30 @@ export default async function handler(
             } else {
               res.status(404).json({ message: "Failed" });
             }
-          } else {
-            try {
-              const alreadyInList = await prisma.contactUser.findFirst({
-                where: {
-                  contactId: existingContact?.id,
-                  userId: user.id,
-                },
-              });
-             if (alreadyInList) {
-                res.status(412).json({ message: "Failed" });
-              } else {
-                await prisma.contactUser.create({
-                  data: {
-                    contactId: existingContact?.id as number,
-                    userId: user.id,
-                  },
-                });
-                res.status(201).json({ message: "Chat Added" });
-              }
-            } catch (error) {
-              res.status(500).json({ message: "Failed" });
-            }
           }
+          // } else {
+          //   try {
+          //     const alreadyInList = await prisma.contactUser.findFirst({
+          //       where: {
+          //         contactId: existingContact?.id,
+          //         userId: user.id,
+          //       },
+          //     });
+          //    if (alreadyInList) {
+          //       res.status(412).json({ message: "Failed" });
+          //     } else {
+          //       await prisma.contactUser.create({
+          //         data: {
+          //           contactId: existingContact?.id as number,
+          //           userId: user.id,
+          //         },
+          //       });
+          //       res.status(201).json({ message: "Chat Added" });
+          //     }
+          //   } catch (error) {
+          //     res.status(500).json({ message: "Failed" });
+          //   }
+          // }
         } catch (error) {
           res.status(500).json({ message: "Error" });
         }

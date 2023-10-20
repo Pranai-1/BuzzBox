@@ -7,10 +7,12 @@ export default function AddChat({
   numberKey,
   setAddNewChat,
   setChats,
+  id
 }: {
   numberKey: number;
   setAddNewChat: any;
   setChats: any;
+  id:number
 }) {
   const [contactName, setContactName] = useState("");
   const [contactNumberKey, setContactNumberKey] = useState(0);
@@ -29,6 +31,7 @@ export default function AddChat({
         contactName,
         contactNumberKey,
         numberKey,
+        id
       };
       try {
       await axios.post("/api/profile", body);

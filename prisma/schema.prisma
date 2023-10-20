@@ -21,6 +21,7 @@ model User {
 
 model Contact {
   id        Int      @id @default(autoincrement())
+  userId    Int
   name      String
   numberKey Int
   users     ContactUser[]  // A relationship field that associates contacts with the users who have them as contacts. 
@@ -39,6 +40,12 @@ model ContactUser {
 
   // /The @@id([contactId, userId]) directive defines a composite primary key based on the contactId and userId fields. 
   //This enforces uniqueness in the combination of these two fields, ensuring that a user cannot have the same contact multiple times.
+}
+
+model OnlineUsers{
+  id      Int  @id @default(autoincrement())
+  userId   Int
+  socketId  String
 }
 
 // model Message {

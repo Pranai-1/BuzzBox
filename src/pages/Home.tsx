@@ -10,7 +10,9 @@ import sendIcon from "../../public/send.png"
 import { io } from "socket.io-client";
 import axios from "axios";
 
-const ENDPOINT="https://buzzbox-socket.onrender.com/"
+// const ENDPOINT="https://buzzbox-socket.onrender.com/"
+
+const ENDPOINT="http://localhost:4000/"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -92,7 +94,7 @@ export default function Home({
   useEffect(() => {
     if (socket) {
       socket.emit("addNewUser", id);
-
+     console.log(socket.id)
       socket.on("getOnlineUsers", (res: any) => {
         setOnlineUsers(res);
       });
@@ -124,9 +126,9 @@ export default function Home({
     
     return currentChatMessages.map((message: any, index: number) => {
       const isSentByYou = message.senderId === id;
-      const messageClass = isSentByYou ? 'text-orange-600 ml-auto ' : 'text-blue-600 '; 
+      const messageClass = isSentByYou ? 'text-orange-600 ml-auto mr-2' : 'text-blue-600 ml-2'; 
       return (
-        <p key={index} className={`font-medium ${messageClass} bg-slate-200 h-max w-max rounded-xl p-2  mb-2`}>
+        <p key={index} className={`font-medium ${messageClass} bg-slate-200 h-max w-max rounded-xl p-2 pt-1 pb-1 mt-1 mb-2`}>
           {message.text}
         </p>
       );
@@ -199,6 +201,7 @@ const HandleSend = () => {
           numberKey={numberKey}
           setAddNewChat={setAddNewChat}
           setChats={setChats}
+          id={id}
         />
       ) : (
         <div className="w-full h-[650px]" >
