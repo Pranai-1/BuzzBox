@@ -11,9 +11,9 @@ import { io } from "socket.io-client";
 import axios from "axios";
 import ReactScrollToBottom from "react-scroll-to-bottom"
 import { number } from "zod";
-//const ENDPOINT="https://buzzbox-socket.onrender.com/"
+const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
- const ENDPOINT="http://localhost:4000/"
+ //const ENDPOINT="http://localhost:4000/"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -92,6 +92,7 @@ const[isOnline,setIsOnline]=useState<boolean>();
     getMessages();
   }, [userIdOfOpenedChat]);
   
+  console.log(messages)
   
   useEffect(() => {
     const helper = async () => {
