@@ -1,7 +1,7 @@
 import { GetServerSideProps } from "next";
 import { getServerAuthSession } from "./api/auth/authoptions";
 import { JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactNode, ReactPortal, SetStateAction, useEffect, useRef, useState } from "react";
-import getContacts from "./api/getContacts";
+import getContacts from "./api/helpers/getContacts";
 import { ContactType } from "./api/types";
 import Contacts from "@/components/Contacts";
 import AddChat from "@/components/AddChat";
@@ -10,9 +10,10 @@ import sendIcon from "../../public/send.png"
 import { io } from "socket.io-client";
 import axios from "axios";
 import ReactScrollToBottom from "react-scroll-to-bottom"
-const ENDPOINT="https://buzzbox-socket.onrender.com/"
+import { number } from "zod";
+//const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
- //const ENDPOINT="http://localhost:4000/"
+ const ENDPOINT="http://localhost:4000/"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -62,11 +63,35 @@ export default function Home({
   const[messages,setMessages]=useState<any>([])
 const[isOnline,setIsOnline]=useState<boolean>();
   const [socket, setSocket] = useState<any>(null);
-
+ const[savedmessages,setsavedmessages]=useState<any>()
   
 
- 
-
+  useEffect(() => {
+    const getMessages = async () => {
+      if (userIdOfOpenedChat !== 0) {
+        let header = {
+          senderId: id,
+          receiverId: userIdOfOpenedChat
+        };
+        try {
+          const response = await axios.get("/api/messages", { headers: header });
+          const data = response.data.messages;
+          setMessages((prev: any)=>({
+            ...prev,
+            [openedChatId]: [
+             ...data 
+            ]
+            
+          }))
+     
+        } catch (error) {
+          console.error("Error fetching messages:", error);
+        }
+      }
+    }
+    getMessages();
+  }, [userIdOfOpenedChat]);
+  
   
   useEffect(() => {
     const helper = async () => {
@@ -105,16 +130,12 @@ const[isOnline,setIsOnline]=useState<boolean>();
   useEffect(() => {
     if (socket) {
       socket.emit("addNewUser", id);
-     
-     console.log(socket.id)
       socket.on("getOnlineUsers", (res: any) => {
         setOnlineUsers(res);
-        console.log(res)
-        console.log("getonline")
+
       });
        
       socket.on("getMessage", (res: string) => {
-        console.log(res)
         setMessages((prev: any)=>({
           ...prev,
           [openedChatId]: [
@@ -160,13 +181,14 @@ function handleClick(clicked: boolean) {
   setOpenChat(clicked);
 }
 
-const HandleSend = () => {
+const HandleSend = async () => {
   if (textToSend.length !== 0 && userIdOfOpenedChat!=0) {
     const message={
       senderId:id,
       receiverId:userIdOfOpenedChat,
       text:textToSend
     }
+ 
     setMessages((prev: any)=>({
       ...prev,
       [openedChatId]: [
@@ -174,11 +196,12 @@ const HandleSend = () => {
         message 
       ]
     }));
+    const response=await axios.post("/api/messages",message)
     socket.emit("sendMessage",{messagetosend:message,userIdOfOpenedChat})
     setTextToSend("");
   }
 }
-console.log(onlineUsers)
+
 useEffect(() => {
   if (onlineUsers.find(user => user.userId === userIdOfOpenedChat)) {
     setIsOnline(true);

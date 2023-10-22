@@ -1,4 +1,4 @@
-import getContacts from "@/pages/api/getContacts";
+import getContacts from "@/pages/api/helpers/getContacts";
 import axios from "axios";
 import { useState } from "react";
 import { toast } from "react-toastify";
