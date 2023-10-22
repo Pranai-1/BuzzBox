@@ -10,9 +10,9 @@ import sendIcon from "../../public/send.png"
 import { io } from "socket.io-client";
 import axios from "axios";
 import ReactScrollToBottom from "react-scroll-to-bottom"
-// const ENDPOINT="https://buzzbox-socket.onrender.com/"
+const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
- const ENDPOINT="http://localhost:4000/"
+//  const ENDPOINT="http://localhost:4000/"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -95,9 +95,9 @@ const[isOnline,setIsOnline]=useState<boolean>();
     return () => {
     
       newSocket.disconnect();
-      newSocket.on("getOnlineUsers",(res: any) => {
-        setOnlineUsers(res);
-       } )
+      // newSocket.on("getOnlineUsers",(res: any) => {
+      //   setOnlineUsers(res);
+      //  } )
       
     };
   }, []);
