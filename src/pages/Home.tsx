@@ -189,6 +189,7 @@ const HandleSend = async () => {
       receiverId:userIdOfOpenedChat,
       text:textToSend
     }
+    const response=await axios.post("/api/messages",message)
  
     setMessages((prev: any)=>({
       ...prev,
@@ -197,7 +198,7 @@ const HandleSend = async () => {
         message 
       ]
     }));
-    const response=await axios.post("/api/messages",message)
+  
     socket.emit("sendMessage",{messagetosend:message,userIdOfOpenedChat})
     setTextToSend("");
   }

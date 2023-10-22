@@ -1,46 +1,52 @@
 import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 
-export default async function handler(req:NextApiRequest,res:NextApiResponse){
-    const prisma=await new PrismaClient()
-    if(req.method=="POST"){
-        console.log(req.body)
-    const message=req.body
- 
-      const messages=await prisma.messages.create({
-        data:{
-            senderId:message.senderId,
-            receiverId:message.receiverId,
-            text:message.text
+const prisma = new PrismaClient();
 
-        }
-      })
-      if(messages){
-        res.status(200).json({response:"success",messages})
-      }
-      res.status(404).json({response:"failed"})
-    }else if(req.method=="GET"){
-        console.log(req.headers)
-       const senderId=Number(req.headers["senderid"])
-       const receiverId=Number(req.headers["receiverid"])
-        const messages = await prisma.messages.findMany({
-            where: {
-              OR: [
-                {
-                  senderId,
-                  receiverId,
-                },
-                {
-                  senderId: receiverId,
-                  receiverId: senderId,
-                },
-              ],
-            },
-          });
-          console.log(messages)
-        if(messages){
-            res.status(200).json({response:"success",messages})
-          }
-          res.status(404).json({response:"failed",messages:[]})
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  if (req.method === "POST") {
+    const message = req.body;
+    try {
+      const createdMessage = await prisma.messages.create({
+        data: {
+          senderId: message.senderId,
+          receiverId: message.receiverId,
+          text: message.text,
+        },
+      });
+      res.status(200).json({ response: "success", message: createdMessage });
+    } catch (error) {
+      res.status(500).json({ response: "error", error: error});
     }
+  } else if (req.method === "GET") {
+    try {
+      const senderId = Number(req.headers.senderid);
+      const receiverId = Number(req.headers.receiverid);
+      const messages = await prisma.messages.findMany({
+        where: {
+          OR: [
+            {
+              senderId,
+              receiverId,
+            },
+            {
+              senderId: receiverId,
+              receiverId: senderId,
+            },
+          ],
+        },
+      });
+      res.status(200).json({ response: "success", messages });
+    } catch (error) {
+      res.status(500).json({ response: "error", error: error });
+    }
+  }
 }
+
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "1mb",
+    },
+  },
+};
