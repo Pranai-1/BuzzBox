@@ -1,6 +1,6 @@
 import { GetServerSideProps } from "next";
 import { getServerAuthSession } from "./api/auth/authoptions";
-import { JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactNode, ReactPortal, SetStateAction, useEffect, useState } from "react";
+import { JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactNode, ReactPortal, SetStateAction, useEffect, useRef, useState } from "react";
 import getContacts from "./api/getContacts";
 import { ContactType } from "./api/types";
 import Contacts from "@/components/Contacts";
@@ -9,10 +9,10 @@ import Profile from "../components/profile";
 import sendIcon from "../../public/send.png"
 import { io } from "socket.io-client";
 import axios from "axios";
+import ReactScrollToBottom from "react-scroll-to-bottom"
+// const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
-const ENDPOINT="https://buzzbox-socket.onrender.com/"
-
-// const ENDPOINT="http://localhost:4000/"
+ const ENDPOINT="http://localhost:4000/"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -58,10 +58,14 @@ export default function Home({
   const [openedChatId, setOpenedChatId] = useState(0);
   const[userIdOfOpenedChat,setUserIdOfOpenedChat]=useState(0)
   const [textToSend, setTextToSend] = useState("");
-  const[onlineUsers,setOnlineUsers]=useState<[]>([])
+  const[onlineUsers,setOnlineUsers]=useState<any[]>([])
   const[messages,setMessages]=useState<any>([])
-
+const[isOnline,setIsOnline]=useState<boolean>();
   const [socket, setSocket] = useState<any>(null);
+
+  
+
+ 
 
   
   useEffect(() => {
@@ -85,12 +89,18 @@ export default function Home({
   useEffect(() => {
     const newSocket = io(ENDPOINT, { transports: ["websocket"] });
     setSocket(newSocket);
-
+ newSocket.on("getOnlineUsers",(res: any) => {
+        setOnlineUsers(res);
+ })
     return () => {
     
       newSocket.disconnect();
+      newSocket.on("getOnlineUsers",(res: any) => {
+        setOnlineUsers(res);
+       } )
+      
     };
-  }, [id]);
+  }, []);
 
   useEffect(() => {
     if (socket) {
@@ -99,8 +109,10 @@ export default function Home({
      console.log(socket.id)
       socket.on("getOnlineUsers", (res: any) => {
         setOnlineUsers(res);
+        console.log(res)
+        console.log("getonline")
       });
-
+       
       socket.on("getMessage", (res: string) => {
         console.log(res)
         setMessages((prev: any)=>({
@@ -115,13 +127,12 @@ export default function Home({
       });
 
       return () => {
-        socket.off("getOnlineUsers");
+        socket.off("getOnlineUsers");//turnoff the socket after receiving the messages inorder to avoid unnecessary callings
         socket.off("getMessage");
       };
     }
   }, [socket,openedChatId]);
 
-  console.log(messages)
 
   const renderMessages = () => {
     const currentChatMessages = messages[openedChatId] || [];
@@ -130,39 +141,16 @@ export default function Home({
       const isSentByYou = message.senderId === id;
       const messageClass = isSentByYou ? 'text-orange-600 ml-auto mr-2' : 'text-blue-600 ml-2'; 
       return (
+      
         <p key={index} className={`font-medium ${messageClass} bg-slate-200 h-max w-max rounded-xl p-2 pt-1 pb-1 mt-1 mb-2`}>
           {message.text}
         </p>
+        
       );
     });
   };
   
 
-//   async function disconnectusers(socketId: string){
-//     try{
-//       const response=await axios.put("/api/onlineUsers",{
-//         socketId,
-//         id
-//       })
-//       setOnlineUsers(response.data.onlineUsers)
-//     }catch(error){
-//       console.log(error)
-//     }
-    
-//   }
-
-// async function usersonline(socketId: any){
-//   try{
-//   const response=await axios.post("/api/onlineUsers",{
-//     socketId,
-//     id
-//   })
-//   setOnlineUsers(response.data.onlineUsers)
-// }catch(error){
-//   console.log(error)
-// }
-
-// }
 
 useEffect(() => {
   setChats(chats);
@@ -191,7 +179,21 @@ const HandleSend = () => {
     setTextToSend("");
   }
 }
+console.log(onlineUsers)
+useEffect(() => {
+  if (onlineUsers.find(user => user.userId === userIdOfOpenedChat)) {
+    setIsOnline(true);
+  } else {
+    setIsOnline(false);
+  }
+}, [onlineUsers, userIdOfOpenedChat]);
 
+
+const handleKeyDown = (e:any) => {
+  if (e.key === 'Enter') {
+    HandleSend();
+  }
+};
   return (
     <div className=" h-full w-screen bg-slate-50 flex ">
       <div className="h-[655px] w-[350px] flex flex-col bg-slate-100 items-center p-2 pt-0">
@@ -236,15 +238,34 @@ const HandleSend = () => {
          {openChat?(
            <div className="h-full w-full relative">
             <div className="h-[50px] w-full bg-gray-200 rounded flex justify-between">
-              <p className="p-2 ml-2 text-blue-500 font-medium">{openedChatName}</p>
+            {isOnline ? (
+            <div>
+              <p className="pt-2 ml-2 text-blue-500 font-medium">{openedChatName}</p>
+                  <div className="flex items-center ml-2 pb-1">
+                    <span className="w-2 h-2 bg-green-500 rounded-full mr-1"></span> {/* Green Dot */}
+                    <p className="text-green-500 text-xs">online</p>
+                  </div>
+            </div>
+            ) : (
+              <div>
+               <p className="pt-2 ml-2 text-blue-500 font-medium">{openedChatName}</p>
+               <div className="flex items-center ml-2 pb-1">
+                    <span className="w-2 h-2 bg-red-500 rounded-full mr-1"></span> {/* Green Dot */}
+                    <p className="text-red-500 text-xs">offline</p>
+                  </div>
+                  </div>
+            )}
               <p className="p-2 ml-2 text-red-500 font-medium">Key-{openedChatNumberKey}</p>
             </div>
-            <div className="h-[550px] w-full flex flex-col " style={{ maxHeight: '550px', overflowY: 'auto' }}>
+            <ReactScrollToBottom>
+      
+            <div className="h-[550px] w-full flex flex-col " style={{ maxHeight: '550px' }}>
           
               {renderMessages()}
         
              
             </div>
+            </ReactScrollToBottom>
             <div className="h-[50px] w-full bg-gray-200 rounded  absolute bottom-0 flex justify-center items-center ">
               <label className="bg-white h-[40px] w-2/3 rounded-lg p-2 flex items-center justify-between">
                 <input className="h-[40px] w-full p-2 border-orange-500"
@@ -252,6 +273,7 @@ const HandleSend = () => {
                  placeholder="Enter your message here"
                  value={textToSend}
                  onChange={(e)=>{setTextToSend(e.target.value)}}
+                 onKeyDown={handleKeyDown}
                  />
                  <div onClick={HandleSend}>
                  <img src={sendIcon.src} className="h-[40px] cursor-pointer" />
@@ -280,3 +302,31 @@ const HandleSend = () => {
 //   console.log(messages+"iuhiuh")
 // socket.emit("sendMessage",{messages:messages[messages.length-1],userIdOfOpenedChar})
 // },[messages])
+
+
+
+//   async function disconnectusers(socketId: string){
+//     try{
+//       const response=await axios.put("/api/onlineUsers",{
+//         socketId,
+//         id
+//       })
+//       setOnlineUsers(response.data.onlineUsers)
+//     }catch(error){
+//       console.log(error)
+//     }
+    
+//   }
+
+// async function usersonline(socketId: any){
+//   try{
+//   const response=await axios.post("/api/onlineUsers",{
+//     socketId,
+//     id
+//   })
+//   setOnlineUsers(response.data.onlineUsers)
+// }catch(error){
+//   console.log(error)
+// }
+
+// }
