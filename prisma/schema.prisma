@@ -42,10 +42,11 @@ model ContactUser {
   //This enforces uniqueness in the combination of these two fields, ensuring that a user cannot have the same contact multiple times.
 }
 
-model OnlineUsers{
+model Messages{
   id      Int  @id @default(autoincrement())
-  userId   Int
-  socketId  String
+  senderId   Int
+  receiverId  Int
+  text        String
 }
 
 // model Message {
