@@ -158,7 +158,6 @@ useEffect(() => {
 
 function handleClick(clicked: boolean) {
   setOpenChat(clicked);
-  alert("clicked");
 }
 
 const HandleSend = () => {
