@@ -131,7 +131,7 @@ const[isOnline,setIsOnline]=useState<boolean>();
         socket.off("getMessage");
       };
     }
-  }, [socket,openedChatId]);
+  }, [socket,openedChatId,onlineUsers]);
 
 
   const renderMessages = () => {
