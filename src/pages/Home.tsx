@@ -12,7 +12,7 @@ import axios from "axios";
 import ReactScrollToBottom from "react-scroll-to-bottom"
 const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
-  //const ENDPOINT="http://localhost:4000/"
+ //const ENDPOINT="http://localhost:4000/"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -62,10 +62,12 @@ export default function Home({
   const[messages,setMessages]=useState<any>([])
 const[isOnline,setIsOnline]=useState<boolean>();
   const [socket, setSocket] = useState<any>(null);
-let count=0;
-  //To get userId of opened chat
 
-  // read the theory in the helper.txt about socket and useeffect combination 
+  
+
+ 
+
+  
   useEffect(() => {
     const helper = async () => {
       if (openedChatId !== 0) {
@@ -84,32 +86,33 @@ let count=0;
     helper();
   }, [openedChatId]);
 
-
-
   useEffect(() => {
     const newSocket = io(ENDPOINT, { transports: ["websocket"] });
     setSocket(newSocket);
+ newSocket.on("getOnlineUsers",(res: any) => {
+        setOnlineUsers(res);
+ })
     return () => {
+    
       newSocket.disconnect();
+      newSocket.on("getOnlineUsers",(res: any) => {
+        setOnlineUsers(res);
+       } )
+      
     };
   }, []);
 
-   if(socket){ 
-  socket.on("getOnlineUsers", (res: any) => {
-    setOnlineUsers(res);
-    console.log(res)
-    console.log("getonline")
-  });
-}else{
-  console.log("no socket")
-  console.log(onlineUsers)
-}
-   
   useEffect(() => {
     if (socket) {
       socket.emit("addNewUser", id);
      
-    
+     console.log(socket.id)
+      socket.on("getOnlineUsers", (res: any) => {
+        setOnlineUsers(res);
+        console.log(res)
+        console.log("getonline")
+      });
+       
       socket.on("getMessage", (res: string) => {
         console.log(res)
         setMessages((prev: any)=>({
@@ -124,7 +127,7 @@ let count=0;
       });
 
       return () => {
-        socket.off("getOnlineUsers");
+        socket.off("getOnlineUsers");//turnoff the socket after receiving the messages inorder to avoid unnecessary callings
         socket.off("getMessage");
       };
     }
@@ -184,7 +187,6 @@ useEffect(() => {
     setIsOnline(false);
   }
 }, [onlineUsers, userIdOfOpenedChat]);
-
 
 const handleKeyDown = (e:any) => {
   if (e.key === 'Enter') {
