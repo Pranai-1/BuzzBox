@@ -25,5 +25,7 @@ export default async function getUserId(req:NextApiRequest,res:NextApiResponse){
 }catch(error){
     console.log(error)
     res.status(406).json({messages:"failed"})
+}finally{
+    prisma.$disconnect()
 }
 }

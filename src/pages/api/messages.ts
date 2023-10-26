@@ -39,7 +39,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(200).json({ response: "success", messages });
     } catch (error) {
       res.status(500).json({ response: "error", error: error });
-    }
+    }finally{
+      prisma.$disconnect()
+  }
   }
 }
 

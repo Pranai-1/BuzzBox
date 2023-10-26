@@ -84,8 +84,8 @@ export default function Login() {
     }
   };
   return (
-    <div className=" h-[650px] w-full bg-slate-100 absolute flex justify-center items-center">
-      <div className="bg-white w-1/3 flex flex-col gap-2 mb-5 p-5 rounded-xl justify-center">
+    <div className=" h-[650px] w-full bg-slate-100 absolute flex justify-center items-center flex-wrap">
+      <div className="bg-white w-[360px] md:w-[440px] flex flex-col gap-2 mb-5 p-5 rounded-xl justify-center">
         <h1 className="font-bold text-center text-2xl text-orange-600">
           Login to BuzzBox
         </h1>

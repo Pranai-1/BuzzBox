@@ -63,12 +63,18 @@ export default function Home({
   const[messages,setMessages]=useState<any>([])
 const[isOnline,setIsOnline]=useState<boolean>();
   const [socket, setSocket] = useState<any>(null);
- const[savedmessages,setsavedmessages]=useState<any>()
+ const[emptyChat,setemptyChat]=useState<boolean>(true)
   
+ useEffect(()=>{
+  setTimeout(()=>{
+    setemptyChat(true)
+  },100)
+ },[openedChatId])
 
   useEffect(() => {
     const getMessages = async () => {
       if (userIdOfOpenedChat !== 0) {
+
         let header = {
           senderId: id,
           receiverId: userIdOfOpenedChat
@@ -83,6 +89,7 @@ const[isOnline,setIsOnline]=useState<boolean>();
             ]
             
           }))
+          setemptyChat(false)
      
         } catch (error) {
           console.error("Error fetching messages:", error);
@@ -158,13 +165,13 @@ const[isOnline,setIsOnline]=useState<boolean>();
 
   const renderMessages = () => {
     const currentChatMessages = messages[openedChatId] || [];
-    
+  
     return currentChatMessages.map((message: any, index: number) => {
       const isSentByYou = message.senderId === id;
       const messageClass = isSentByYou ? 'text-orange-600 ml-auto mr-2' : 'text-blue-600 ml-2'; 
       return (
       
-        <p key={index} className={`font-medium ${messageClass} bg-slate-200 h-max w-max rounded-xl p-2 pt-1 pb-1 mt-1 mb-2`}>
+        <p key={index} className={`font-medium ${messageClass} bg-slate-300 h-max w-max rounded-xl p-2 pt-1 pb-1 mt-1 mb-2`}>
           {message.text}
         </p>
         
@@ -218,102 +225,96 @@ const handleKeyDown = (e:any) => {
   }
 };
   return (
-    <div className=" h-full w-screen bg-slate-50 flex ">
-      <div className="h-[655px] w-[350px] flex flex-col bg-slate-100 items-center p-2 pt-0">
-        <div>
-          <Profile name={name} numberKey={numberKey} />
-        </div>
-        <div className="p-2 ml-[250px]">
-          <p
-            className=" text-2xl text-orange-500 ml-6 cursor-pointer mb-0"
-            onClick={() => {
-              setAddNewChat(true);
-            }}
-          >
-            +
-          </p>
-          <p className=" text-sm text-orange-500 mt-0">New Chat</p>
-        </div>
-        <div className="flex flex-col gap-3 flex-wrap  w-full mt-5" style={{ maxHeight: '300px', overflowY: 'auto' }}>
-          {chats.map((contact) => (
-            <Contacts
-              id={contact.id}
-              name={contact.name}
-              numberKey={contact.numberKey}
-              handleClick={() => handleClick(true)}
-              setOpenedChatName={setOpenedChatName}
-              setOpenedChatNumberKey={setOpenedChatNumberKey}
-              setOpenedChatId={setOpenedChatId}
-              
-            />
-          ))}
-        </div>
-      </div>
-      {addNewChat ? (
-        <AddChat
-          numberKey={numberKey}
-          setAddNewChat={setAddNewChat}
-          setChats={setChats}
-          id={id}
+    <div className="h-full w-full flex">
+  <div className="h-[650px] w-[350px] flex flex-col items-center p-2 pt-0 bg-gray-900">
+    <div>
+      <Profile name={name} numberKey={numberKey} />
+    </div>
+    <div className="p-2 bg-orange-600 cursor-pointer rounded-xl mt-3 ml-[200px] " onClick={() => {
+      setAddNewChat(true);
+    }}>
+      <p className="text-sm text-black font-medium mt-0">New Chat</p>
+    </div>
+    <div className="flex flex-col gap-5 flex-wrap w-full mt-5" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+      {chats.map((contact) => (
+        <Contacts
+          id={contact.id}
+          name={contact.name}
+          numberKey={contact.numberKey}
+          handleClick={() => handleClick(true)}
+          setOpenedChatName={setOpenedChatName}
+          setOpenedChatNumberKey={setOpenedChatNumberKey}
+          setOpenedChatId={setOpenedChatId}
         />
-      ) : (
-        <div className="w-full h-[650px]" >
-         {openChat?(
-           <div className="h-full w-full relative">
-            <div className="h-[50px] w-full bg-gray-200 rounded flex justify-between">
+      ))}
+    </div>
+  </div>
+  {addNewChat ? (
+    <AddChat
+      numberKey={numberKey}
+      setAddNewChat={setAddNewChat}
+      setChats={setChats}
+      id={id}
+    />
+  ) : (
+    <div className="w-full h-[647px] m-1 bg-slate-50">
+      {openChat ? (
+        <div className="h-full w-full relative">
+          <div className="h-[50px] w-full bg-slate-300 flex justify-between rounded-lg">
             {isOnline ? (
-            <div>
-              <p className="pt-2 ml-2 text-blue-500 font-medium">{openedChatName}</p>
-                  <div className="flex items-center ml-2 pb-1">
-                    <span className="w-2 h-2 bg-green-500 rounded-full mr-1"></span> {/* Green Dot */}
-                    <p className="text-green-500 text-xs">online</p>
-                  </div>
-            </div>
+              <div>
+                <p className="pt-2 ml-2 text-blue-500 font-medium">{openedChatName}</p>
+                <div className="flex items-center ml-2 pb-1">
+                  <span className="w-2 h-2 bg-green-500 rounded-full mr-1"></span>
+                  <p className="text-green-500 text-xs">online</p>
+                </div>
+              </div>
             ) : (
               <div>
-               <p className="pt-2 ml-2 text-blue-500 font-medium">{openedChatName}</p>
-               <div className="flex items-center ml-2 pb-1">
-                    <span className="w-2 h-2 bg-red-500 rounded-full mr-1"></span> {/* Green Dot */}
-                    <p className="text-red-500 text-xs">offline</p>
-                  </div>
-                  </div>
-            )}
-              <p className="p-2 ml-2 text-red-500 font-medium">Key-{openedChatNumberKey}</p>
-            </div>
-            <ReactScrollToBottom>
-      
-            <div className="h-[550px] w-full flex flex-col " style={{ maxHeight: '550px' }}>
-          
-              {renderMessages()}
-        
-             
-            </div>
-            </ReactScrollToBottom>
-            <div className="h-[50px] w-full bg-gray-200 rounded  absolute bottom-0 flex justify-center items-center ">
-              <label className="bg-white h-[40px] w-2/3 rounded-lg p-2 flex items-center justify-between">
-                <input className="h-[40px] w-full p-2 border-orange-500"
-                 title="message"
-                 placeholder="Enter your message here"
-                 value={textToSend}
-                 onChange={(e)=>{setTextToSend(e.target.value)}}
-                 onKeyDown={handleKeyDown}
-                 />
-                 <div onClick={HandleSend}>
-                 <img src={sendIcon.src} className="h-[40px] cursor-pointer" />
-                 </div>
-                </label>
-
+                <p className="pt-2 ml-2 text-blue-500 font-medium text-xl">{openedChatName}</p>
               </div>
-           </div>
-         ):(
-          <div className="w-full h-full flex flex-col items-center justify-center">
-          <p className="text-3xl font-bold text-orange-500">Welcome {name}</p>
-          <p className="text-xl text-gray-700">Click on contacts to begin chatting.</p>
+            )}
+            <p className="p-2 ml-2 text-red-500 font-medium">Key-{openedChatNumberKey}</p>
+          </div>
+
+          {emptyChat ? (
+            <div className="h-[550px] w-full bg-slate-100 flex justify-center items-center">
+              <p>Loading Chats ......</p>
+            </div>
+          ) : (
+            <ReactScrollToBottom>
+              <div className="h-[550px] w-full flex flex-col bg-slate-100 rounded-xl" style={{ maxHeight: '550px' }}>
+                {renderMessages()}
+              </div>
+            </ReactScrollToBottom>
+          )}
+
+          <div className="h-[50px] w-full bg-slate-300 rounded absolute bottom-0 flex justify-center items-center">
+            <label className="bg-white h-[40px] w-2/3 rounded-lg p-2 flex items-center justify-between font-medium">
+              <input
+                className="h-[40px] w-full p-2 border-orange-500"
+                title="message"
+                placeholder="Enter your message here"
+                value={textToSend}
+                onChange={(e) => { setTextToSend(e.target.value) }}
+                onKeyDown={handleKeyDown}
+              />
+              <div onClick={HandleSend}>
+                <img src={sendIcon.src} className="h-[40px] cursor-pointer" alt="Send" />
+              </div>
+            </label>
+          </div>
         </div>
-         )}
+      ) : (
+        <div className="w-full h-full flex flex-col items-center justify-center">
+          <p className="text-3xl font-bold text-orange-500">Welcome {name}</p>
+          <p className="text-xl text-gray-700">Click on contacts to start a chat.</p>
         </div>
       )}
     </div>
+  )}
+</div>
+
   );
 }
 

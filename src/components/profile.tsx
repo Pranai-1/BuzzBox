@@ -8,7 +8,7 @@ export default function Profile({
   numberKey: number;
 }) {
   return (
-    <div className="h-max w-[350px] bg-white flex  items-center relative p-2">
+    <div className="h-max w-[300px] bg-white flex  items-center relative p-2 rounded-xl mt-5">
       <div className="h-40 w-1/2   flex items-center justify-center mt-2">
       <div
           className="w-full h-full bg-center bg-no-repeat bg-contain overflow-hidden"

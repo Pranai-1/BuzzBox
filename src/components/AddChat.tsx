@@ -16,17 +16,18 @@ export default function AddChat({
 }) {
   const [contactName, setContactName] = useState("");
   const [contactNumberKey, setContactNumberKey] = useState(0);
-  const [isEmptyContactName, setIsEmptyContactName] = useState<boolean>(false);
-  const [isEmptyContactNumberKey, setIsEmptyContactNumberKey] =
-    useState<boolean>(false);
+  const [isValidContactName, setIsValidContactName] = useState<string>("");
+  const [isValidContactNumberKey, setIsValidContactNumberKey] =useState<string>("");
 
   async function HandleSubmit() {
-    if (contactNumberKey == 0) setIsEmptyContactNumberKey(true);
-    else setIsEmptyContactNumberKey(false);
-    if (contactName.length == 0) setIsEmptyContactName(true);
-    else setIsEmptyContactName(false);
-
-    if (!isEmptyContactName && !isEmptyContactNumberKey) {
+    if (contactName.length == 0){
+      setIsValidContactName("name should be greater than 2 characters");
+      return
+    } 
+    if (contactNumberKey <100000 || contactNumberKey>999999){
+      setIsValidContactNumberKey("contact key should be of 6 digits");
+      return
+    } 
       const body = {
         contactName,
         contactNumberKey,
@@ -34,25 +35,20 @@ export default function AddChat({
         id
       };
       try {
-      await axios.post("/api/profile", body);
-       
-        setAddNewChat(false);
-
+      await axios.post("/api/profile", body); 
+        setAddNewChat(false)
        const response=await axios.get("/api/getcontactsaftersubmit",{
         headers:{
           numberKey
         }
        })
          setChats(response.data.chats);
-
           toast.success("Chat added");
       } catch (error) {
         console.log(error);
         toast.error("Error occured");
       }
-    } else {
-      toast.error("Invalid Credentials");
-    }
+   
   }
   function handleNameChange(value: string) {
     setContactName(value);
@@ -63,7 +59,7 @@ export default function AddChat({
   }
 
   return (
-    <div className="h-max w-[300px] bg-white m-[100px] p-5 rounded-xl relative">
+    <div className="h-max w-[300px] bg-slate-200 m-[100px] p-5 rounded-xl relative">
       <button
         onClick={() => setAddNewChat(false)}
         className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer"
@@ -82,8 +78,8 @@ export default function AddChat({
           className="block w-full p-3 border rounded mt-1"
         />
       </label>
-      {isEmptyContactName && (
-        <p className="text-red-500 text-sm">Name is required*</p>
+      {isValidContactName.length>0 && (
+        <p className="text-red-500 text-sm">{isValidContactName}</p>
       )}
       <label className="block text-gray-700 text-sm font-bold mb-1 w-full">
         NumberKey<span className="text-red-500">*</span>
@@ -96,8 +92,8 @@ export default function AddChat({
           className="block w-full p-3 border rounded mt-1"
         />
       </label>
-      {isEmptyContactNumberKey && (
-        <p className="text-red-500 text-sm">NumberKey is required*</p>
+      {isValidContactNumberKey.length>0 && (
+        <p className="text-red-500 text-sm">{isValidContactNumberKey}</p>
       )}
       <button
         className="p-2 font-normal text-xl bg-orange-500 rounded-xl text-white h-max pt-1 
