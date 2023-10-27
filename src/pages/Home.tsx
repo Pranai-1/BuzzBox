@@ -226,7 +226,7 @@ const handleKeyDown = (e:any) => {
 };
   return (
     <div className="h-full w-full flex">
-  <div className="h-[650px] w-[350px] flex flex-col items-center p-2 pt-0 bg-gray-900">
+  <div className="h-[657px] w-[350px] flex flex-col items-center p-2 pt-0 bg-gray-900">
     <div>
       <Profile name={name} numberKey={numberKey} />
     </div>
@@ -263,7 +263,7 @@ const handleKeyDown = (e:any) => {
           <div className="h-[50px] w-full bg-slate-300 flex justify-between rounded-lg">
             {isOnline ? (
               <div>
-                <p className="pt-2 ml-2 text-blue-500 font-medium">{openedChatName}</p>
+                <p className="pt-2 ml-2 text-blue-800 font-medium">{openedChatName}</p>
                 <div className="flex items-center ml-2 pb-1">
                   <span className="w-2 h-2 bg-green-500 rounded-full mr-1"></span>
                   <p className="text-green-500 text-xs">online</p>
@@ -271,7 +271,7 @@ const handleKeyDown = (e:any) => {
               </div>
             ) : (
               <div>
-                <p className="pt-2 ml-2 text-blue-500 font-medium text-xl">{openedChatName}</p>
+                <p className="pt-2 ml-2 text-blue-800 font-medium text-xl">{openedChatName}</p>
               </div>
             )}
             <p className="p-2 ml-2 text-red-500 font-medium">Key-{openedChatNumberKey}</p>
