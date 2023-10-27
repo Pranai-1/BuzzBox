@@ -25,15 +25,16 @@ export default function Home() {
   const router = useRouter();
   return (
     <div className="h-full w-full relative bg-black p-10 px-0">
-      <p className="font-bold h-max text-3xl flex  justify-center w-full text-blue-700">Welcome Here,Happy Texting !</p>
-      <div className=" w-full h-[160px] flex flex-wrap  items-center justify-center gap-32 mt-6">
+      <p className="font-bold h-max text-3xl flex justify-center w-full text-blue-700 ml-5 md:ml-0">Welcome Here!</p>
+      <span className="font-bold h-max text-2xl flex justify-center w-full text-green-700 ml-5 md:ml-0">Happy Texting </span>
+      <div className=" w-full h-max flex flex-wrap  items-center justify-center gap-6 mt-6 md:gap-32">
         <IndexBody/>
   </div>
   <p className="text-center mt-8 p-2 text-2xl font-bold text-orange-700">
     "In the world of messaging, let your words be the bridge to understanding."
   </p>
   <button
-        className=" flex justify-center items-center bg-orange-600 rounded-xl p-3 font-bold mt-3 text-white text-xl ml-[650px]"
+        className=" flex justify-center items-center bg-orange-600 rounded-xl p-3 font-bold mt-3 text-white text-xl ml-[130px] md:ml-[660px]"
         onClick={() => router.push("/signup")}
       >
         Create Account
@@ -43,7 +44,7 @@ export default function Home() {
   </p>
   <Images/>
   <button
-        className=" flex justify-center items-center bg-blue-600 rounded-xl p-3 font-bold mt-10 text-white text-xl ml-[650px]"
+        className=" flex justify-center items-center bg-blue-600 rounded-xl p-3 font-bold mt-10 text-white text-xl ml-[130px] md:ml-[650px]"
         onClick={() => router.push("/signup")}>
     Get Started
    </button>

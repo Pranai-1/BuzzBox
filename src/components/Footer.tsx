@@ -2,9 +2,9 @@
 
 export default function Footer(){
     return(
-        <footer className="bg-slate-300 text-black p-6 text-center mt-10 flex flex-col gap-3">
-    <div className="flex justify-around">
-    <div className=" items-center mb-4 w-[400px]">
+        <footer className="bg-slate-300 text-black p-6 text-center mt-10 flex flex-col gap-3 flex-wrap">
+    <div className="flex justify-around flex-wrap">
+    <div className=" items-center mb-4 w-max">
       <p className="font-bold text-xl">BuzzBox</p>
       <p className="mb-4">&copy; 2023 BuzzBox. All rights reserved.</p>
     <p className="text-blue-600">Contact us: info@buzzbox.com</p>

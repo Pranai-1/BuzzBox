@@ -3,7 +3,7 @@
 export default function IndexBody(){
     return(
         <>
-        <div className="h-full w-1/5 bg-black rounded-lg flex flex-col items-center gap-2"
+        <div className="h-[160px] w-[300px] bg-black rounded-lg flex flex-col items-center gap-2"
             style={{
                 background: 'linear-gradient(135deg, #001f3f, #4A90E2)',
                 padding: '10px',
@@ -18,7 +18,7 @@ export default function IndexBody(){
             <p className="font-medium  text-black rounded-lg">
                 BuzzBox is an innovative online messaging platform that facilitates quick and efficient communication.
             </p>
-        </div><div className="h-full w-1/5 bg-black rounded-lg flex flex-col items-center gap-2"
+        </div><div className="h-[160px] w-[300px] bg-black rounded-lg flex flex-col items-center gap-2"
             style={{
                 background: 'linear-gradient(135deg, #001f3f, #4A90E2)',
                 padding: '10px',
@@ -32,7 +32,8 @@ export default function IndexBody(){
                 <p className="font-medium  text-black rounded-lg">
                     To get started with our platform, you'll need an unique numberKey for every user.
                 </p>
-            </div><div className="h-full w-1/5 bg-black  rounded-lg flex flex-col items-center gap-2"
+            </div>
+            <div className="h-[160px] w-[300px] bg-black  rounded-lg flex flex-col items-center gap-2"
                 style={{
                     background: 'linear-gradient(135deg, #001f3f, #4A90E2)',
                     padding: '10px',
