@@ -16,18 +16,22 @@ export default function AddChat({
 }) {
   const [contactName, setContactName] = useState("");
   const [contactNumberKey, setContactNumberKey] = useState(0);
-  const [isValidContactName, setIsValidContactName] = useState<string>("");
-  const [isValidContactNumberKey, setIsValidContactNumberKey] =useState<string>("");
+  const [contactNameErrorMessage, setContactNameErrorMessage] = useState<string>("");
+  const [numberKeyErrorMessage, setNumberKeyErrorMessage] =useState<string>("");
 
   async function HandleSubmit() {
-    if (contactName.length == 0){
-      setIsValidContactName("name should be greater than 2 characters");
+    if (contactName.length <3){
+      setContactNameErrorMessage("name must contain 3 characters");
       return
-    } 
+    } else{
+      setContactNameErrorMessage("")
+    }
     if (contactNumberKey <100000 || contactNumberKey>999999){
-      setIsValidContactNumberKey("contact key should be of 6 digits");
+      setNumberKeyErrorMessage("contact key should be of 6 digits");
       return
-    } 
+    }else{
+      setNumberKeyErrorMessage("")
+    }
       const body = {
         contactName,
         contactNumberKey,
@@ -78,8 +82,8 @@ export default function AddChat({
           className="block w-full p-3 border rounded mt-1"
         />
       </label>
-      {isValidContactName.length>0 && (
-        <p className="text-red-500 text-sm">{isValidContactName}</p>
+      {contactNameErrorMessage.length>0 && (
+        <p className="text-red-500 text-sm">{contactNameErrorMessage}</p>
       )}
       <label className="block text-gray-700 text-sm font-bold mb-1 w-full">
         NumberKey<span className="text-red-500">*</span>
@@ -92,8 +96,8 @@ export default function AddChat({
           className="block w-full p-3 border rounded mt-1"
         />
       </label>
-      {isValidContactNumberKey.length>0 && (
-        <p className="text-red-500 text-sm">{isValidContactNumberKey}</p>
+      {numberKeyErrorMessage.length>0 && (
+        <p className="text-red-500 text-sm">{numberKeyErrorMessage}</p>
       )}
       <button
         className="p-2 font-normal text-xl bg-orange-500 rounded-xl text-white h-max pt-1 

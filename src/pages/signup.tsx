@@ -12,10 +12,11 @@ export default function Signup() {
   const [password, setPassword] = useState<string>("");
   const [numberKey, setNumberKey] = useState<number>(0);
   const [name, setName] = useState<string>("");
-  const [isEmptyName, setIsEmptyName] = useState<boolean>(false);
-  const [isEmptyEmail, setIsEmptyEmail] = useState<boolean>(false);
-  const [isEmptyPassword, setIsEmptyPassword] = useState<boolean>(false);
-  const [isEmptyNumberKey, setIsEmptyNumberKey] = useState<boolean>(false);
+  const [nameErrorMessage, setNameErrorMessage] = useState<string>("");
+  const [numberKeyErrorMessage, setNumberKeyErrorMessage] =useState<string>("");
+  const [emailErrorMessage, setEmailErrorMessage] = useState<string>("");
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState<string>("");
+  
   const handleChange = (value: any, type: string) => {
     switch (type) {
       case "Name":
@@ -34,21 +35,32 @@ export default function Signup() {
   };
 
   const HandleSubmit = async () => {
-    if (name.length == 0) setIsEmptyName(true);
-    else setIsEmptyName(false);
-    if (email.length == 0) setIsEmptyEmail(true);
-    else setIsEmptyEmail(false);
-    if (password.length == 0) setIsEmptyPassword(true);
-    else setIsEmptyPassword(false);
-    if (numberKey == 0) setIsEmptyNumberKey(true);
-    else setIsEmptyNumberKey(false);
-
-    if (
-      !isEmptyName &&
-      !isEmptyEmail &&
-      !isEmptyPassword &&
-      !isEmptyNumberKey
-    ) {
+    if (name.length <3){
+      setNameErrorMessage("name must contain 3 characters");
+      return
+    } else{
+      setNameErrorMessage("")
+    }
+   
+    if (email.length <11) {
+      setEmailErrorMessage("Invalid Email");
+      return
+    }else{
+      setEmailErrorMessage("")
+    }
+    if (password.length <8) {
+      setPasswordErrorMessage("Password must contain 8 characters");
+      return
+    } else{
+      setPasswordErrorMessage("")
+    }
+    if (numberKey <100000 || numberKey>999999){
+      setNumberKeyErrorMessage("number key should be of 6 digits");
+      return
+    }else{
+      setNameErrorMessage("")
+    }
+   
       const body = {
         name,
         email,
@@ -63,9 +75,7 @@ export default function Signup() {
       } catch {
         toast.error("signup failed");
       }
-    } else {
-      toast.error("Invalid Credentials");
-    }
+   
   };
   return (
     <div className=" h-[650px] w-full bg-slate-100 absolute flex justify-center items-center">
@@ -87,7 +97,7 @@ export default function Signup() {
             className="block w-full p-3 border rounded mt-1"
           />
         </label>
-        {isEmptyName && (
+        {nameErrorMessage.length>0 && (
           <p className="text-red-500 text-sm">Name is required*</p>
         )}
 
@@ -101,7 +111,7 @@ export default function Signup() {
             className="block w-full p-3 border rounded mt-1"
           />
         </label>
-        {isEmptyEmail && (
+        {emailErrorMessage.length>0 && (
           <p className="text-red-500 text-sm">Email is required*</p>
         )}
         <label className="block text-gray-700 text-sm font-bold mb-2 w-full">
@@ -114,7 +124,7 @@ export default function Signup() {
             className="block w-full p-3 border rounded mt-1"
           />
         </label>
-        {isEmptyPassword && (
+        {passwordErrorMessage.length>0 && (
           <p className="text-red-500 text-sm">Password is required*</p>
         )}
         <label className="block text-gray-700 text-sm font-bold mb-2 w-full">
@@ -129,7 +139,7 @@ export default function Signup() {
           />
         </label>
 
-        {isEmptyNumberKey && (
+        {numberKeyErrorMessage.length>0 && (
           <p className="text-red-500 text-sm">NumberKey is required*</p>
         )}
         <button

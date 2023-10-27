@@ -1,4 +1,4 @@
-import BuzzBox from "../../public/BuzzBox-3.png";
+import logo from "../../public/logo.png";
 
 export default function Profile({
   name,
@@ -13,7 +13,7 @@ export default function Profile({
       <div
           className="w-full h-full bg-center bg-no-repeat bg-contain overflow-hidden"
           style={{
-            backgroundImage: `url(${BuzzBox.src})`,
+            backgroundImage: `url(${logo.src})`,
           }}
         ></div>
       </div>

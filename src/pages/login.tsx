@@ -9,8 +9,8 @@ import { getServerAuthSession } from "./api/auth/authoptions";
 export default function Login() {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
-  const [isEmptyEmail, setIsEmptyEmail] = useState<boolean>(false);
-  const [isEmptyPassword, setIsEmptyPassword] = useState<boolean>(false);
+  const [emailErrorMessage, setEmailErrorMessage] = useState<string>("");
+  const [passwordErrorMessage, setPasswordErrorMessage] = useState<string>("");
 
   const {data:sessionData} = useSession();
   const router = useRouter();
@@ -42,19 +42,20 @@ export default function Login() {
   };
 
   const HandleSubmit = async () => {
-    if (email.length === 0) {
-      setIsEmptyEmail(true);
-    } else {
-      setIsEmptyEmail(false);
+    if (email.length <11) {
+      setEmailErrorMessage("Invalid Email");
+      return
+    }else{
+      setEmailErrorMessage("")
+    }
+    if (password.length <8) {
+      setPasswordErrorMessage("Password must contain 8 characters");
+      return
+    }else{
+      setPasswordErrorMessage("")
     }
 
-    if (password.length === 0) {
-      setIsEmptyPassword(true);
-    } else {
-      setIsEmptyPassword(false);
-    }
-
-    if (!isEmptyEmail && !isEmptyPassword) {
+   
       const body = {
         email,
         password,
@@ -80,7 +81,7 @@ export default function Login() {
         } else {
           toast.error("Login failed");
         }
-      }
+      
     }
   };
   return (
@@ -102,8 +103,8 @@ export default function Login() {
             className="block w-full p-3 border rounded mt-1"
           />
         </label>
-        {isEmptyEmail && (
-          <p className="text-red-500 text-sm">Email is required*</p>
+        {emailErrorMessage.length>0 && (
+          <p className="text-red-500 text-sm">{emailErrorMessage}*</p>
         )}
         <label className="block text-gray-700 text-sm font-bold mb-2 w-full">
           Password<span className="text-red-500">*</span>
@@ -115,8 +116,8 @@ export default function Login() {
             className="block w-full p-3 border rounded mt-1"
           />
         </label>
-        {isEmptyPassword && (
-          <p className="text-red-500 text-sm">Password is required*</p>
+        {passwordErrorMessage.length>0 && (
+          <p className="text-red-500 text-sm">{passwordErrorMessage}*</p>
         )}
 
         <button
