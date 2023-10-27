@@ -24,7 +24,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 export default function Home() {
   const router = useRouter();
   return (
-    <div className="h-full w-full relative bg-black p-10 px-0">
+    <div className="h-full w-full relative bg-black pt-10 ">
       <p className="font-bold h-max text-3xl flex justify-center w-full text-blue-700 ml-5 md:ml-0">Welcome Here!</p>
       <span className="font-bold h-max text-2xl flex justify-center w-full text-green-700 ml-5 md:ml-0">Happy Texting </span>
       <div className=" w-full h-max flex flex-wrap  items-center justify-center gap-6 mt-6 md:gap-32">
@@ -42,9 +42,38 @@ export default function Home() {
       <p className="mt-4 text-center text-white text-lg">
     Join us today and experience the future of online communication. Connect, share, and engage with BuzzBox!
   </p>
+
+   <div className="flex justify-center flex-wrap mt-4 font-medium">
+   <div  className="h-max w-max bg-black  rounded-lg flex flex-col items-center gap-2 m-2 flex-wrap justify-center"
+      style={{
+        background: 'linear-gradient(135deg, #4AC0E8, #338BB3)',
+        padding: '20px',
+        boxShadow: '0 10px 20px rgba(51, 139, 179, 0.5)',
+    }}
+          >
+   
+    <p className="italic">"Texting is the closest thing to telepathy we have."</p>
+    <p className="italic">"Words are free; it's how you use them that may cost you."</p>
+    <p className="italic">"Texting is a silent shout for love."</p>
+ 
+  </div>
+  <div  className="h-max w-max bg-black  rounded-lg flex flex-col items-center gap-2 m-2"
+             style={{
+              background: 'linear-gradient(135deg, #4AC0E8, #338BB3)',
+              padding: '20px',
+              boxShadow: '0 10px 20px rgba(51, 139, 179, 0.5)',
+          }}
+          
+            >
+  <p className="italic">"In the world of messages, every word counts."</p>
+  <p className="italic">"A text message can say so much with just a few characters."</p>
+  <p className="italic">"The art of texting is in the spaces between the words."</p>
+  </div>
+
+  </div>
   <Images/>
   <button
-        className=" flex justify-center items-center bg-blue-600 rounded-xl p-3 font-bold mt-10 text-white text-xl ml-[130px] md:ml-[650px]"
+        className=" flex justify-center items-center bg-blue-600 rounded-xl p-3 font-bold mt-10 text-white text-xl ml-[130px] md:ml-[660px]"
         onClick={() => router.push("/signup")}>
     Get Started
    </button>

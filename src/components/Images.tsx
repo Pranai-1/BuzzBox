@@ -26,7 +26,19 @@ import image5 from "../../public/image5.jpg";
     />
 
   </div>
-  <div className="hidden md:w-full  md:h-[250px] md:flex justify-center gap-5 md:gap-32 mt-8 flex-wrap">
+  <div className="flex justify-center flex-wrap mt-4">
+  <div  className="h-max w-max bg-black  rounded-lg flex flex-col items-center gap-2 m-2 font-medium justify-center"
+               style={{
+                background: 'linear-gradient(135deg, #6CB2E8, #3A9CC7)',
+                padding: '20px',
+                boxShadow: '0 10px 20px rgba(0, 0, 0, 0.3)',
+            }}>
+  <p className="italic">"Texting bridges the gaps between us, no matter the distance."</p>
+  <p className="italic">"The most valuable messages are the ones that touch the heart."</p>
+  <p className="italic">"A well-crafted message can brighten someone's day."</p>
+  </div>
+  </div>
+  <div className="hidden md:w-full  md:h-[250px] md:flex justify-center gap-5 md:gap-32 mt-4 flex-wrap">
     <img
       src={image4.src}
       alt="Image Description"
