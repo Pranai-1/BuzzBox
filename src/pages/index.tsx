@@ -25,8 +25,8 @@ export default function Home() {
   const router = useRouter();
   return (
     <div className="h-full w-full relative bg-black pt-10 ">
-      <p className="font-bold h-max text-3xl flex justify-center w-full text-blue-700 ml-5 md:ml-0">Welcome Here!</p>
-      <span className="font-bold h-max text-2xl flex justify-center w-full text-green-700 ml-5 md:ml-0">Happy Texting </span>
+      <p className="font-bold h-max text-3xl flex justify-center w-full text-red-600 ml-5 md:ml-0">Welcome Here!</p>
+      <span className="font-medium h-max text-2xl flex justify-center w-full text-yellow-600 ml-5 md:ml-0">Happy Texting </span>
       <div className=" w-full h-max flex flex-wrap  items-center justify-center gap-6 mt-6 md:gap-32">
         <IndexBody/>
   </div>
