@@ -1,46 +1,68 @@
-
-
-export default function Footer(){
-    return(
-        <footer className="bg-slate-300 text-black p-6 text-center mt-10 flex flex-col gap-3 flex-wrap">
-    <div className="flex justify-around flex-wrap">
-    <div className=" items-center mb-4 w-max">
-      <p className="font-bold text-xl">BuzzBox</p>
-      <p className="mb-4">&copy; 2023 BuzzBox. All rights reserved.</p>
-    <p className="text-blue-600">Contact us: info@buzzbox.com</p>
-  </div>
-    <div className="mt-6">
-      <p>Connect with us on social media:</p>
-      <div className="flex justify-center mt-4">
-        <a href="#" className="text-blue-600 hover:underline mx-2">Facebook
-          <i className="fab fa-facebook"></i>
-        </a>
-        <a href="#" className="text-blue-600 hover:underline mx-2">Twitter
-          <i className="fab fa-twitter"></i>
-        </a>
-        <a href="#" className="text-blue-600 hover:underline mx-2">Instagram
-          <i className="fab fa-instagram"></i>
-        </a>
+function Footer() {
+  return (
+    <footer className="bg-gray-800 text-white py-8">
+      <div className="container mx-auto">
+        <div className="flex flex-col md:flex-row justify-between items-center">
+          <div className="text-center md:text-left mb-4 md:mb-0 ml-2">
+            <h2 className="text-3xl font-bold">BuzzBox</h2>
+            <p className="text-sm text-gray-400">text your loved ones</p>
+          </div>
+          <div>
+          <ul className="hidden md:pr-5 md:grid md:justify-between md:gap-3 ">
+            <li>
+              <a href="#" className="text-gray-400 hover:text-white mb-2">Home</a>
+            </li>
+            <li>
+              <a href="#" className="text-gray-400 hover:text-white mb-2">About</a>
+            </li>
+            <li>
+              <a href="#" className="text-gray-400 hover:text-white mb-2">Contact</a>
+            </li>
+          </ul>
+          </div>
+          <div>
+          <ul className="pr-5 grid justify-between gap-3">
+            <li>
+              <a href="#" className="text-gray-400 hover:text-white mb-2">Careers</a>
+            </li>
+            <li>
+              <a href="#" className="text-gray-400 hover:text-white mb-2">Blog</a>
+            </li>
+            <li>
+              <a href="#" className="text-gray-400 hover:text-white mb-2">Affiliate</a>
+            </li>
+          </ul>
+          </div>
+          <div>
+          <ul className="pr-5 grid justify-between gap-3">
+            <li>
+              <a href="#" className="text-gray-400 hover:text-white ">Help and Support</a>
+            </li>
+            <li>
+              <a href="#" className="text-gray-400 hover:text-white ">Terms and conditions</a>
+            </li>
+            <li>
+              <a href="#" className="text-gray-400 hover:text-white ">Expert Suggestions</a>
+            </li>
+          </ul>
+          </div>
+        </div>
+        <div className="mt-6 text-center md:text-left">
+          <p className="text-gray-400 text-sm pl-2">
+            Join us on social media:
+            <a href="#" className="ml-2 text-blue-400 hover:text-blue-300">Facebook</a>
+            <a href="#" className="ml-2 text-blue-400 hover:text-blue-300">Twitter</a>
+            <a href="#" className="ml-2 text-blue-400 hover:text-blue-300">LinkedIn</a>
+          </p>
+        </div>
       </div>
-    </div>
-
-
-    </div>
-   
-
-  <div>
- 
-  </div>
-  <div>
-    <div className="mt-6">
-      <p className="text-blue-600 text-lg font-bold">Copyright Infringement Notice</p>
-      <p className="text-sm">
-        If you believe that any content or images used on this website infringe your copyright,
-        please contact us immediately at{' '}
-        <a href="mailto:copyright@buzzbox.com" className="text-blue-600 hover:underline">copyright@buzzbox.com</a>.
-      </p>
-    </div>
-  </div>
-</footer>
-    )
+      <div className="mt-6 text-center">
+        <p className="text-gray-400 text-sm">
+          &copy; {new Date().getFullYear()} BuzzBox. All Rights Reserved.
+        </p>
+      </div>
+    </footer>
+  );
 }
+
+export default Footer;
