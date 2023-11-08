@@ -4,13 +4,13 @@ export default function IndexBody(){
     const router=useRouter();
     return(
         <>
-        <div className="w-full  h-max text-xl flex flex-col justify-center items-center font-normal  absolute top-56 text-blue-600 mt-3">
+        <div className="w-full  h-max text-xl flex flex-col justify-center items-center font-normal  absolute top-56 text-yellow-500 mt-3">
       <p> Experience an exciting free Omegle text alternative to Find friends, connect with strangers, and</p>
        <p> talk with girls and guys in random anonymous chat rooms. No registration required. </p>
 
        <div className="w-full   flex justify-center items-center gap-10 mt-8">
         <button
-        className="  bg-blue-600 rounded-xl p-3 font-medium  text-white text-xl"
+        className="  bg-blue-700 rounded-xl p-3 font-medium  text-white text-xl"
         onClick={() => router.push("/signup")}>
    Anonymous Chat
    </button> 

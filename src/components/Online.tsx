@@ -1,4 +1,5 @@
 export default function Online({status,name}:{status:boolean,name:string}){
+    console.log(status)
     return(
         <>
         {status ? (
