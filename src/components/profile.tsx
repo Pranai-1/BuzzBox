@@ -1,4 +1,4 @@
-import logo from "../../public/logo.png";
+import logo from "../../public/l.png";
 
 export default function Profile({
   name,
@@ -8,21 +8,16 @@ export default function Profile({
   numberKey: number;
 }) {
   return (
-    <div className="h-max w-[300px] bg-white flex  items-center relative p-2 rounded-xl mt-5">
-      <div className="h-40 w-1/2   flex items-center justify-center mt-2">
-      <div
-          className="w-full h-full bg-center bg-no-repeat bg-contain overflow-hidden"
-          style={{
-            backgroundImage: `url(${logo.src})`,
-          }}
-        ></div>
-      </div>
-      <div className="flex flex-col h-40 w-1/2">
-      <span className="font-medium text-xl p-2 text-orange-600">User Profile</span>
-      
-      <p className="font-medium mt-2">Name-{name}</p>
-      <p className="font-normal mt-1">Key: {numberKey}</p>
-      </div>
+    <div className="w-[300px] bg-gray-800 p-4 mt-5 rounded-xl text-white flex items-center relative shadow-lg">
+    <div className="w-1/2 h-20 flex items-center justify-center mt-2">
+      <div className="w-16 h-16 bg-center bg-no-repeat bg-cover rounded-full" style={{ backgroundImage: `url(${logo.src})` }}></div>
     </div>
+    <div className="w-1/2 h-20 flex flex-col">
+      <span className="text-2xl font-semibold text-orange-500 mt-2 capitalize">{name}</span>
+      <p className="mt-1 font-normal text-gray-300">Key: {numberKey}</p>
+    </div>
+  </div>
+  
+  
   );
 }

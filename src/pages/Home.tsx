@@ -11,6 +11,8 @@ import { io } from "socket.io-client";
 import axios from "axios";
 import ReactScrollToBottom from "react-scroll-to-bottom"
 import { number } from "zod";
+import Online from "@/components/Online";
+import WelcomeChat from "@/components/WelcomeChat";
 const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
  //const ENDPOINT="http://localhost:4000/"
@@ -61,7 +63,7 @@ export default function Home({
   const [textToSend, setTextToSend] = useState("");
   const[onlineUsers,setOnlineUsers]=useState<any[]>([])
   const[messages,setMessages]=useState<any>([])
-const[isOnline,setIsOnline]=useState<boolean>();
+const[isOnline,setIsOnline]=useState<boolean>(false);
   const [socket, setSocket] = useState<any>(null);
  const[emptyChat,setemptyChat]=useState<boolean>(true)
   
@@ -225,8 +227,8 @@ const handleKeyDown = (e:any) => {
   }
 };
   return (
-    <div className="h-full w-full flex">
-  <div className="h-[657px] w-[350px] flex flex-col items-center p-2 pt-0 bg-gray-900">
+    <div className="h-full w-full flex bg-black">
+  <div className="h-[657px] w-[350px] flex flex-col items-center p-2 pt-0 bg-gradient-to-b from-teal-400 to-purple-600">
     <div>
       <Profile name={name} numberKey={numberKey} />
     </div>
@@ -257,23 +259,11 @@ const handleKeyDown = (e:any) => {
       id={id}
     />
   ) : (
-    <div className="w-full h-[647px] m-1 bg-slate-50">
+    <div className="w-full h-[657px]  bg-slate-50">
       {openChat ? (
         <div className="h-full w-full relative">
           <div className="h-[50px] w-full bg-slate-300 flex justify-between rounded-lg">
-            {isOnline ? (
-              <div>
-                <p className="pt-2 ml-2 text-blue-800 font-medium">{openedChatName}</p>
-                <div className="flex items-center ml-2 pb-1">
-                  <span className="w-2 h-2 bg-green-500 rounded-full mr-1"></span>
-                  <p className="text-green-500 text-xs">online</p>
-                </div>
-              </div>
-            ) : (
-              <div>
-                <p className="pt-2 ml-2 text-blue-800 font-medium text-xl">{openedChatName}</p>
-              </div>
-            )}
+            <Online status={isOnline} name={openedChatName}/>
             <p className="p-2 ml-2 text-red-500 font-medium">Key-{openedChatNumberKey}</p>
           </div>
 
@@ -306,10 +296,7 @@ const handleKeyDown = (e:any) => {
           </div>
         </div>
       ) : (
-        <div className="w-full h-full flex flex-col items-center justify-center">
-          <p className="text-3xl font-bold text-orange-500">Welcome {name}</p>
-          <p className="text-xl text-gray-700">Click on contacts to start a chat.</p>
-        </div>
+        <WelcomeChat name={name}/>
       )}
     </div>
   )}

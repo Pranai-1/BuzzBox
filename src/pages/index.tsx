@@ -1,4 +1,4 @@
-import { useRouter } from "next/router";
+
 import { GetServerSideProps } from "next";
 import { getServerAuthSession } from "./api/auth/authoptions";
 import Footer from "@/components/Footer";
@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 };
 
 export default function Home() {
-  const router = useRouter();
+
   return (
     <div className="h-max w-full">
     <div className="h-[600px]  relative flex flex-col flex-wrap ">

@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 
 const userInput = z.object({
   email: z.string().min(11).max(40).email(),
-  password: z.string().min(8).max(25),
+  password: z.string().min(6).max(25),
 });
 
 export default async function handler(
