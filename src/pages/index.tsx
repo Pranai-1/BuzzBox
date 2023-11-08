@@ -3,7 +3,8 @@ import { GetServerSideProps } from "next";
 import { getServerAuthSession } from "./api/auth/authoptions";
 import Footer from "@/components/Footer";
 import IndexBody from "@/components/IndexBody";
-import Images from "@/components/Images";
+import Header from "@/components/Header";
+
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -24,10 +25,18 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 export default function Home() {
   const router = useRouter();
   return (
-    <div className="h-full w-full relative bg-black pt-10 ">
-      <p className="font-bold h-max text-3xl flex justify-center w-full text-red-600 ml-5 md:ml-0">Welcome Here!</p>
-      <span className="font-medium h-max text-2xl flex justify-center w-full text-yellow-600 ml-5 md:ml-0">Happy Texting </span>
-      <div className=" w-full h-max flex flex-wrap  items-center justify-center gap-6 mt-6 md:gap-32">
+    <div className="h-max w-full">
+    <div className="h-[600px]  relative flex flex-col flex-wrap ">
+      <Header/>
+      <IndexBody/>
+    </div>
+     <Footer/>
+     </div>
+  );
+}
+
+   
+      {/* <div className=" w-full h-max flex flex-wrap  items-center justify-center gap-6 mt-6 md:gap-32">
         <IndexBody/>
   </div>
   <p className="text-center mt-8 p-2 text-2xl font-bold text-orange-700">
@@ -76,11 +85,4 @@ export default function Home() {
         className=" flex justify-center items-center bg-blue-600 rounded-xl p-3 font-bold mt-10 text-white text-xl ml-[130px] md:ml-[660px]"
         onClick={() => router.push("/signup")}>
     Get Started
-   </button>
-   <Footer/>
-
-    </div>
-    
-  );
-}
-
+   </button> */}

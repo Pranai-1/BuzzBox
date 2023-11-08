@@ -1,9 +1,44 @@
-
+import { useRouter } from "next/router";
 
 export default function IndexBody(){
+    const router=useRouter();
     return(
         <>
-        <div className="h-[160px] w-[300px] bg-black rounded-lg flex flex-col items-center gap-2"
+        <div className="w-full  h-max text-xl flex flex-col justify-center items-center font-normal  absolute top-56 text-blue-600 mt-3">
+      <p> Experience an exciting free Omegle text alternative to Find friends, connect with strangers, and</p>
+       <p> talk with girls and guys in random anonymous chat rooms. No registration required. </p>
+
+       <div className="w-full   flex justify-center items-center gap-10 mt-8">
+        <button
+        className="  bg-blue-600 rounded-xl p-3 font-medium  text-white text-xl"
+        onClick={() => router.push("/signup")}>
+   Anonymous Chat
+   </button> 
+   <button
+        className="  bg-orange-600 rounded-xl p-3 font-medium text-white text-xl  "
+        onClick={() => router.push("/signup")}>
+    Create Account
+   </button> 
+   </div>
+    
+   <div className=" mt-32 flex flex-wrap flex-col justify-center items-center">
+    <p className="text-blue-800 text-lg px-2 bg-purple-400 font-medium rounded-xl w-max">Reach people like you</p>
+    <p className="text-slate-300 text-2xl  font-medium rounded-xl mt-3"> Anonymous Chat, Meet new people</p>
+    <p className=" text-gray-500 text-lg  font-medium rounded-xl mt-3">Find female and male strangers worldwide, the new modern Omegle
+     alternative. </p>
+    <p className="text-gray-500 text-lg  font-medium rounded-xl ">Connect with real people, enjoy ad free chats, and build 
+    genuine relationships.</p>
+   </div>   
+ </div>
+        
+        
+ </>
+         
+    )
+}
+
+
+{/* <div className="h-[160px] w-[300px] bg-black rounded-lg flex flex-col items-center gap-2"
             style={{
                 background: 'linear-gradient(135deg, #001f3f, #4A90E2)',
                 padding: '10px',
@@ -48,8 +83,4 @@ export default function IndexBody(){
                     <p> - Be respectful and considerate in your interactions. </p>
                     <p> - Do not use offensive language or engage in harassment. </p>
                 </div>
-            </div>
-            </>
-         
-    )
-}
+            </div> */}
