@@ -1,6 +1,6 @@
 function Footer() {
   return (
-    <footer className="bg-gray-800 text-white py-8 p-3 mt-[120px]">
+    <div className="h-max w-full bg-gray-800 text-white py-8 p-3 absolute top-[710px]">
       <div className="container mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="text-center md:text-left mb-4 md:mb-0 ml-2">
@@ -61,7 +61,7 @@ function Footer() {
           &copy; {new Date().getFullYear()} BuzzBox. All Rights Reserved.
         </p>
       </div>
-    </footer>
+    </div>
   );
 }
 

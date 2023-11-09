@@ -25,12 +25,13 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 export default function Home() {
 
   return (
-    <div className="h-max w-full">
-    <div className="h-[600px]  relative flex flex-col flex-wrap ">
+    <div className="h-max w-full flex flex-col flex-wrap">
+    <div className="h-full md:h-[600px]  relative flex flex-col flex-wrap ">
       <Header/>
       <IndexBody/>
+      <Footer/>
     </div>
-     <Footer/>
+    
      </div>
   );
 }

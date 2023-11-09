@@ -13,9 +13,9 @@ import ReactScrollToBottom from "react-scroll-to-bottom"
 import { number } from "zod";
 import Online from "@/components/Online";
 import WelcomeChat from "@/components/WelcomeChat";
-const ENDPOINT="https://buzzbox-socket.onrender.com/"
+//const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
- //const ENDPOINT="http://localhost:4000/"
+ const ENDPOINT="http://localhost:4000/"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
