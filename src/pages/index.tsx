@@ -4,6 +4,7 @@ import { getServerAuthSession } from "./api/auth/authoptions";
 import Footer from "@/components/Footer";
 import IndexBody from "@/components/IndexBody";
 import Header from "@/components/Header";
+import Navbar from "@/components/navbar";
 
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
@@ -26,7 +27,9 @@ export default function Home() {
 
   return (
     <div className="h-max w-full flex flex-col flex-wrap">
+         <Navbar />
     <div className="h-full md:h-[600px]  relative flex flex-col flex-wrap ">
+ 
       <Header/>
       <IndexBody/>
       <Footer/>

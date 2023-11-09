@@ -13,9 +13,10 @@ import ReactScrollToBottom from "react-scroll-to-bottom"
 import { number } from "zod";
 import Online from "@/components/Online";
 import WelcomeChat from "@/components/WelcomeChat";
-//const ENDPOINT="https://buzzbox-socket.onrender.com/"
+import Navbar from "@/components/navbar";
+const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
- const ENDPOINT="http://localhost:4000/"
+ //const ENDPOINT="http://localhost:4000/"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -237,7 +238,9 @@ const handleKeyDown = (e:any) => {
 };
 
   return (
-    <div className="h-full w-full flex">
+    <div className="h-full w-full ">
+          <Navbar />
+          <div className="flex">
   <div className="h-[657px] w-[350px] flex flex-col items-center p-2 pt-0 bg-gradient-to-b from-teal-400 to-purple-600">
     <div>
       <Profile name={name} numberKey={numberKey} />
@@ -310,6 +313,7 @@ const handleKeyDown = (e:any) => {
       )}
     </div>
   )}
+  </div>
 </div>
 
   );

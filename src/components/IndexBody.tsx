@@ -11,7 +11,7 @@ export default function IndexBody(){
        <div className="w-full   flex justify-center items-center gap-10 mt-8">
         <button
         className="  bg-blue-700 rounded-xl p-3 font-medium  text-white text-xl"
-        onClick={() => router.push("/signup")}>
+        onClick={() => router.push("/AnonLogin")}>
    Anonymous Chat
    </button> 
    <button

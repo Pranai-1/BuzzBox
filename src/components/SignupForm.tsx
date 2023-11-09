@@ -77,7 +77,7 @@ export default function SignupForm() {
    
   };
   return (
-    <div className=" h-[660px] w-full bg-black absolute flex justify-center items-center">
+    <div className=" h-[707px] w-full bg-black absolute flex justify-center items-center">
       <div className="bg-white  w-[360px] md:w-[520px] flex flex-col gap-2 mb-5 p-5 rounded-xl justify-center">
         <h1 className="font-bold text-center text-2xl text-orange-600">
           Signup to BuzzBox
