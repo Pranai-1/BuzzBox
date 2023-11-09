@@ -49,3 +49,12 @@ export type CustomToken = {
   email: string;
   messages: ContactType[];
 };
+
+export type OnlineUsers={
+  userId:number,
+  socketId:string
+}
+
+export type Messages = {
+  [key: number]: string[]; 
+}

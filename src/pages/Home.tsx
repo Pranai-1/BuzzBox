@@ -2,12 +2,12 @@ import { GetServerSideProps } from "next";
 import { getServerAuthSession } from "./api/auth/authoptions";
 import { JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactNode, ReactPortal, SetStateAction, useEffect, useRef, useState } from "react";
 import getContacts from "./api/helpers/getContacts";
-import { ContactType } from "./api/types";
+import { ContactType, Messages, OnlineUsers } from "./api/types";
 import Contacts from "@/components/Contacts";
 import AddChat from "@/components/AddChat";
 import Profile from "../components/profile";
 import sendIcon from "../../public/send.png"
-import { io } from "socket.io-client";
+import { Socket, io } from "socket.io-client";
 import axios from "axios";
 import ReactScrollToBottom from "react-scroll-to-bottom"
 import { number } from "zod";
@@ -61,108 +61,152 @@ export default function Home({
   const [openedChatId, setOpenedChatId] = useState(0);
   const[userIdOfOpenedChat,setUserIdOfOpenedChat]=useState(0)
   const [textToSend, setTextToSend] = useState("");
-  const[onlineUsers,setOnlineUsers]=useState<any[]>([])
-  const[messages,setMessages]=useState<any>([])
+  const[onlineUsers,setOnlineUsers]=useState<OnlineUsers[]>([])
+  const[messages,setMessages]=useState<Messages>([])
 const[isOnline,setIsOnline]=useState<boolean>(false);
-  const [socket, setSocket] = useState<any>(null);
+  const [socket, setSocket] = useState<Socket | null>(null);
  const[emptyChat,setemptyChat]=useState<boolean>(true)
   
- useEffect(()=>{
+//This useEffect will setup a socket connection 
+  useEffect(() => {
+    const newSocket = io(ENDPOINT, { transports: ["websocket"] });
+    setSocket(newSocket);
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
+  
+
+  //This is used to establish a real time communication for messages,if user wants to chat with multiple persons at the same time
+  //this useEffect useEffect takes care of this scenario.But,if the user is offline then there will be no communication
+  //Below Handlesend method will takes care of sending the messages to the socket server
+  useEffect(() => {
+    const handleMessage = (res: string) => {
+      setMessages((prev: any) => ({
+        ...prev,
+        [openedChatId]: [...(prev[openedChatId] || []), res],
+      }));
+    };
+  
+    if (socket) {
+      const userOnline = onlineUsers.find((user) => user.userId === userIdOfOpenedChat);// Check if the user is online and should listen for messages
+      if (userOnline) {
+        socket.on("getMessage", handleMessage);        // Add the event listener when the component mounts
+      }
+      return () => {
+        if (userOnline) {
+          socket.off("getMessage", handleMessage);// Remove the event listener when the component unmounts  
+        }
+      };
+    } 
+    
+  }, [socket, openedChatId, onlineUsers, userIdOfOpenedChat, setMessages]);
+  
+
+  const HandleSend = async () => {
+    if (textToSend.length !== 0 && userIdOfOpenedChat!=0) {
+      const message={
+        senderId:id,
+        receiverId:userIdOfOpenedChat,
+        text:textToSend
+      }
+      const response=await axios.post("/api/messages",message)
+   
+      setMessages((prev: any)=>({
+        ...prev,
+        [openedChatId]: [
+          ...(prev[openedChatId] || []),
+          message 
+        ]
+      }));
+    if(socket)
+      socket.emit("sendMessage",{messagetosend:message,userIdOfOpenedChat})
+      setTextToSend("");
+    }
+  }
+  
+//This is used to add a new user which is ourselves to the onlineusers of the server and then server sends back all the onlineusers
+
+  useEffect(()=>{
+    if (socket) {
+      socket.emit("addNewUser", id);
+     socket.on("getOnlineUsers", (res: any) => {
+        setOnlineUsers(res);
+    })
+  }
+  
+  },[socket,id])
+  
+console.log(onlineUsers)
+
+
+//This is used to receive the messages from the db 
+useEffect(() => {
+  const getMessages = async () => {
+    if (userIdOfOpenedChat !== 0) {
+      let header = {
+        senderId: id,
+        receiverId: userIdOfOpenedChat
+      };
+      try {
+        const response = await axios.get("/api/messages", { headers: header });
+        const data = response.data.messages;
+        setMessages((prev: any)=>({
+          ...prev,
+          [openedChatId]: [
+           ...data 
+          ]    
+        }))
+        setemptyChat(false)
+   
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    }
+  }
+  getMessages();
+}, [userIdOfOpenedChat]);
+
+//console.log(messages)
+
+
+//This is used to get theuserId of the openedchat
+useEffect(() => {
+  const helper = async () => {
+    if (openedChatId !== 0) {
+      try {
+        const response = await axios.get("/api/getUserId", {
+          headers: {
+            openedChatId,
+          },
+        });
+        setUserIdOfOpenedChat(response.data.id);
+      } catch (error) {
+        console.error("Error getting user ID:", error);
+      }
+    }
+  };
+  helper();
+}, [openedChatId]);
+
+
+
+useEffect(()=>{
   setTimeout(()=>{
     setemptyChat(true)
   },100)
  },[openedChatId])
 
-  useEffect(() => {
-    const getMessages = async () => {
-      if (userIdOfOpenedChat !== 0) {
 
-        let header = {
-          senderId: id,
-          receiverId: userIdOfOpenedChat
-        };
-        try {
-          const response = await axios.get("/api/messages", { headers: header });
-          const data = response.data.messages;
-          setMessages((prev: any)=>({
-            ...prev,
-            [openedChatId]: [
-             ...data 
-            ]
-            
-          }))
-          setemptyChat(false)
-     
-        } catch (error) {
-          console.error("Error fetching messages:", error);
-        }
-      }
-    }
-    getMessages();
-  }, [userIdOfOpenedChat]);
-  
-  console.log(messages)
-  
-  useEffect(() => {
-    const helper = async () => {
-      if (openedChatId !== 0) {
-        try {
-          const response = await axios.get("/api/getUserId", {
-            headers: {
-              openedChatId,
-            },
-          });
-          setUserIdOfOpenedChat(response.data.id);
-        } catch (error) {
-          console.error("Error getting user ID:", error);
-        }
-      }
-    };
-    helper();
-  }, [openedChatId]);
+useEffect(() => {
+  if (onlineUsers.find(user => user.userId === userIdOfOpenedChat)) {
+    setIsOnline(true);
+  } else {
+    setIsOnline(false);
+  }
+}, [onlineUsers, userIdOfOpenedChat]);
 
-  useEffect(() => {
-    const newSocket = io(ENDPOINT, { transports: ["websocket"] });
-    setSocket(newSocket);
- newSocket.on("getOnlineUsers",(res: any) => {
-        setOnlineUsers(res);
- })
-    return () => {
-    
-      newSocket.disconnect();
-      newSocket.on("getOnlineUsers",(res: any) => {
-        setOnlineUsers(res);
-       } )
-      
-    };
-  }, []);
 
-  useEffect(() => {
-    if (socket) {
-      socket.emit("addNewUser", id);
-      socket.on("getOnlineUsers", (res: any) => {
-        setOnlineUsers(res);
-
-      });
-       
-      socket.on("getMessage", (res: string) => {
-        setMessages((prev: any)=>({
-          ...prev,
-          [openedChatId]: [
-            ...(prev[openedChatId] || []),
-            res 
-          ]
-          
-        }));
-   
-      });
-
-      return () => {
-        socket.off("getOnlineUsers");//turnoff the socket after receiving the messages inorder to avoid unnecessary callings
-        socket.off("getMessage");
-      };
-    }
-  }, [socket,openedChatId]);
 
 
   const renderMessages = () => {
@@ -182,52 +226,18 @@ const[isOnline,setIsOnline]=useState<boolean>(false);
   };
   
 
-
-useEffect(() => {
-  setChats(chats);
-}, [chats]);
-
 function handleClick(clicked: boolean) {
   setOpenChat(clicked);
 }
-
-const HandleSend = async () => {
-  if (textToSend.length !== 0 && userIdOfOpenedChat!=0) {
-    const message={
-      senderId:id,
-      receiverId:userIdOfOpenedChat,
-      text:textToSend
-    }
-    const response=await axios.post("/api/messages",message)
- 
-    setMessages((prev: any)=>({
-      ...prev,
-      [openedChatId]: [
-        ...(prev[openedChatId] || []),
-        message 
-      ]
-    }));
-  
-    socket.emit("sendMessage",{messagetosend:message,userIdOfOpenedChat})
-    setTextToSend("");
-  }
-}
-
-useEffect(() => {
-  if (onlineUsers.find(user => user.userId === userIdOfOpenedChat)) {
-    setIsOnline(true);
-  } else {
-    setIsOnline(false);
-  }
-}, [onlineUsers, userIdOfOpenedChat]);
 
 const handleKeyDown = (e:any) => {
   if (e.key === 'Enter') {
     HandleSend();
   }
 };
+
   return (
-    <div className="h-full w-full flex bg-black">
+    <div className="h-full w-full flex">
   <div className="h-[657px] w-[350px] flex flex-col items-center p-2 pt-0 bg-gradient-to-b from-teal-400 to-purple-600">
     <div>
       <Profile name={name} numberKey={numberKey} />
@@ -259,7 +269,7 @@ const handleKeyDown = (e:any) => {
       id={id}
     />
   ) : (
-    <div className="w-full h-[657px]  bg-slate-50">
+    <div className="w-full h-[657px]">
       {openChat ? (
         <div className="h-full w-full relative">
           <div className="h-[50px] w-full bg-slate-300 flex justify-between rounded-lg">
@@ -273,7 +283,7 @@ const handleKeyDown = (e:any) => {
             </div>
           ) : (
             <ReactScrollToBottom>
-              <div className="h-[550px] w-full flex flex-col bg-slate-100 rounded-xl" style={{ maxHeight: '550px' }}>
+              <div className="h-[500px] w-full flex flex-col  rounded-xl" style={{ maxHeight: '550px' }}>
                 {renderMessages()}
               </div>
             </ReactScrollToBottom>
@@ -306,38 +316,3 @@ const handleKeyDown = (e:any) => {
 }
 
 
-
-// useEffect(()=>{
-//   if(socket==null)return
-//   console.log("Inside useEffect")
-//   console.log(messages+"iuhiuh")
-// socket.emit("sendMessage",{messages:messages[messages.length-1],userIdOfOpenedChar})
-// },[messages])
-
-
-
-//   async function disconnectusers(socketId: string){
-//     try{
-//       const response=await axios.put("/api/onlineUsers",{
-//         socketId,
-//         id
-//       })
-//       setOnlineUsers(response.data.onlineUsers)
-//     }catch(error){
-//       console.log(error)
-//     }
-    
-//   }
-
-// async function usersonline(socketId: any){
-//   try{
-//   const response=await axios.post("/api/onlineUsers",{
-//     socketId,
-//     id
-//   })
-//   setOnlineUsers(response.data.onlineUsers)
-// }catch(error){
-//   console.log(error)
-// }
-
-// }
