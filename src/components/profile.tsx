@@ -14,7 +14,10 @@ export default function Profile({
     </div>
     <div className="w-1/2 h-20 flex flex-col">
       <span className="text-2xl font-semibold text-orange-500 mt-2 capitalize">{name}</span>
-      <p className="mt-1 font-normal text-gray-300">Key: {numberKey}</p>
+      {numberKey>0 &&(
+          <p className="mt-1 font-normal text-gray-300">Key: {numberKey}</p>
+      )}
+     
     </div>
   </div>
   

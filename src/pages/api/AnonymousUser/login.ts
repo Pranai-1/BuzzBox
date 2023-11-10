@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 import randomName from 'random-name';
-
+import jwt from "jsonwebtoken"
 export default async function AnonLogin(req:NextApiRequest,res:NextApiResponse){
   const body=req.body;
   if(body.gender.length==0){
@@ -19,7 +19,8 @@ export default async function AnonLogin(req:NextApiRequest,res:NextApiResponse){
       gender
     }
    })
-   req.headers["id"]=user.id+""
+   let userToken = jwt.sign({ id: user.id,name:user.name }, "userSecretKey", { expiresIn: '1d' });
+   res.setHeader("Set-Cookie", `token=${userToken}; HttpOnly; Secure; SameSite=Strict; Path=/`);
 }catch(error){
     console.log(error)
     res.status(404).json({error:"Error"})

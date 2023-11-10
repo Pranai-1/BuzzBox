@@ -3,6 +3,7 @@ import girl from "../../public/girl.png"
 import man from "../../public/man.png"
 import { useState } from "react";
 import axios from "axios";
+import { toast } from "react-toastify";
 export default function AnonLogin(){
     const router=useRouter();
     const [isClickedMan, setIsClickedMan] = useState<boolean>(false);
@@ -36,8 +37,15 @@ export default function AnonLogin(){
    const body={
     gender
    }
+   try{
    const response=await axios.post("/api/AnonymousUser/login",body)
    console.log(response.data.name)
+   toast.success("Success")
+   router.push("/AnonChat")
+   }catch(error){
+    console.log(error)
+    toast.error("Error Occured")
+   }
     }
 
     return(
