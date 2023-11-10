@@ -49,6 +49,11 @@ model Messages{
   text        String
 }
 
+model AnonymousUser{
+  id Int @id @default(autoincrement())
+  name String
+  gender String
+}
 // model Message {
 //   id      Int      @id @default(autoincrement())
 //   content   String

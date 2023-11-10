@@ -2,11 +2,12 @@ import { useRouter } from "next/router";
 import girl from "../../public/girl.png"
 import man from "../../public/man.png"
 import { useState } from "react";
+import axios from "axios";
 export default function AnonLogin(){
     const router=useRouter();
     const [isClickedMan, setIsClickedMan] = useState<boolean>(false);
     const [isClickedGirl, setIsClickedGirl] = useState<boolean>(false);
-
+    const[errorMessage,setErrorMessage]=useState<string>("")
     const handleClickMan = (type:string) => {
         if(isClickedGirl){
             setIsClickedGirl(false)
@@ -19,9 +20,24 @@ export default function AnonLogin(){
         }
         setIsClickedGirl(true);
       };
-    function HandleSubmit() {
-      
-    
+   async function HandleSubmit() {
+        let gender:string=""
+      if(isClickedGirl){
+        gender="Female"
+      }
+     
+      if(isClickedMan){
+        gender="Male"
+      }
+    if(gender.length==0){
+        setErrorMessage("Please Select the Gender")
+        return;
+    }
+   const body={
+    gender
+   }
+   const response=await axios.post("/api/AnonymousUser/login",body)
+   console.log(response.data.name)
     }
 
     return(
@@ -44,7 +60,11 @@ export default function AnonLogin(){
         
       />
          </div>
+        
           </div>
+          {errorMessage.length>0&&(
+            <p className="text-red">{errorMessage}**</p>
+         )}
           <p className="text-gray-600 font-medium mt-2 p-2">I'm at least 18 years old and have read and agree to the Terms of Service</p>
          <button className="h-[40px] w-full bg-indigo-400 font-medium p-2 rounded-lg my-1 text-red-700 mr-2"
          onClick={HandleSubmit}
