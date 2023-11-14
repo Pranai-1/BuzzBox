@@ -10,7 +10,7 @@ export default function Handler({
   roomkey: any;
  
 }) {
-    console.log(id+""+roomkey)
+    
   return (
     <div className="h-[50px] bg-slate-200 w-full cursor-pointer rounded-lg flex items-center p-2" onClick={()=>{
     }}>
