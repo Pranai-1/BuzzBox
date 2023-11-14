@@ -14,9 +14,12 @@ import { number } from "zod";
 import Online from "@/components/Online";
 import WelcomeChat from "@/components/WelcomeChat";
 import Navbar from "@/components/navbar";
-const ENDPOINT="https://buzzbox-socket.onrender.com/"
+import AddRoom from "@/components/AddRoom";
+import getRooms from "./api/helpers/getRooms";
+import Rooms from "@/components/Rooms";
+//const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
-// const ENDPOINT="http://localhost:4000/"
+ const ENDPOINT="http://localhost:4000/"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -28,14 +31,16 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       },
     };
   }
-  const data = await getContacts(session.user.numberKey);
+  const contacts = await getContacts(session.user.numberKey);
+  const rooms = await getRooms(session.user.numberKey);
   return {
     props: {
       id:session.user.id,
       name: session.user.name,
       numberKey: session.user.numberKey,
       email: session.user.email,
-      contacts: data,
+      contacts: contacts,
+      rooms:rooms
     },
   };
 };
@@ -45,18 +50,21 @@ export default function Home({
   numberKey,
   email,
   contacts,
+  rooms,
   id
 }: {
   name: string;
   numberKey: number;
   email: string;
   contacts: ContactType[];
+  rooms:any;
   id:number
 }) {
 
   const [addNewChat, setAddNewChat] = useState(false);
   const [addNewRoom, setAddNewRoom] = useState(false);
   const [chats, setChats] = useState(contacts);
+  const [chatRooms, setChatRooms] = useState(rooms);
   const [openChat, setOpenChat] = useState(false);
   const [openedChatName, setOpenedChatName] = useState("");
   const [openedChatNumberKey, setOpenedChatNumberKey] = useState(0);
@@ -68,7 +76,7 @@ export default function Home({
 const[isOnline,setIsOnline]=useState<boolean>(false);
   const [socket, setSocket] = useState<Socket | null>(null);
  const[emptyChat,setemptyChat]=useState<boolean>(true)
-  
+
 //This useEffect will setup a socket connection 
   useEffect(() => {
     const newSocket = io(ENDPOINT, { transports: ["websocket"] });
@@ -169,7 +177,7 @@ useEffect(() => {
   getMessages();
 }, [userIdOfOpenedChat]);
 
-//console.log(messages)
+console.log(chats)
 
 
 //This is used to get theuserId of the openedchat
@@ -258,7 +266,8 @@ const handleKeyDown = (e:any) => {
       <p className="text-sm text-black font-medium mt-0">New Room</p>
     </div>
     </div>
-    <div className="flex flex-col gap-5 flex-wrap w-full mt-5" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+   
+     <div className="flex flex-col gap-5 flex-wrap w-full mt-5" style={{ maxHeight: '300px', overflowY: 'auto' }}>
       {chats.map((contact) => (
         <Contacts
           id={contact.id}
@@ -271,6 +280,20 @@ const handleKeyDown = (e:any) => {
         />
       ))}
     </div>
+   
+      {chatRooms.length>0 && (
+         <div className="flex flex-col gap-5 flex-wrap w-full mt-10" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+           <p className="font-bold text-center text-red-700">Rooms:</p>
+           {chatRooms.map((room: any) => (
+             <Rooms
+               id={room.id}
+               roomkey={room.key}
+               />
+           ))}
+           </div>
+      )}
+     
+   
   </div>
   {addNewChat ? (
     <AddChat
@@ -279,8 +302,14 @@ const handleKeyDown = (e:any) => {
       id={id}
     />
   ) : (
-    
-    <div className="w-full h-[657px]">
+    (addNewRoom?(
+     <AddRoom
+     setAddNewRoom={setAddNewRoom}
+     setChats={setChats}
+     id={id}
+   />
+    ):(
+      <div className="w-full h-[657px]">
       {openChat ? (
         <div className="h-full w-full relative">
           <div className="h-[50px] w-full bg-slate-300 flex justify-between rounded-lg">
@@ -320,6 +349,8 @@ const handleKeyDown = (e:any) => {
         <WelcomeChat name={name}/>
       )}
     </div>
+    ))
+   
   )}
   </div>
 </div>

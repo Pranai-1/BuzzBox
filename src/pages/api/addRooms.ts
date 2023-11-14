@@ -14,7 +14,7 @@ export default async function handler(
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method Not Allowed" });
   }
-
+let arr=[]
   const body = req.body;
   const prisma = new PrismaClient();
 
@@ -59,13 +59,23 @@ export default async function handler(
     });
 
     if (addUserInRoom) {
-      const allRoomsOfThisUser = await prisma.roomUser.findMany({
+      const roomsOfThisUser = await prisma.roomUser.findMany({
         where: {
           userId: id,
         },
       });
-
-      return res.status(200).json({ message: 'Success', rooms: allRoomsOfThisUser });
+      if(roomsOfThisUser){
+        for(const obj of roomsOfThisUser){
+        const roomDetails=await prisma.room.findFirst({
+            where:{
+            id:obj.roomId
+            }
+        })
+        arr.push(roomDetails)
+      }
+    }
+      console.log(arr)
+      return res.status(200).json({ message: 'Success', rooms: arr });
     } else {
       return res.status(500).json({ message: "Failed to add user to the room" });
     }

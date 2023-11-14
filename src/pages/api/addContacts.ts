@@ -75,30 +75,10 @@ export default async function handler(
             } else {
               res.status(404).json({ message: "Failed" });
             }
+          }else {
+            res.status(404).json({ message: "Failed" });
           }
-          // } else {
-          //   try {
-          //     const alreadyInList = await prisma.contactUser.findFirst({
-          //       where: {
-          //         contactId: existingContact?.id,
-          //         userId: user.id,
-          //       },
-          //     });
-          //    if (alreadyInList) {
-          //       res.status(412).json({ message: "Failed" });
-          //     } else {
-          //       await prisma.contactUser.create({
-          //         data: {
-          //           contactId: existingContact?.id as number,
-          //           userId: user.id,
-          //         },
-          //       });
-          //       res.status(201).json({ message: "Chat Added" });
-          //     }
-          //   } catch (error) {
-          //     res.status(500).json({ message: "Failed" });
-          //   }
-          // }
+          
         } catch (error) {
           res.status(500).json({ message: "Error" });
         }

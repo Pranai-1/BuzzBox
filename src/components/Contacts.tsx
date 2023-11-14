@@ -27,9 +27,9 @@ export default function Handler({
       setOpenedChatId(id)
     }}>
       <div className="w-10 h-10 bg-gray-400 rounded-full mr-2 flex justify-center items-center">
-        <p className="font-normal text-xl">{char}</p>
+        <p className="font-medium text-xl">{char}</p>
       </div>
-      <p className="p-2">{name}</p>
+      <p className="p-2 font-medium">{name}</p>
     </div>
   );
 }

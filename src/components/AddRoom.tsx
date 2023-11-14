@@ -30,8 +30,9 @@ export default function AddRoom({
       try {
         const response=await axios.post("/api/addRooms", body); 
       setAddNewRoom(false)
-         setChats(response.data.rooms);
-          toast.success("Chat added");
+      console.log(response.data.rooms)
+        // setChats(response.data.rooms);
+          toast.success("Joined Room");
       } catch (error) {
         console.log(error);
         toast.error("Error occured");
@@ -72,7 +73,7 @@ export default function AddRoom({
                items-center  text-center mt-1"
         onClick={HandleSubmit}
       >
-        Add Chat
+        Create/Join Room
       </button>
     </div>
   );
