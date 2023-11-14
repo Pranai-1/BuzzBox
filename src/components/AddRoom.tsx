@@ -5,11 +5,11 @@ import { toast } from "react-toastify";
 
 export default function AddRoom({
   setAddNewRoom,
-  setChats,
+  setChatRooms,
   id
 }: {
   setAddNewRoom: any;
-  setChats: any;
+  setChatRooms: any;
   id:number
 }) {
   const [roomKey, setRoomKey] = useState(0);
@@ -31,7 +31,7 @@ export default function AddRoom({
         const response=await axios.post("/api/addRooms", body); 
       setAddNewRoom(false)
       console.log(response.data.rooms)
-        // setChats(response.data.rooms);
+         setChatRooms(response.data.rooms);
           toast.success("Joined Room");
       } catch (error) {
         console.log(error);

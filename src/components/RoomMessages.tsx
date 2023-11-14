@@ -3,9 +3,9 @@ import Online from "./Online"
 import sendIcon from "../../public/send.png"
 export default function Handler(
     {
-        isOnline,
-        openedChatName,
-        openedChatNumberKey,
+      
+        openedRoomKey,
+        openedRoomId,
         emptyChat,
         renderMessages,
         textToSend,
@@ -13,9 +13,9 @@ export default function Handler(
         HandleSend
 
     }:{
-        isOnline:boolean,
-        openedChatName:string,
-        openedChatNumberKey:number,
+       
+        openedRoomKey:number,
+        openedRoomId:number,
         emptyChat:boolean,
         renderMessages:any,
         textToSend:string,
@@ -26,15 +26,15 @@ export default function Handler(
 ){
     const handleKeyDown = (e:any) => {
         if (e.key === 'Enter') {
-          HandleSend("contacts");
+          HandleSend("room");
         }
       };
       
     return(
         <div className="h-full w-full relative">
         <div className="h-[50px] w-full bg-slate-300 flex justify-between rounded-lg">
-          <Online status={isOnline} name={openedChatName}/>
-          <p className="p-2 ml-2 text-red-500 font-medium">Key-{openedChatNumberKey}</p>
+         
+          <p className="p-2 ml-2 text-red-500 font-medium">Key-{openedRoomKey}</p>
         </div>
 
         {emptyChat ? (
@@ -56,7 +56,7 @@ export default function Handler(
               title="message"
               placeholder="Enter your message here"
               value={textToSend}
-              onChange={(e) =>setTextToSend(e.target.value) }
+              onChange={(e) =>  setTextToSend(e.target.value) }
               onKeyDown={handleKeyDown}
             />
             <div onClick={HandleSend}>

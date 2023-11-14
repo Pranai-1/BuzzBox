@@ -18,6 +18,7 @@ import AddRoom from "@/components/AddRoom";
 import getRooms from "./api/helpers/getRooms";
 import Rooms from "@/components/Rooms";
 import ContactMessages from "@/components/ContactMessages";
+import RoomMessages from "@/components/RoomMessages";
 //const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
  const ENDPOINT="http://localhost:4000/"
@@ -67,16 +68,22 @@ export default function Home({
   const [chats, setChats] = useState(contacts);
   const [chatRooms, setChatRooms] = useState(rooms);
   const [openChat, setOpenChat] = useState(false);
+  const [openRoom, setOpenRoom] = useState(false);
   const [openedChatName, setOpenedChatName] = useState("");
+  const [openedRoomId, setOpenedRoomId] = useState(0);
+  const [openedRoomKey, setOpenedRoomKey] = useState(0);
   const [openedChatNumberKey, setOpenedChatNumberKey] = useState(0);
   const [openedChatId, setOpenedChatId] = useState(0);
   const[userIdOfOpenedChat,setUserIdOfOpenedChat]=useState(0)
   const [textToSend, setTextToSend] = useState("");
   const[onlineUsers,setOnlineUsers]=useState<OnlineUsers[]>([])
   const[messages,setMessages]=useState<Messages>([])
+  const[roomMessages,setRoomMessages]=useState<Messages>([])
 const[isOnline,setIsOnline]=useState<boolean>(false);
   const [socket, setSocket] = useState<Socket | null>(null);
  const[emptyChat,setemptyChat]=useState<boolean>(true)
+ const[emptyRoom,setemptyRoom]=useState<boolean>(true)
+ const[usersOfRoom,setUsersOfRoom]=useState<any>([])
 
 //This useEffect will setup a socket connection 
   useEffect(() => {
@@ -115,6 +122,7 @@ const[isOnline,setIsOnline]=useState<boolean>(false);
   
 
   const HandleSend = async () => {
+   
     if (textToSend.length !== 0 && userIdOfOpenedChat!=0) {
       const message={
         senderId:id,
@@ -134,7 +142,8 @@ const[isOnline,setIsOnline]=useState<boolean>(false);
       socket.emit("sendMessage",{messagetosend:message,userIdOfOpenedChat})
       setTextToSend("");
     }
-  }
+ 
+}
   
 //This is used to add a new user which is ourselves to the onlineusers of the server and then server sends back all the onlineusers
 
@@ -178,8 +187,48 @@ useEffect(() => {
   getMessages();
 }, [userIdOfOpenedChat]);
 
+useEffect(() => {
+  const getRoomMessages = async () => {
+    if (openedRoomId !== 0) {
+      let header = {
+        senderId: id,
+        receiverId: usersOfRoom
+      };
+      try {
+        const response = await axios.get("/api/messages", { headers: header });
+        const data = response.data.messages;
+        setRoomMessages((prev: any)=>({
+          ...prev,
+          [openedRoomId]: [
+           ...data 
+          ]    
+        }))
+        setemptyChat(false)
+   
+      } catch (error) {
+        console.error("Error fetching messages:", error);
+      }
+    }
+  }
+  getRoomMessages();
+}, [openedRoomId]);
+
 console.log(chats)
 
+useEffect(()=>{
+  if(openedRoomId!=0){
+  const getUsersOfRoom=async()=>{
+   const response=await axios.get("/api/getUsersOfRoom",{
+    headers:{
+      roomId:openedRoomId
+    }
+   })
+   setUsersOfRoom(response.data.users)
+  }
+
+  getUsersOfRoom()
+}
+},[openedRoomId])
 
 //This is used to get theuserId of the openedchat
 useEffect(() => {
@@ -207,6 +256,12 @@ useEffect(()=>{
     setemptyChat(true)
   },100)
  },[openedChatId])
+
+ useEffect(()=>{
+  setTimeout(()=>{
+    setemptyRoom(true)
+  },100)
+ },[openedRoomId])
 
 
 useEffect(() => {
@@ -237,10 +292,16 @@ useEffect(() => {
   };
   
 
-function handleClick(clicked: boolean) {
-  setOpenChat(clicked);
+function handleChatClick() {
+  setOpenChat(true);
+  setOpenRoom(false)
 }
 
+
+  function handleRoomClick() {
+    setOpenChat(false);
+    setOpenRoom(true)
+  }
 
   return (
     <div className="h-full w-full ">
@@ -253,11 +314,13 @@ function handleClick(clicked: boolean) {
     <div className="flex justify-center gap-5 w-full  mt-3 ">
     <div className="p-2 bg-orange-600 cursor-pointer rounded-xl  " onClick={() => {
       setAddNewChat(true);
+      setAddNewRoom(false);
     }}>
       <p className="text-sm text-black font-medium mt-0">New Chat</p>
     </div>
     <div className="p-2 bg-orange-600 cursor-pointer rounded-xl " onClick={() => {
       setAddNewRoom(true);
+      setAddNewChat(false)
     }}>
       <p className="text-sm text-black font-medium mt-0">New Room</p>
     </div>
@@ -269,7 +332,7 @@ function handleClick(clicked: boolean) {
           id={contact.id}
           name={contact.name}
           numberKey={contact.numberKey}
-          handleClick={() => handleClick(true)}
+          handleClick={() => handleChatClick()}
           setOpenedChatName={setOpenedChatName}
           setOpenedChatNumberKey={setOpenedChatNumberKey}
           setOpenedChatId={setOpenedChatId}
@@ -282,8 +345,11 @@ function handleClick(clicked: boolean) {
            <p className="font-bold text-center text-red-700">Rooms:</p>
            {chatRooms.map((room: any) => (
              <Rooms
-               id={room.id}
+               roomid={room.id}
                roomkey={room.key}
+               handleClick={() => handleRoomClick()}
+               setOpenedRoomKey={setOpenedRoomKey}
+              setOpenedRoomId={setOpenedRoomId}
                />
            ))}
            </div>
@@ -294,7 +360,7 @@ function handleClick(clicked: boolean) {
   {addNewChat ? (
   <AddChat setAddNewChat={setAddNewChat} setChats={setChats} id={id} />
 ) : addNewRoom ? (
-  <AddRoom setAddNewRoom={setAddNewRoom} setChats={setChats} id={id} />
+  <AddRoom setAddNewRoom={setAddNewRoom} setChatRooms={setChatRooms} id={id} />
 ) : (
   <div className="w-full h-[657px]">
     {openChat ? (
@@ -308,6 +374,16 @@ function handleClick(clicked: boolean) {
         setTextToSend={setTextToSend}
         HandleSend={HandleSend}
       />
+    ): openRoom?(
+      <RoomMessages
+      openedRoomId={openedRoomId}
+      openedRoomKey={openedRoomKey}
+      emptyChat={emptyChat}
+      renderMessages={renderMessages}
+      textToSend={textToSend}
+      setTextToSend={setTextToSend}
+      HandleSend={HandleSend}
+    />
     ) : (
       <WelcomeChat name={name} />
     )}

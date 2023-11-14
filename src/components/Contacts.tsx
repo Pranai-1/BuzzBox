@@ -13,7 +13,7 @@ export default function Handler({
   id: number;
   name: string;
   numberKey: number;
-  handleClick(x: boolean):any
+  handleClick:any
   setOpenedChatName:Dispatch<SetStateAction<string>>;
   setOpenedChatNumberKey:Dispatch<SetStateAction<number>>;
   setOpenedChatId:Dispatch<SetStateAction<number>>
@@ -21,7 +21,7 @@ export default function Handler({
   const char=name.charAt(0).toLocaleUpperCase()
   return (
     <div className="h-[50px] bg-slate-200 w-full cursor-pointer rounded-lg flex items-center p-2" onClick={()=>{
-      handleClick(true)
+      handleClick()
       setOpenedChatName(name)
       setOpenedChatNumberKey(numberKey)
       setOpenedChatId(id)
