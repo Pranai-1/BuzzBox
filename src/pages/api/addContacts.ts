@@ -7,7 +7,6 @@ const prisma = new PrismaClient();
 const userInput = z.object({
   contactName: z.string().min(3).max(25),
   contactNumberKey: z.number().min(100000).max(999999),
-  numberKey: z.number().min(100000).max(999999),
   id:z.number()
 });
 
@@ -17,13 +16,14 @@ export default async function handler(
 ) {
   if (req.method === "POST") {
     try {
+      let arr=[]
       const body = req.body;
       const parsedInput = userInput.safeParse(body);
       if (!parsedInput.success) {
         return res.status(422).json({ message: "Validation failed" });
       }
-      const { contactNumberKey, contactName, numberKey,id } = parsedInput.data;
-      const user = await prisma.user.findFirst({ where: { numberKey } });
+      const { contactNumberKey, contactName,id } = parsedInput.data;
+      const user = await prisma.user.findFirst({ where: { id } });
       const findUserToAdd = await prisma.user.findFirst({
         where: { numberKey: contactNumberKey },
       });
@@ -55,7 +55,20 @@ export default async function handler(
                 },
               });
               if (contactUser) {
-                res.status(201).json({ message: "Chat Added" });
+                const contacts = await prisma.contactUser.findMany({
+                  where: {
+                    userId: user?.id,
+                  },
+                });
+                for (const obj of contacts) {
+                  const contacts = await prisma.contact.findFirst({
+                    where: {
+                      id: obj.contactId,
+                    },
+                  });
+                  arr.push(contacts);
+                }
+                res.status(201).json({ message: "Chat Added",chats:arr });
               } else {
                 res.status(409).json({ message: "Failed" });
               }

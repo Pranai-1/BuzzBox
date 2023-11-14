@@ -4,12 +4,10 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 
 export default function AddChat({
-  numberKey,
   setAddNewChat,
   setChats,
   id
 }: {
-  numberKey: number;
   setAddNewChat: any;
   setChats: any;
   id:number
@@ -35,17 +33,11 @@ export default function AddChat({
       const body = {
         contactName,
         contactNumberKey,
-        numberKey,
         id
       };
       try {
-      await axios.post("/api/profile", body); 
+        const response= await axios.post("/api/addContacts", body); 
         setAddNewChat(false)
-       const response=await axios.get("/api/getcontactsaftersubmit",{
-        headers:{
-          numberKey
-        }
-       })
          setChats(response.data.chats);
           toast.success("Chat added");
       } catch (error) {

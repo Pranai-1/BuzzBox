@@ -3,12 +3,12 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 export default async function handler(req:NextApiRequest,res:NextApiResponse) {
 
- const numberKey=Number(req.headers["numberkey"])
+ const id=Number(req.headers["id"])
 
   const prisma = new PrismaClient();
   let arr = [];
   try {
-    const user = await prisma.user.findFirst({ where: { numberKey } });
+    const user = await prisma.user.findFirst({ where: { id } });
     if (user && user.id) {
       const contactUser = await prisma.contactUser.findMany({
         where: {

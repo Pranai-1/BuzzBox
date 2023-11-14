@@ -16,7 +16,7 @@ import WelcomeChat from "@/components/WelcomeChat";
 import Navbar from "@/components/navbar";
 const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
- //const ENDPOINT="http://localhost:4000/"
+// const ENDPOINT="http://localhost:4000/"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -55,6 +55,7 @@ export default function Home({
 }) {
 
   const [addNewChat, setAddNewChat] = useState(false);
+  const [addNewRoom, setAddNewRoom] = useState(false);
   const [chats, setChats] = useState(contacts);
   const [openChat, setOpenChat] = useState(false);
   const [openedChatName, setOpenedChatName] = useState("");
@@ -245,10 +246,17 @@ const handleKeyDown = (e:any) => {
     <div>
       <Profile name={name} numberKey={numberKey} />
     </div>
-    <div className="p-2 bg-orange-600 cursor-pointer rounded-xl mt-3 ml-[200px] " onClick={() => {
+    <div className="flex justify-center gap-5 w-full  mt-3 ">
+    <div className="p-2 bg-orange-600 cursor-pointer rounded-xl  " onClick={() => {
       setAddNewChat(true);
     }}>
       <p className="text-sm text-black font-medium mt-0">New Chat</p>
+    </div>
+    <div className="p-2 bg-orange-600 cursor-pointer rounded-xl " onClick={() => {
+      setAddNewRoom(true);
+    }}>
+      <p className="text-sm text-black font-medium mt-0">New Room</p>
+    </div>
     </div>
     <div className="flex flex-col gap-5 flex-wrap w-full mt-5" style={{ maxHeight: '300px', overflowY: 'auto' }}>
       {chats.map((contact) => (
@@ -266,12 +274,12 @@ const handleKeyDown = (e:any) => {
   </div>
   {addNewChat ? (
     <AddChat
-      numberKey={numberKey}
       setAddNewChat={setAddNewChat}
       setChats={setChats}
       id={id}
     />
   ) : (
+    
     <div className="w-full h-[657px]">
       {openChat ? (
         <div className="h-full w-full relative">

@@ -17,6 +17,7 @@ model User {
   numberKey Int      @unique
   contacts  ContactUser[]  //A relationship field that associates a user with their contacts. 
   //It's defined as an array of ContactUser records, meaning a user can have multiple contacts.
+  rooms     RoomUser[]    // A relationship field that associates users with the rooms they are subscribed to.
 }
 
 model Contact {
@@ -54,6 +55,27 @@ model AnonymousUser{
   name String
   gender String
 }
+
+
+
+
+model Room {
+  id    Int      @id @default(autoincrement())
+  key   Int      @unique
+  users RoomUser[]    // A relationship field that associates rooms with the users who are subscribed to them.
+}
+
+model RoomUser {
+  id     Int   @id @default(autoincrement())
+  userId Int
+  roomId Int
+  user   User  @relation(fields: [userId], references: [id])
+  room   Room  @relation(fields: [roomId], references: [id])
+
+  @@unique([userId, roomId])
+}
+
+
 // model Message {
 //   id      Int      @id @default(autoincrement())
 //   content   String
