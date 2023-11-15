@@ -19,9 +19,9 @@ import getRooms from "./api/helpers/getRooms";
 import Rooms from "@/components/Rooms";
 import ContactMessages from "@/components/ContactMessages";
 import RoomMessages from "@/components/RoomMessages";
-//const ENDPOINT="https://buzzbox-socket.onrender.com/"
+const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
- const ENDPOINT="http://localhost:4000/"
+ //const ENDPOINT="http://localhost:4000/"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -81,10 +81,10 @@ export default function Home({
   const[roomMessages,setRoomMessages]=useState<Messages>([])
 const[isOnline,setIsOnline]=useState<boolean>(false);
   const [socket, setSocket] = useState<Socket | null>(null);
- const[emptyChat,setemptyChat]=useState<boolean>(true)
- const[emptyRoom,setemptyRoom]=useState<boolean>(true)
+ const[emptyChat,setemptyChat]=useState<boolean>(false)
+ const[emptyRoom,setemptyRoom]=useState<boolean>(false)
  const[usersOfRoom,setUsersOfRoom]=useState<any>([])
-
+ const[count,setCount]=useState<number>(0)
 //This useEffect will setup a socket connection 
   useEffect(() => {
     const newSocket = io(ENDPOINT, { transports: ["websocket"] });
@@ -145,6 +145,55 @@ const[isOnline,setIsOnline]=useState<boolean>(false);
  
 }
   
+
+useEffect(() => {
+  const handleRoomMessage = (res: string) => {
+  
+    setRoomMessages((prev: any) => ({
+      ...prev,
+      [openedRoomId]: [...(prev[openedRoomId] || []), res],
+    }));
+   
+  };
+
+  if (socket) {
+    // const userOnline = onlineUsers.find((user) => user.userId === userIdOfOpenedChat);// Check if the user is online and should listen for messages
+    // if (userOnline) {
+      socket.on("getRoomMessage", handleRoomMessage);        // Add the event listener when the component mounts
+    //}
+    return () => {
+      // if (userOnline) {
+        socket.off("getRoomMessage", handleRoomMessage);// Remove the event listener when the component unmounts  
+     // }
+    };
+  } 
+  
+}, [socket, openedRoomId, onlineUsers, setRoomMessages]);
+
+
+const HandleRoomSend = async () => {
+  if (textToSend.length !== 0 && openedRoomId!=0) {
+    const message={
+      senderId:id,
+      //receiverId:usersOfRoom,
+      text:textToSend
+    }
+    //const response=await axios.post("/api/messages",message)
+ 
+    setRoomMessages((prev: any)=>({
+      ...prev,
+      [openedRoomId]: [
+        ...(prev[openedRoomId] || []),
+        message 
+      ]
+    }));
+  if(socket)
+    socket.emit("sendRoomMessage",{messagetosend:message,usersOfRoom})
+    setTextToSend("");
+  }
+
+}
+
 //This is used to add a new user which is ourselves to the onlineusers of the server and then server sends back all the onlineusers
 
   useEffect(()=>{
@@ -157,7 +206,7 @@ const[isOnline,setIsOnline]=useState<boolean>(false);
   
   },[socket,id])
   
-console.log(onlineUsers)
+// console.log(onlineUsers)
 
 
 //This is used to receive the messages from the db 
@@ -188,42 +237,21 @@ useEffect(() => {
 }, [userIdOfOpenedChat]);
 
 useEffect(() => {
-  const getRoomMessages = async () => {
-    if (openedRoomId !== 0) {
-      let header = {
-        senderId: id,
-        receiverId: usersOfRoom
-      };
-      try {
-        const response = await axios.get("/api/messages", { headers: header });
-        const data = response.data.messages;
-        setRoomMessages((prev: any)=>({
-          ...prev,
-          [openedRoomId]: [
-           ...data 
-          ]    
-        }))
-        setemptyChat(false)
-   
-      } catch (error) {
-        console.error("Error fetching messages:", error);
-      }
-    }
-  }
-  getRoomMessages();
+  setemptyRoom(false)
 }, [openedRoomId]);
 
-console.log(chats)
+// console.log(chats)
 
 useEffect(()=>{
   if(openedRoomId!=0){
+  
   const getUsersOfRoom=async()=>{
    const response=await axios.get("/api/getUsersOfRoom",{
     headers:{
       roomId:openedRoomId
     }
    })
-   setUsersOfRoom(response.data.users)
+   setUsersOfRoom(response.data.roomUsers)
   }
 
   getUsersOfRoom()
@@ -251,17 +279,17 @@ useEffect(() => {
 
 
 
-useEffect(()=>{
-  setTimeout(()=>{
-    setemptyChat(true)
-  },100)
- },[openedChatId])
+// useEffect(()=>{
+//   setTimeout(()=>{
+//     setemptyChat(true)
+//   },10)
+//  },[openedChatId])
 
- useEffect(()=>{
-  setTimeout(()=>{
-    setemptyRoom(true)
-  },100)
- },[openedRoomId])
+//  useEffect(()=>{
+//   setTimeout(()=>{
+//     setemptyRoom(true)
+//   },10)
+//  },[openedRoomId])
 
 
 useEffect(() => {
@@ -291,6 +319,34 @@ useEffect(() => {
     });
   };
   
+  const renderRoomMessages = () => {
+    const currentChatMessages = roomMessages[openedRoomId] || [];
+   
+    return currentChatMessages.map((message: any, index: number) => {
+      const isSentByYou = message.senderId === id;
+      const messageClass = isSentByYou ? '' : ''; 
+      return (
+      (isSentByYou ? (
+        <p key={index} className="font-medium text-orange-600 ml-auto mr-2 bg-slate-300 h-max w-max rounded-xl p-2 pt-1 pb-1 mt-1 mb-2">
+        {message.text}
+      </p>
+      ):(
+      <div key={index} className="flex flex-col">
+         <p  className=" text-gray-400 ml-2 mr-2  h-max w-max  ">
+        sent by:{message.senderId}
+      </p>
+        <p  className="font-medium text-blue-600 ml-2 mr-2 bg-slate-300 h-max w-max rounded-xl p-2 pt-1 pb-1 mt-1 mb-2">
+        {message.text}
+      </p>
+     
+      </div>
+      ))
+        
+        
+      );
+    });
+  };
+  
 
 function handleChatClick() {
   setOpenChat(true);
@@ -307,7 +363,8 @@ function handleChatClick() {
     <div className="h-full w-full ">
           <Navbar />
           <div className="flex">
-  <div className="h-[657px] w-[350px] flex flex-col items-center p-2 pt-0 bg-gradient-to-b from-teal-400 to-purple-600">
+  <div className="h-[657px] w-[370px] flex flex-col items-center p-2 pt-0 bg-gradient-to-b from-teal-400 to-purple-600"
+  style={{ maxHeight: '657px', overflowY: 'auto', overflowX: 'hidden' }}>
     <div>
       <Profile name={name} numberKey={numberKey} />
     </div>
@@ -326,7 +383,7 @@ function handleChatClick() {
     </div>
     </div>
    
-     <div className="flex flex-col gap-5 flex-wrap w-full mt-5" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+     <div className="flex flex-col gap-5 flex-wrap w-full mt-5" >
       {chats.map((contact) => (
         <Contacts
           id={contact.id}
@@ -341,7 +398,7 @@ function handleChatClick() {
     </div>
    
       {chatRooms.length>0 && (
-         <div className="flex flex-col gap-5 flex-wrap w-full mt-10" style={{ maxHeight: '300px', overflowY: 'auto' }}>
+         <div className="flex flex-col gap-5 flex-wrap w-full mt-10" >
            <p className="font-bold text-center text-red-700">Rooms:</p>
            {chatRooms.map((room: any) => (
              <Rooms
@@ -379,10 +436,10 @@ function handleChatClick() {
       openedRoomId={openedRoomId}
       openedRoomKey={openedRoomKey}
       emptyChat={emptyChat}
-      renderMessages={renderMessages}
+      renderRoomMessages={renderRoomMessages}
       textToSend={textToSend}
       setTextToSend={setTextToSend}
-      HandleSend={HandleSend}
+      HandleSend={HandleRoomSend}
     />
     ) : (
       <WelcomeChat name={name} />

@@ -74,7 +74,7 @@ let arr=[]
         arr.push(roomDetails)
       }
     }
-      console.log(arr)
+
       return res.status(200).json({ message: 'Success', rooms: arr });
     } else {
       return res.status(500).json({ message: "Failed to add user to the room" });
