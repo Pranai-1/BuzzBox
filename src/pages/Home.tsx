@@ -19,9 +19,9 @@ import getRooms from "./api/helpers/getRooms";
 import Rooms from "@/components/Rooms";
 import ContactMessages from "@/components/ContactMessages";
 import RoomMessages from "@/components/RoomMessages";
-const ENDPOINT="https://buzzbox-socket.onrender.com/"
+//const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
- //const ENDPOINT="http://localhost:4000/"
+ const ENDPOINT="http://localhost:4000/"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -147,11 +147,11 @@ const[isOnline,setIsOnline]=useState<boolean>(false);
   
 
 useEffect(() => {
-  const handleRoomMessage = (res: string) => {
-  
+  const handleRoomMessage = (res: any) => {
+  console.log(res)
     setRoomMessages((prev: any) => ({
       ...prev,
-      [openedRoomId]: [...(prev[openedRoomId] || []), res],
+      [res.roomId]: [...(prev[res.roomId] || []), res],
     }));
    
   };
@@ -169,13 +169,13 @@ useEffect(() => {
   } 
   
 }, [socket, openedRoomId, onlineUsers, setRoomMessages]);
-
+console.log(roomMessages)
 
 const HandleRoomSend = async () => {
   if (textToSend.length !== 0 && openedRoomId!=0) {
     const message={
       senderId:id,
-      //receiverId:usersOfRoom,
+      roomId:openedRoomId,
       text:textToSend
     }
     //const response=await axios.post("/api/messages",message)
@@ -188,7 +188,7 @@ const HandleRoomSend = async () => {
       ]
     }));
   if(socket)
-    socket.emit("sendRoomMessage",{messagetosend:message,usersOfRoom})
+    socket.emit("sendRoomMessage",{messagetosend:message,roomId:openedRoomId})
     setTextToSend("");
   }
 
@@ -244,17 +244,23 @@ useEffect(() => {
 
 useEffect(()=>{
   if(openedRoomId!=0){
-  
-  const getUsersOfRoom=async()=>{
-   const response=await axios.get("/api/getUsersOfRoom",{
-    headers:{
-      roomId:openedRoomId
+  if(socket){
+    let data={
+      id,
+     roomId: openedRoomId
     }
-   })
-   setUsersOfRoom(response.data.roomUsers)
+    socket.emit("AddUserToRoom",data)
   }
+  // const getUsersOfRoom=async()=>{
+  //  const response=await axios.get("/api/getUsersOfRoom",{
+  //   headers:{
+  //     roomId:openedRoomId
+  //   }
+  //  })
+  //  setUsersOfRoom(response.data.roomUsers)
+  // }
 
-  getUsersOfRoom()
+  // getUsersOfRoom()
 }
 },[openedRoomId])
 
@@ -321,7 +327,7 @@ useEffect(() => {
   
   const renderRoomMessages = () => {
     const currentChatMessages = roomMessages[openedRoomId] || [];
-   
+   console.log(currentChatMessages)
     return currentChatMessages.map((message: any, index: number) => {
       const isSentByYou = message.senderId === id;
       const messageClass = isSentByYou ? '' : ''; 
@@ -363,8 +369,10 @@ function handleChatClick() {
     <div className="h-full w-full ">
           <Navbar />
           <div className="flex">
-  <div className="h-[657px] w-[370px] flex flex-col items-center p-2 pt-0 bg-gradient-to-b from-teal-400 to-purple-600"
-  style={{ maxHeight: '657px', overflowY: 'auto', overflowX: 'hidden' }}>
+        <div className="h-[657px] w-[400px] flex flex-col items-center p-2 pt-0 bg-gradient-to-b from-teal-400 to-purple-600
+         overflow-y-auto overflow-x-hidden ">
+
+
     <div>
       <Profile name={name} numberKey={numberKey} />
     </div>
