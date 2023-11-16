@@ -7,7 +7,7 @@ export default function Handler(
         openedChatName,
         openedChatNumberKey,
         emptyChat,
-        renderMessages,
+        renderContactMessages,
         textToSend,
         setTextToSend,
         HandleSend
@@ -17,7 +17,7 @@ export default function Handler(
         openedChatName:string,
         openedChatNumberKey:number,
         emptyChat:boolean,
-        renderMessages:any,
+        renderContactMessages:any,
         textToSend:string,
         setTextToSend:any,
         HandleSend:any
@@ -44,7 +44,7 @@ export default function Handler(
         ) : (
           <ReactScrollToBottom>
             <div className="h-[500px] w-full flex flex-col  rounded-xl" style={{ maxHeight: '550px' }}>
-              {renderMessages()}
+              {renderContactMessages()}
             </div>
           </ReactScrollToBottom>
         )}

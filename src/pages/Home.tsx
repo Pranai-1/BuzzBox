@@ -6,12 +6,9 @@ import { ContactType, Messages, OnlineUsers } from "./api/types";
 import Contacts from "@/Contacts/Contacts";
 import AddChat from "@/components/UserProfile/AddChat";
 import Profile from "../components/UserProfile/profile";
-
 import { Socket, io } from "socket.io-client";
 import axios from "axios";
-import ReactScrollToBottom from "react-scroll-to-bottom"
 import { number } from "zod";
-import Online from "@/Contacts/Online";
 import WelcomeChat from "@/components/Base/WelcomeChat";
 import Navbar from "@/components/Base/navbar";
 import AddRoom from "@/components/Rooms/AddRoom";
@@ -19,6 +16,9 @@ import getRooms from "./api/helpers/getRooms";
 import Rooms from "@/components/Rooms/Rooms";
 import ContactMessages from "@/Contacts/ContactMessages";
 import RoomMessages from "@/components/Rooms/RoomMessages";
+import Options from "@/components/UserProfile/Options";
+import RenderRoomMessages from "@/components/Rooms/RenderRoomMessages";
+import RenderContactMessages from "@/Contacts/RenderContactMessages";
 const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
  //const ENDPOINT="http://localhost:4000/"
@@ -83,8 +83,7 @@ const[isOnline,setIsOnline]=useState<boolean>(false);
   const [socket, setSocket] = useState<Socket | null>(null);
  const[emptyChat,setemptyChat]=useState<boolean>(false)
  const[emptyRoom,setemptyRoom]=useState<boolean>(false)
- const[usersOfRoom,setUsersOfRoom]=useState<any>([])
- const[count,setCount]=useState<number>(0)
+
 //This useEffect will setup a socket connection 
   useEffect(() => {
     const newSocket = io(ENDPOINT, { transports: ["websocket"] });
@@ -294,48 +293,14 @@ useEffect(() => {
 
 
 
-  const renderMessages = () => {
-    const currentChatMessages = messages[openedChatId] || [];
-  
-    return currentChatMessages.map((message: any, index: number) => {
-      const isSentByYou = message.senderId === id;
-      const messageClass = isSentByYou ? 'text-orange-600 ml-auto mr-2' : 'text-blue-600 ml-2'; 
-      return (
-      
-        <p key={index} className={`font-medium ${messageClass} bg-slate-300 h-max w-max rounded-xl p-2 pt-1 pb-1 mt-1 mb-2`}>
-          {message.text}
-        </p>
-        
-      );
-    });
+  const renderContactMessages = () => {
+   return <RenderContactMessages messages={messages} openedChatId={openedChatId} id={id}/>
   };
   
   const renderRoomMessages = () => {
-    const currentChatMessages = roomMessages[openedRoomId] || [];
-   console.log(currentChatMessages)
-    return currentChatMessages.map((message: any, index: number) => {
-      const isSentByYou = message.senderId === id;
-      const messageClass = isSentByYou ? '' : ''; 
-      return (
-      (isSentByYou ? (
-        <p key={index} className="font-medium text-orange-600 ml-auto mr-2 bg-slate-300 h-max w-max rounded-xl p-2 pt-1 pb-1 mt-1 mb-2">
-        {message.text}
-      </p>
-      ):(
-      <div key={index} className="flex flex-col">
-         <p  className=" text-gray-400 ml-2 mr-2  h-max w-max  ">
-        sent by:{message.senderId}
-      </p>
-        <p  className="font-medium text-blue-600 ml-2 mr-2 bg-slate-300 h-max w-max rounded-xl p-2 pt-1 pb-1 mt-1 mb-2">
-        {message.text}
-      </p>
-     
-      </div>
-      ))
-        
-        
-      );
-    });
+    return(
+      <RenderRoomMessages roomMessages={roomMessages} openedRoomId={openedRoomId} id={id}/>
+    )
   };
   
 
@@ -343,7 +308,6 @@ function handleChatClick() {
   setOpenChat(true);
   setOpenRoom(false)
 }
-
 
   function handleRoomClick() {
     setOpenChat(false);
@@ -360,18 +324,7 @@ function handleChatClick() {
       <Profile name={name} numberKey={numberKey} />
     </div>
     <div className="flex justify-center gap-5 w-full  mt-3 ">
-    <div className="p-2 bg-orange-600 cursor-pointer rounded-xl  " onClick={() => {
-      setAddNewChat(true);
-      setAddNewRoom(false);
-    }}>
-      <p className="text-sm text-black font-medium mt-0">New Chat</p>
-    </div>
-    <div className="p-2 bg-orange-600 cursor-pointer rounded-xl " onClick={() => {
-      setAddNewRoom(true);
-      setAddNewChat(false)
-    }}>
-      <p className="text-sm text-black font-medium mt-0">New Room</p>
-    </div>
+      <Options setAddNewChat={setAddNewChat} setAddNewRoom={setAddNewRoom}/>
     </div>
    
      <div className="flex flex-col gap-5 flex-wrap w-full mt-5" >
@@ -417,7 +370,7 @@ function handleChatClick() {
         openedChatName={openedChatName}
         openedChatNumberKey={openedChatNumberKey}
         emptyChat={emptyChat}
-        renderMessages={renderMessages}
+        renderContactMessages={renderContactMessages}
         textToSend={textToSend}
         setTextToSend={setTextToSend}
         HandleSend={HandleSend}
@@ -437,7 +390,6 @@ function handleChatClick() {
     )}
   </div>
 )}
-
   </div>
 </div>
 
