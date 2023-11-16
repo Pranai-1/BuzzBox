@@ -1,5 +1,5 @@
 import ReactScrollToBottom from "react-scroll-to-bottom"
-import Online from "./Online"
+import Online from "../components/UserProfile/Online"
 import sendIcon from "../../public/send.png"
 export default function Handler(
     {

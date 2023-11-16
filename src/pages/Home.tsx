@@ -6,9 +6,12 @@ import { ContactType, Messages, OnlineUsers } from "./api/types";
 import Contacts from "@/Contacts/Contacts";
 import AddChat from "@/components/UserProfile/AddChat";
 import Profile from "../components/UserProfile/profile";
+
 import { Socket, io } from "socket.io-client";
 import axios from "axios";
+
 import { number } from "zod";
+
 import WelcomeChat from "@/components/Base/WelcomeChat";
 import Navbar from "@/components/Base/navbar";
 import AddRoom from "@/components/Rooms/AddRoom";
@@ -267,11 +270,11 @@ useEffect(() => {
 
 
 
-useEffect(()=>{
-  setTimeout(()=>{
-    setemptyChat(true)
-  },10)
- },[openedChatId])
+// useEffect(()=>{
+//   setTimeout(()=>{
+//     setemptyChat(true)
+//   },10)
+//  },[openedChatId])
 
 
 //  useEffect(()=>{
