@@ -2,8 +2,8 @@ import { GetServerSideProps } from "next";
 import { getServerAuthSession } from "./api/auth/authoptions";
 import { JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactNode, ReactPortal, SetStateAction, useEffect, useRef, useState } from "react";
 import getContacts from "./api/helpers/getContacts";
-import { ContactType, Messages, OnlineUsers } from "./api/types";
-import Contacts from "@/Contacts/Contacts";
+import { ContactType, ContactMessageType, OnlineUsers, RoomType, RoomMessage, RoomMessageType } from "./api/types";
+import Contacts from "@/components/Contacts";
 import AddChat from "@/components/UserProfile/AddChat";
 import Profile from "../components/UserProfile/profile";
 
@@ -22,9 +22,10 @@ import RoomMessages from "@/components/Rooms/RoomMessages";
 import Options from "@/components/UserProfile/Options";
 import RenderRoomMessages from "@/components/Rooms/RenderRoomMessages";
 import RenderContactMessages from "@/Contacts/RenderContactMessages";
-const ENDPOINT="https://buzzbox-socket.onrender.com/"
+import { Message } from "postcss";
+//const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
- //const ENDPOINT="http://localhost:4000/"
+ const ENDPOINT="http://localhost:4000/"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -62,7 +63,7 @@ export default function Home({
   numberKey: number;
   email: string;
   contacts: ContactType[];
-  rooms:any;
+  rooms:RoomType[];
   id:number
 }) {
 
@@ -80,8 +81,8 @@ export default function Home({
   const[userIdOfOpenedChat,setUserIdOfOpenedChat]=useState(0)
   const [textToSend, setTextToSend] = useState("");
   const[onlineUsers,setOnlineUsers]=useState<OnlineUsers[]>([])
-  const[messages,setMessages]=useState<Messages>([])
-  const[roomMessages,setRoomMessages]=useState<Messages>([])
+  const[messages,setMessages]=useState<ContactMessageType>({})
+  const[roomMessages,setRoomMessages]=useState<RoomMessageType>({})
 const[isOnline,setIsOnline]=useState<boolean>(false);
   const [socket, setSocket] = useState<Socket | null>(null);
  const[emptyChat,setemptyChat]=useState<boolean>(false)
@@ -101,7 +102,7 @@ const[isOnline,setIsOnline]=useState<boolean>(false);
   //this useEffect useEffect takes care of this scenario.But,if the user is offline then there will be no communication
   //Below Handlesend method will takes care of sending the messages to the socket server
   useEffect(() => {
-    const handleMessage = (res: string) => {
+    const handleMessage = (res: Message) => {
       setMessages((prev: any) => ({
         ...prev,
         [openedChatId]: [...(prev[openedChatId] || []), res],
@@ -149,8 +150,7 @@ const[isOnline,setIsOnline]=useState<boolean>(false);
   
 
 useEffect(() => {
-  const handleRoomMessage = (res: any) => {
-  console.log(res)
+  const handleRoomMessage = (res: RoomMessage) => {
     setRoomMessages((prev: any) => ({
       ...prev,
       [res.roomId]: [...(prev[res.roomId] || []), res],
@@ -166,7 +166,7 @@ useEffect(() => {
   } 
   
 }, [socket, openedRoomId, onlineUsers, setRoomMessages]);
-console.log(roomMessages)
+console.log(messages)
 
 const HandleRoomSend = async () => {
   if (textToSend.length !== 0 && openedRoomId!=0) {
@@ -194,7 +194,7 @@ const HandleRoomSend = async () => {
   useEffect(()=>{
     if (socket) {
       socket.emit("addNewUser", id);
-     socket.on("getOnlineUsers", (res: any) => {
+     socket.on("getOnlineUsers", (res: OnlineUsers[]) => {
         setOnlineUsers(res);
     })
   }
@@ -347,7 +347,7 @@ function handleChatClick() {
       {chatRooms.length>0 && (
          <div className="flex flex-col gap-5 flex-wrap w-full mt-10" >
            <p className="font-bold text-center text-red-700">Rooms:</p>
-           {chatRooms.map((room: any) => (
+           {chatRooms.map((room) => (
              <Rooms
                roomid={room.id}
                roomkey={room.key}

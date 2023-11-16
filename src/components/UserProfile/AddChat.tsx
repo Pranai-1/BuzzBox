@@ -1,6 +1,7 @@
 import getContacts from "@/pages/api/helpers/getContacts";
+import { ContactType } from "@/pages/api/types";
 import axios from "axios";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "react-toastify";
 
 export default function AddChat({
@@ -8,8 +9,8 @@ export default function AddChat({
   setChats,
   id
 }: {
-  setAddNewChat: any;
-  setChats: any;
+  setAddNewChat: Dispatch<SetStateAction<boolean>>;
+  setChats: Dispatch<SetStateAction<ContactType[]>>;
   id:number
 }) {
   const [contactName, setContactName] = useState("");

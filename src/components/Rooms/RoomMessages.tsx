@@ -1,6 +1,7 @@
 import ReactScrollToBottom from "react-scroll-to-bottom"
 import Online from "../UserProfile/Online"
 import sendIcon from "../../../public/send.png"
+import { Dispatch, SetStateAction } from "react";
 export default function Handler(
     {
       
@@ -19,14 +20,14 @@ export default function Handler(
         emptyRoom:boolean,
         renderRoomMessages:any,
         textToSend:string,
-        setTextToSend:any,
-        HandleSend:any
+        setTextToSend:Dispatch<SetStateAction<string>>,
+        HandleSend:()=>Promise<void>
 
     }
 ){
-    const handleKeyDown = (e:any) => {
+    const handleKeyDown = (e: { key: string; }) => {
         if (e.key === 'Enter') {
-          HandleSend("room");
+          HandleSend();
         }
       };
       

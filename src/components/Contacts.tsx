@@ -13,7 +13,7 @@ export default function Handler({
   id: number;
   name: string;
   numberKey: number;
-  handleClick:any
+  handleClick:()=>void;
   setOpenedChatName:Dispatch<SetStateAction<string>>;
   setOpenedChatNumberKey:Dispatch<SetStateAction<number>>;
   setOpenedChatId:Dispatch<SetStateAction<number>>
@@ -26,7 +26,7 @@ export default function Handler({
       setOpenedChatNumberKey(numberKey)
       setOpenedChatId(id)
     }}>
-      <div className="w-10 h-10 bg-slate-400 rounded-full mr-2 ml-3 px-2 py-1">
+      <div className="w-10 h-10 bg-slate-400 rounded-full mr-2 ml-3 px-2 py-1 flex items-center justify-center">
         <p className=" font-medium text-xl">{char}</p>
       </div>
       <p className="p-2 font-medium">{name}</p>

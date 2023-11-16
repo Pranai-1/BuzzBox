@@ -1,6 +1,7 @@
 import getContacts from "@/pages/api/helpers/getContacts";
+import { RoomType } from "@/pages/api/types";
 import axios from "axios";
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "react-toastify";
 
 export default function AddRoom({
@@ -8,8 +9,8 @@ export default function AddRoom({
   setChatRooms,
   id
 }: {
-  setAddNewRoom: any;
-  setChatRooms: any;
+  setAddNewRoom: Dispatch<SetStateAction<boolean>>;
+  setChatRooms: Dispatch<SetStateAction<RoomType[]>>;
   id:number
 }) {
   const [roomKey, setRoomKey] = useState(0);

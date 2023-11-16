@@ -1,3 +1,4 @@
+import { Dispatch, SetStateAction } from "react";
 
 
 
@@ -8,11 +9,11 @@ export default function Handler({
   setOpenedRoomKey,
   setOpenedRoomId,
 }: {
-  roomid: any;
-  roomkey: any;
-  handleClick():any
-  setOpenedRoomKey:any,
-  setOpenedRoomId:any
+  roomid: number;
+  roomkey: number;
+  handleClick:()=>void
+  setOpenedRoomKey:Dispatch<SetStateAction<number>>,
+  setOpenedRoomId:Dispatch<SetStateAction<number>>
  
 }) {
     

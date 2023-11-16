@@ -1,9 +1,10 @@
-export default function RenderRoomMessages({roomMessages,openedRoomId,id}:{roomMessages:any,openedRoomId:any,id:number}){
-    const currentChatMessages = roomMessages[openedRoomId] || [];
-   console.log(currentChatMessages)
-    return currentChatMessages.map((message: any, index: number) => {
+import { RoomMessage, RoomMessageType } from "@/pages/api/types";
+
+export default function RenderRoomMessages({roomMessages,openedRoomId,id}:{roomMessages:RoomMessageType,openedRoomId:number,id:number}){
+    const currentRoomMessages = roomMessages[openedRoomId] || [];
+   console.log(currentRoomMessages)
+    return currentRoomMessages.map((message: any, index: number) => {
       const isSentByYou = message.senderId === id;
-      const messageClass = isSentByYou ? '' : ''; 
       return (
       (isSentByYou ? (
         <p key={index} className="font-medium text-orange-600 ml-auto mr-2 bg-slate-300 h-max w-max rounded-xl p-2 pt-1 pb-1 mt-1 mb-2">

@@ -26,16 +26,21 @@ export type ContactType = {
   numberKey: number;
 };
 
+export type RoomType = {
+  id: number;
+ key: number;
+};
+
 export type ContactUserType = {
   contactId: number;
   userId: number;
 };
 
-export type MessageType = {
-  id: number;
-  content: string;
-  senderId: number;
-};
+// export type MessageType = {
+//   id: number;
+//   content: string;
+//   senderId: number;
+// };
 
 export type addContact = {
   name: string;
@@ -54,7 +59,19 @@ export type OnlineUsers={
   userId:number,
   socketId:string
 }
-
-export type Messages = {
-  [key: number]: string[]; 
+export type ContactMessage={
+  senderId:number,
+  receiverId:number,
+  text:string
+}
+export type ContactMessageType = {
+  [key: number]: ContactMessage[]; 
+}
+export type RoomMessage={
+  senderId:number,
+  roomId:number,
+  text:string
+}
+export type RoomMessageType = {
+  [key: number]: ContactMessage[]; 
 }

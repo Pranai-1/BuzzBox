@@ -13,7 +13,7 @@ export default function AnonChat({id,name}:{id:number,name:string}){
     const HandleSend=()=>{
 
     }
-    const handleKeyDown = (e:any) => {
+    const handleKeyDown = (e: { key: string }) => {
         if (e.key === 'Enter') {
           HandleSend();
         }

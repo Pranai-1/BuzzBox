@@ -1,4 +1,6 @@
-export default function Options({setAddNewChat,setAddNewRoom}:{setAddNewChat:any,setAddNewRoom:any}){
+import { Dispatch, SetStateAction } from "react";
+
+export default function Options({setAddNewChat,setAddNewRoom}:{setAddNewChat:Dispatch<SetStateAction<boolean>>,setAddNewRoom:Dispatch<SetStateAction<boolean>>}){
     return(
         <>
     <div className="p-2 bg-orange-600 cursor-pointer rounded-xl  " onClick={() => {
