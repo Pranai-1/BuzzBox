@@ -23,9 +23,9 @@ import Options from "@/components/UserProfile/Options";
 import RenderRoomMessages from "@/components/Rooms/RenderRoomMessages";
 import RenderContactMessages from "@/Contacts/RenderContactMessages";
 import { Message } from "postcss";
-//const ENDPOINT="https://buzzbox-socket.onrender.com/"
+const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
- const ENDPOINT="http://localhost:4000/"
+ //const ENDPOINT="http://localhost:4000/"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
