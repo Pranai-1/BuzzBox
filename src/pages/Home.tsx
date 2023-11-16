@@ -3,22 +3,22 @@ import { getServerAuthSession } from "./api/auth/authoptions";
 import { JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactNode, ReactPortal, SetStateAction, useEffect, useRef, useState } from "react";
 import getContacts from "./api/helpers/getContacts";
 import { ContactType, Messages, OnlineUsers } from "./api/types";
-import Contacts from "@/components/Contacts";
-import AddChat from "@/components/AddChat";
-import Profile from "../components/profile";
+import Contacts from "@/Contacts/Contacts";
+import AddChat from "@/components/UserProfile/AddChat";
+import Profile from "../components/UserProfile/profile";
 
 import { Socket, io } from "socket.io-client";
 import axios from "axios";
 import ReactScrollToBottom from "react-scroll-to-bottom"
 import { number } from "zod";
-import Online from "@/components/Online";
-import WelcomeChat from "@/components/WelcomeChat";
-import Navbar from "@/components/navbar";
-import AddRoom from "@/components/AddRoom";
+import Online from "@/Contacts/Online";
+import WelcomeChat from "@/components/Base/WelcomeChat";
+import Navbar from "@/components/Base/navbar";
+import AddRoom from "@/components/Rooms/AddRoom";
 import getRooms from "./api/helpers/getRooms";
-import Rooms from "@/components/Rooms";
-import ContactMessages from "@/components/ContactMessages";
-import RoomMessages from "@/components/RoomMessages";
+import Rooms from "@/components/Rooms/Rooms";
+import ContactMessages from "@/Contacts/ContactMessages";
+import RoomMessages from "@/components/Rooms/RoomMessages";
 const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
  //const ENDPOINT="http://localhost:4000/"
@@ -157,14 +157,9 @@ useEffect(() => {
   };
 
   if (socket) {
-    // const userOnline = onlineUsers.find((user) => user.userId === userIdOfOpenedChat);// Check if the user is online and should listen for messages
-    // if (userOnline) {
-      socket.on("getRoomMessage", handleRoomMessage);        // Add the event listener when the component mounts
-    //}
-    return () => {
-      // if (userOnline) {
-        socket.off("getRoomMessage", handleRoomMessage);// Remove the event listener when the component unmounts  
-     // }
+      socket.on("getRoomMessage", handleRoomMessage);        
+    return () => {  
+        socket.off("getRoomMessage", handleRoomMessage);
     };
   } 
   
@@ -178,8 +173,6 @@ const HandleRoomSend = async () => {
       roomId:openedRoomId,
       text:textToSend
     }
-    //const response=await axios.post("/api/messages",message)
- 
     setRoomMessages((prev: any)=>({
       ...prev,
       [openedRoomId]: [
@@ -236,11 +229,10 @@ useEffect(() => {
   getMessages();
 }, [userIdOfOpenedChat]);
 
-useEffect(() => {
-  setemptyRoom(false)
-}, [openedRoomId]);
+// useEffect(() => {
+//   setemptyRoom(false)
+// }, [openedRoomId]);
 
-// console.log(chats)
 
 useEffect(()=>{
   if(openedRoomId!=0){
@@ -251,16 +243,6 @@ useEffect(()=>{
     }
     socket.emit("AddUserToRoom",data)
   }
-  // const getUsersOfRoom=async()=>{
-  //  const response=await axios.get("/api/getUsersOfRoom",{
-  //   headers:{
-  //     roomId:openedRoomId
-  //   }
-  //  })
-  //  setUsersOfRoom(response.data.roomUsers)
-  // }
-
-  // getUsersOfRoom()
 }
 },[openedRoomId])
 
@@ -269,6 +251,7 @@ useEffect(() => {
   const helper = async () => {
     if (openedChatId !== 0) {
       try {
+        console.log(openedChatId)
         const response = await axios.get("/api/getUserId", {
           headers: {
             openedChatId,
@@ -285,17 +268,19 @@ useEffect(() => {
 
 
 
-// useEffect(()=>{
-//   setTimeout(()=>{
-//     setemptyChat(true)
-//   },10)
-//  },[openedChatId])
+useEffect(()=>{
+  setTimeout(()=>{
+    setemptyChat(true)
+  },10)
+ },[openedChatId])
+
 
 //  useEffect(()=>{
 //   setTimeout(()=>{
 //     setemptyRoom(true)
 //   },10)
 //  },[openedRoomId])
+
 
 
 useEffect(() => {
@@ -371,8 +356,6 @@ function handleChatClick() {
           <div className="flex">
         <div className="h-[657px] w-[400px] flex flex-col items-center p-2 pt-0 bg-gradient-to-b from-teal-400 to-purple-600
          overflow-y-auto overflow-x-hidden ">
-
-
     <div>
       <Profile name={name} numberKey={numberKey} />
     </div>
@@ -443,7 +426,7 @@ function handleChatClick() {
       <RoomMessages
       openedRoomId={openedRoomId}
       openedRoomKey={openedRoomKey}
-      emptyChat={emptyChat}
+      emptyRoom={emptyRoom}
       renderRoomMessages={renderRoomMessages}
       textToSend={textToSend}
       setTextToSend={setTextToSend}

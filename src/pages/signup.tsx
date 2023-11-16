@@ -1,7 +1,7 @@
 import { GetServerSideProps } from "next";
 import "react-toastify/dist/ReactToastify.css";
 import { getServerAuthSession } from "./api/auth/authoptions";
-import SignupForm from "@/components/SignupForm";
+import SignupForm from "@/components/User/SignupForm";
 
 export default function Signup() {
   return (

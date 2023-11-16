@@ -1,7 +1,7 @@
 import { NextApiRequest, NextApiResponse, GetServerSideProps } from "next"
 import auth from "./api/AnonymousUser/auth"
 import { useRouter } from "next/router"
-import Profile from "@/components/profile"
+import Profile from "@/components/UserProfile/profile"
 import sendIcon from "../../public/send.png"
 import { useState } from "react"
 

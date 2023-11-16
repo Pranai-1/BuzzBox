@@ -2,8 +2,10 @@ import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next/types";
 
 export default async function getUserId(req:NextApiRequest,res:NextApiResponse){
+    console.log("contactId")
     const prisma=new PrismaClient()
     const contactId=Number(req.headers["openedchatid"])
+    console.log(contactId)
     try{
     const contact=await prisma.contact.findFirst({
         where:{
@@ -20,7 +22,7 @@ export default async function getUserId(req:NextApiRequest,res:NextApiResponse){
 
         }
     }else{
-        res.status(404).json({messages:"failed",id:0})
+        res.status(405).json({messages:"failed",id:0})
     }
 }catch(error){
     console.log(error)

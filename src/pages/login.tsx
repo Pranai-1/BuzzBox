@@ -1,7 +1,7 @@
 
 import { GetServerSideProps } from "next";
 import { getServerAuthSession } from "./api/auth/authoptions";
-import LoginForm from "@/components/LoginForm";
+import LoginForm from "@/components/User/LoginForm";
 
 export default function Login() {
 

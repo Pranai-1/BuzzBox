@@ -1,4 +1,4 @@
-import Navbar from "@/components/navbar";
+import Navbar from "@/components/Base/navbar";
 import "@/styles/globals.css";
 import type { AppProps, AppType } from "next/app";
 import { ToastContainer, toast } from "react-toastify";
