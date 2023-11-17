@@ -67,7 +67,7 @@ export default function SignupForm() {
         numberKey,
       };
       try {
-        const response = await axios.post("/api/users/signup", body);
+        const response = await axios.post("/api/signup", body);
 
         toast.success("signup successful");
         router.push("/login");
