@@ -1,8 +1,9 @@
 import { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
-import { signupBody } from "../types";
+
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
+import { SignupBody } from "./types";
 
 const userInput = z.object({
   name: z.string().min(3).max(25),
@@ -19,7 +20,7 @@ export default async function Handler(
     const prisma = new PrismaClient();
     let body: any = req.body;
     let x = Number(body.numberKey);
-    let signupBody: signupBody = {
+    let signupBody: any = {
       name: body.name,
       email: body.email,
       password: body.password,
