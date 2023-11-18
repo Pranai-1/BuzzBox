@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import ReCAPTCHA from "react-google-recaptcha";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -15,7 +16,9 @@ export default function SignupForm() {
   const [numberKeyErrorMessage, setNumberKeyErrorMessage] =useState<string>("");
   const [emailErrorMessage, setEmailErrorMessage] = useState<string>("");
   const [passwordErrorMessage, setPasswordErrorMessage] = useState<string>("");
-  
+  const[captcha,setCaptcha]=useState<string|null>();
+  const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
+
   const handleChange = (value: any, type: string) => {
     switch (type) {
       case "Name":
@@ -59,7 +62,9 @@ export default function SignupForm() {
     }else{
       setNameErrorMessage("")
     }
-   
+    console.log(captcha)
+   if(!captcha)
+   return
       const body = {
         name,
         email,
@@ -141,6 +146,7 @@ export default function SignupForm() {
         {numberKeyErrorMessage.length>0 && (
           <p className="text-red-500 text-sm">{numberKeyErrorMessage}</p>
         )}
+          <ReCAPTCHA sitekey={RECAPTCHA_SITE_KEY!} onChange={setCaptcha} className="mx-1"/>
         <button
           className="p-2 font-medium text-xl bg-orange-500 rounded-xl text-white h-max pt-1 
        items-center  text-center"
