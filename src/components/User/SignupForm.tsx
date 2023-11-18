@@ -38,7 +38,7 @@ export default function SignupForm() {
 
   const HandleSubmit = async () => {
     if (name.length <3){
-      setNameErrorMessage("name must contain 3 characters");
+      setNameErrorMessage("Name must contain 3 characters");
       return
     } else{
       setNameErrorMessage("")
@@ -57,12 +57,12 @@ export default function SignupForm() {
       setPasswordErrorMessage("")
     }
     if (numberKey <100000 || numberKey>999999){
-      setNumberKeyErrorMessage("number key should be of 6 digits");
+      setNumberKeyErrorMessage("Number key should be of 6 digits");
       return
     }else{
       setNameErrorMessage("")
     }
-    console.log(captcha)
+
    if(!captcha)
    return
       const body = {
