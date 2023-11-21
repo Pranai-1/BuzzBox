@@ -4,8 +4,11 @@ import { useRouter } from "next/router"
 import Profile from "@/components/UserProfile/profile"
 import sendIcon from "../../public/send.png"
 import { useState } from "react"
+import Options from "@/components/UserProfile/Options"
 
 export default function AnonChat({id,name}:{id:number,name:string}){
+  const [addNewChat, setAddNewChat] = useState(false);
+  const [addNewRoom, setAddNewRoom] = useState(false);
     const[started,setStarted]=useState<boolean>(false)
     const router=useRouter()
     const numberKey=0
@@ -50,7 +53,11 @@ export default function AnonChat({id,name}:{id:number,name:string}){
        <div className="h-full w-full flex">
         <div className="h-[675px] w-[350px] flex flex-col items-center p-2 pt-0 bg-gradient-to-b from-teal-400 to-purple-600">
         <Profile name={name} numberKey={numberKey}/>
+        <div className="flex justify-center gap-5 w-full  mt-3 ">
+      <Options setAddNewChat={setAddNewChat} setAddNewRoom={setAddNewRoom}/>
+    </div>
         </div>
+       
      
         <div className="h-max w-full m-1  text-xl font-medium text-slate-300 flex flex-col justify-center items-center">
         <div className="bg-gray-600 p-2 h-max w-full text-center text-slate-300 font-medium rounded-lg">New Chat</div>
