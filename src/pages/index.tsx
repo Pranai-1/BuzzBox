@@ -23,7 +23,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   };
 };
 
-export default function Home() {
+export default function Index() {
 
   return (
     <div className="h-max w-full flex flex-col flex-wrap">
