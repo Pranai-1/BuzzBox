@@ -118,3 +118,22 @@ export const getServerAuthSession = (ctx: {
 }) => {
   return getServerSession(ctx.req, ctx.res, authOptions);
 };
+
+
+//  The `jwt` and `session` callbacks in NextAuth.js are internally managed by the NextAuth.js library, and they are automatically 
+//called at specific points in the authentication process. Developers do not need to manually invoke these callbacks; instead, 
+//NextAuth.js takes care of invoking them based on predefined events in the authentication flow.
+
+// Here's a summary:
+
+// 1. **`jwt` Callback:**
+//    - Automatically called by NextAuth.js during the creation or updating of a JSON Web Token (JWT).
+//    - Occurs, for example, when a user logs in, the JWT is refreshed, or there are other events that trigger a change in the JWT.
+
+// 2. **`session` Callback:**
+//    - Automatically called by NextAuth.js when a user session is created or updated.
+//    - Takes place after the `jwt` callback and allows you to synchronize the server-side session with the data present in the JWT.
+
+// Developers provide these callbacks as part of the NextAuth.js configuration, and the library internally invokes them as needed 
+//during the authentication process. This design allows for customization and extension of the authentication flow without requiring 
+//manual intervention.
