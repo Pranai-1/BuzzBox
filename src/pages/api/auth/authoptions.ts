@@ -137,3 +137,34 @@ export const getServerAuthSession = (ctx: {
 // Developers provide these callbacks as part of the NextAuth.js configuration, and the library internally invokes them as needed 
 //during the authentication process. This design allows for customization and extension of the authentication flow without requiring 
 //manual intervention.
+
+// UseSession:-
+// When you use `useSession()` in NextAuth.js on the client side, the library typically communicates with an API route that is 
+//automatically set up by NextAuth.js. This API route is responsible for handling authentication-related requests, such as checking the 
+//authentication status, fetching user information, and managing sessions.
+
+// The default API route provided by NextAuth.js is typically located at `/api/auth`. So, when you call `useSession()`, it sends 
+//requests to the `/api/auth/session` endpoint to retrieve the session information.This session is automatically created and managed 
+//by next-auth library
+
+// Here's a breakdown of the process:
+
+// 1. **Client-Side Component:**
+//    - You call `useSession()` in a Next.js component on the client side.
+
+// 2. **NextAuth.js API Route:**
+//    - Internally, `useSession()` makes requests to the `/api/auth/session` endpoint.
+
+// 3. **Authentication Status Check:**
+//    - The API route at `/api/auth/session` checks the authentication status based on the user's session.
+
+// 4. **Session Information:**
+//    - If the user is authenticated, the API route responds with information about the authenticated user, including properties such as `user.id`, `user.name`, etc.
+
+// 5. **Reactivity:**
+//    - The component re-renders based on the updated session information obtained from the `/api/auth/session` API route.
+
+// This communication with the API route is handled behind the scenes by NextAuth.js, and developers typically don't need to 
+//manually configure or interact with this API route. It's part of the default setup provided by NextAuth.js to manage 
+//authentication on the server side. If needed, you can customize the NextAuth.js configuration to adjust the API routes or 
+//other aspects of the authentication flow.
