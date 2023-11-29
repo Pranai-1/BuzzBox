@@ -168,3 +168,40 @@ export const getServerAuthSession = (ctx: {
 //manually configure or interact with this API route. It's part of the default setup provided by NextAuth.js to manage 
 //authentication on the server side. If needed, you can customize the NextAuth.js configuration to adjust the API routes or 
 //other aspects of the authentication flow.
+
+
+
+//The callbacks you've provided are part of the configuration for authentication using NextAuth.js. While your application might work 
+//without explicitly defining these callbacks, they serve important purposes in the authentication flow.
+
+//Let's break down the two callbacks:
+
+//1. **`jwt` callback:**
+//    - This callback is used to customize the JSON Web Token (JWT) that is created and returned to the client upon successful
+//authentication. In this case, it's setting the `email` property of the token based on the user's email. Customizing the JWT allows 
+//you to include additional information or modify existing claims.
+//    - For example, you might want to include user roles, permissions, or any other custom data in the JWT.
+
+// 2. **`session` callback:**
+//    - This callback is used to customize the session object that is created and persisted on the server. It runs each time a session 
+//is created or updated. In this case, it's updating the email in the `session.user` object based on the `token.email`.
+//    - Customizing the session object allows you to store additional user-related information on the server-side session.
+
+// While your application might work without these callbacks, not defining them means you are using the default behavior provided by 
+//NextAuth.js. By defining these callbacks, you gain the ability to customize and extend the authentication process to suit your 
+//specific needs.
+
+// Here are some common use cases for these callbacks:
+
+// - **Customizing Tokens and Sessions:** You might want to include additional user information or customize the token and session 
+//objects.
+
+// - **Enriching User Information:** If your authentication provider returns additional information about the user that is not included
+// in the default token or session, you can use these callbacks to enrich the user object.
+
+// - **Authorization:** You can use these callbacks to implement custom authorization logic based on the user's information.
+
+// - **Logging and Analytics:** You might want to log or track certain events related to authentication.
+
+// While the basic authentication flow may work without these callbacks, customizing them becomes crucial as your application 
+//requirements become more complex and you need more control over the authentication process.
