@@ -199,6 +199,8 @@ export const getServerAuthSession = (ctx: {
 // - **Enriching User Information:** If your authentication provider returns additional information about the user that is not included
 // in the default token or session, you can use these callbacks to enrich the user object.
 
+
+
 // - **Authorization:** You can use these callbacks to implement custom authorization logic based on the user's information.
 
 // - **Logging and Analytics:** You might want to log or track certain events related to authentication.
