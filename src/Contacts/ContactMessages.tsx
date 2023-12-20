@@ -32,8 +32,8 @@ export default function Handler(
       };
       
     return(
-        <div className="h-full w-full relative">
-        <div className="h-[50px] w-full bg-slate-300 flex justify-between rounded-lg">
+        <div className="h-full w-full relative ">
+        <div className="h-[50px] w-full bg-slate-300 flex justify-between rounded-lg mt-1">
           <Online status={isOnline} name={openedChatName}/>
           <p className="p-2 ml-2 text-red-500 font-medium">Key-{openedChatNumberKey}</p>
         </div>

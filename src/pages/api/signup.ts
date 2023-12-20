@@ -52,11 +52,10 @@ export default async function Handler(
           email: email,
           password: hashedPassword,
           numberKey: numberKey,
-          // contacts:{},
-          //messages:{}
+          contacts:{},      
         },
       });
-
+     console.log(result)
       res.status(201).json({ message: "User created successfully" });
     } catch (error) {
       console.error("Error creating user:", error);

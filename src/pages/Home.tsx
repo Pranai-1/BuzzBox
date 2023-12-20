@@ -29,6 +29,7 @@ const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
+
   if (!session) {
     return {
       redirect: {
@@ -37,7 +38,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       },
     };
   }
-  const contacts = await getContacts(session.user.numberKey);
+  const contacts = await getContacts(session.user.numberKey); //session also contains contacts,but that contacts doesn't have detail 
+  //information,it has a contactId and userId like this [ { contactId: 70, userId: 25 } ],but we want [ { id: 70, userId: 25, name: 'pranai', numberKey: 123456 } ] 
+  //like that.
+  //instead of sending session.user.numberKey ,we can send session.user.id as well but we need to change the function of getContacts
+  //we can even send session.user.contacts and get the data
+
   const rooms = await getRooms(session.user.numberKey);
   return {
     props: {
@@ -321,7 +327,7 @@ function handleChatClick() {
     <div className="h-full w-full ">
          
           <div className="flex">
-        <div className="h-[657px] w-[400px] flex flex-col items-center p-2 pt-0 bg-gradient-to-b from-teal-400 to-purple-600
+        <div className="h-[641px] w-[400px] flex flex-col items-center p-2 pt-0 bg-gradient-to-b from-teal-400 to-purple-600
          overflow-y-auto overflow-x-hidden ">
     <div>
       <Profile name={name} numberKey={numberKey} />
@@ -366,7 +372,7 @@ function handleChatClick() {
 ) : addNewRoom ? (
   <AddRoom setAddNewRoom={setAddNewRoom} setChatRooms={setChatRooms} id={id} />
 ) : (
-  <div className="w-full h-[657px]">
+  <div className="w-full h-[641px]">
     {openChat ? (
       <ContactMessages
         isOnline={isOnline}

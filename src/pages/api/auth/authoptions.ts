@@ -76,7 +76,7 @@ export const authOptions: NextAuthOptions = {
               numberKey: true,
             },
           });
-
+       console.log(user)
           if (!user) {
             return null;
           }
