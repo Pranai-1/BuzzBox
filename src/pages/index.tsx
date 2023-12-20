@@ -27,7 +27,7 @@ export default function Index() {
 
   return (
     <div className="h-max w-full flex flex-col flex-wrap">
-         <Navbar />
+       
     <div className="h-full md:h-[600px]  relative flex flex-col flex-wrap ">
  
       <Header/>

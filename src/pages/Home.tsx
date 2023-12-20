@@ -319,7 +319,7 @@ function handleChatClick() {
 
   return (
     <div className="h-full w-full ">
-          <Navbar />
+         
           <div className="flex">
         <div className="h-[657px] w-[400px] flex flex-col items-center p-2 pt-0 bg-gradient-to-b from-teal-400 to-purple-600
          overflow-y-auto overflow-x-hidden ">
