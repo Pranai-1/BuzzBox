@@ -72,6 +72,7 @@ export default function SignupForm() {
         password,
         numberKey,
       };
+      console.log(body)
       try {
         const response = await axios.post("/api/signup", body);
        success("signup successful");
