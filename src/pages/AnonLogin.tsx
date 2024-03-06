@@ -41,7 +41,7 @@ export default function AnonLogin(){
    const response=await axios.post("/api/AnonymousUser/login",body)
    console.log(response.data.name)
    toast.success("Success")
-   router.push("/AnonChat")
+   //router.push("/AnonChat")
    }catch(error){
     console.log(error)
     toast.error("Error Occured")
