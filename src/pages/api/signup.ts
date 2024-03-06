@@ -17,6 +17,7 @@ export default async function Handler(
   res: NextApiResponse,
 ) {
 if(req.method=="POST"){
+  console.log("prisma")
     const prisma = new PrismaClient();
     console.log(prisma)
     let body: any = req.body;
