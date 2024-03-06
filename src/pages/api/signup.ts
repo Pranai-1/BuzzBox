@@ -18,6 +18,7 @@ export default async function Handler(
 ) {
 
     const prisma = new PrismaClient();
+    console.log(prisma)
     let body: any = req.body;
     let x = Number(body.numberKey);
 
@@ -29,16 +30,18 @@ export default async function Handler(
     };
 
     const parsedInput = userInput.safeParse(signupBody);
-
+ 
     if (!parsedInput.success) {
       return res.status(422).json({ message: "Validation failed" });
     }
 
     const { email, name, password, numberKey } = parsedInput.data;
     const saltRounds = 10;
-
+     console.log("Hello")
     try {
+      console.log("hi")
       const user = await prisma.user.findFirst({ where: { email } });
+      console.log(user)
       if (user) {
         return res
           .status(409)
