@@ -16,7 +16,7 @@ export default async function Handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-
+if(req.method=="POST"){
     const prisma = new PrismaClient();
     console.log(prisma)
     let body: any = req.body;
@@ -72,6 +72,8 @@ export default async function Handler(
     } finally {
       await prisma.$disconnect();
     }
+  }
+  res.status(407).end()
   }
 
 
