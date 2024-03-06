@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useRouter } from "next/router";
 import { useCallback, useState } from "react";
-import ReCAPTCHA from "react-google-recaptcha";
+//import ReCAPTCHA from "react-google-recaptcha";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { failed, success } from "../../../public/toast";
@@ -153,7 +153,7 @@ export default function SignupForm() {
         {numberKeyErrorMessage.length>0 && (
           <p className="text-red-500 text-sm">{numberKeyErrorMessage}</p>
         )}
-          <ReCAPTCHA sitekey={RECAPTCHA_SITE_KEY!} onChange={setCaptcha} className="mx-1"/>
+          {/* <ReCAPTCHA sitekey={RECAPTCHA_SITE_KEY!} onChange={setCaptcha} className="mx-1"/> */}
         <button
           className="p-2 font-medium text-xl bg-orange-500 rounded-xl text-white h-max pt-1 
        items-center  text-center"
