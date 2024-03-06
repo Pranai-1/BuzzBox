@@ -3,8 +3,8 @@ import { success } from "../../public/toast"
 import Title from "./Title"
 import Options from "./UserProfile/Options"
 
-export default function MenuBar({setShowContacts,setShowProfile,setAddNewChat,setAddNewRoom,setDisableMenu,setShowChat,showContacts}:
-    {setShowContacts:any,setShowProfile:any,setAddNewChat:any,setAddNewRoom:any,setDisableMenu:any,setShowChats:any,showContacts:any}){
+export default function MenuBar({setShowContacts,setShowProfile,setAddNewChat,setAddNewRoom,setDisableMenu,showContacts}:
+    {setShowContacts:any,setShowProfile:any,setAddNewChat:any,setAddNewRoom:any,setDisableMenu:any,showContacts:any}){
     return(
         <>
       <div className={`${showContacts ? 'hidden md:flex flex-col flex-wrap h-full  md:bg-black' : ' h-full w-[150px] bg-black'} `} > 

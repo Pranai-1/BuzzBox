@@ -363,7 +363,6 @@ function handleChatClick() {
                 setAddNewChat={setAddNewChat}
                 setAddNewRoom={setAddNewRoom}
                 setDisableMenu={setDisableMenu}
-                setShowChats={setShowChats}
                 showContacts={showContacts}
             />
             <div className="w-[150px]  overflow-auto scrollbar-hide">
