@@ -64,8 +64,8 @@ export default function SignupForm() {
       setNameErrorMessage("")
     }
 
-   if(!captcha)
-   return
+  //  if(!captcha)
+  //  return
       const body = {
         name,
         email,
