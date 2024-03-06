@@ -3,7 +3,6 @@ import { z } from "zod";
 
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
-import { SignupBody } from "./types";
 
 const userInput = z.object({
   name: z.string().min(3).max(25),
@@ -12,14 +11,14 @@ const userInput = z.object({
   numberKey: z.number().min(100000).max(999999),
 });
 
+const prisma = new PrismaClient();
+
 export default async function Handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-if(req.method=="POST"){
-  console.log("prisma")
-    const prisma = new PrismaClient();
-    console.log(prisma)
+
+ 
     let body: any = req.body;
     let x = Number(body.numberKey);
 
@@ -74,7 +73,5 @@ if(req.method=="POST"){
       await prisma.$disconnect();
     }
   }
-  res.status(407).end()
-  }
-
+ 
 
