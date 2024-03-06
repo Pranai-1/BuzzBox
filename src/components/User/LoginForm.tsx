@@ -3,6 +3,7 @@ import { useRouter } from "next/router";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import { z } from "zod";
+import { failed, success } from "../../../public/toast";
 
 export default function LoginForm(){
 
@@ -41,8 +42,6 @@ export default function LoginForm(){
         }else{
           setPasswordErrorMessage("")
         }
-    
-       
           const body = {
             email,
             password,
@@ -62,11 +61,11 @@ export default function LoginForm(){
               redirect: false,
             });
             if (response?.status == 200) {
-              router.push("/Home");
-              toast.success("Login success");
+              router.push("/");
+              success("Login success");
             
             } else {
-              toast.error("Login failed");
+             failed("Login failed");
             }
           
         }

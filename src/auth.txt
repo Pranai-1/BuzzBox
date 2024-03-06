@@ -1,0 +1,122 @@
+step 1:-    create a auth folder inside api folder and create a [...nextauth].ts file
+            The [...nextauth].ts filename pattern is a special feature of Next.js routing called catch-all routes. 
+            In Next.js, square brackets [] are used to denote dynamic routes, and ... is used to specify a catch-all route.
+            This means that all the authentication related logic is handles by this route
+
+step 2:-    import NextAuth from "next-auth";
+            import { authOptions } from "./authoptions";
+            export default NextAuth(authOptions);
+            NextAuth is a library in the Next.js ecosystem that provides authentication and authorization functionality for Next.js 
+            applications. 
+            It simplifies the process of implementing various authentication strategies, such as email/password authentication, 
+            social authentication (e.g., with Google, Facebook, GitHub), and more.
+            When you pass it an authOptions object, you're initializing NextAuth with the specified configuration options.
+
+step 3:-   In authoptions define providers,providers array is used to define authentication providers, and each provider is 
+           represented by a function that takes an object as an argument.Below is what it takes to create a session
+
+           export const authoptions: NextAuthOptions = {
+                    providers: [
+                        GitHubProvider({
+                            clientId: process.env.GITHUB_ID as string,
+                            clientSecret: process.env.GITHUB_SECRET as string
+                        }),
+                        CredentialsProvider({
+                        credentials: {
+                            email: { label: "Email", type: "text" },
+                            password: { label: "Password", type: "password" },
+                            numberKey:{label: "numberKey", type: "number" }
+                        },
+                        async authorize(credentials) {
+                            const { email, password } = credentials as {
+                            email: string;
+                            password: string;
+                            };
+                            if(!(email=="reddy" && password=="123")){
+                            return null
+                            }
+                            const session: any = {
+                            email: credentials?.email,
+                            id:1,
+                            name:"pranai",
+                            };
+                            return session;//dont forget to return a session
+                        },
+                        }),
+                    ],
+                    };
+            Session by default can store properties such as name,email,image,id but if you want to extend the session then you need 
+            to create a token and a callback object 
+
+step 4:-    Tokens are created by declaring a session strategy as jwt and a secret inside authoptions object independently
+step 5:-    Extending tokens to extend session,this can be done by firstly extending the default session with a interface
+            and providing callbacks object with functions
+
+            declare module "next-auth" {
+            interface Session extends DefaultSession {
+                user: {
+                numberKey: number;
+                } & DefaultSession["user"];//this the default session that nextjs provides and we are extending it
+            }
+            interface User {
+                numberKey: number;
+            }//this is the type for the use in 68 line
+            }
+
+
+            callbacks: {
+                    async jwt({token, user}) {
+                    if (user) {
+                        token.email = user.email;
+                        token.numberKey = user.numberKey;
+                    }
+                    return token;
+                    },
+                    async session({ session, token }) {
+                        if (session.user) {
+                            session.user.email = token.email as string;
+                            session.user.numberKey = token.numberKey as number;
+                        }
+                        return session;
+                        }
+                },
+                
+1. **`jwt` Callback:**
+    - Automatically called by NextAuth.js during the creation or updating of a JSON Web Token (JWT).
+   - Occurs, for example, when a user logs in, the JWT is refreshed, or there are other events that trigger a change in the JWT.
+
+2. **`session` Callback:**
+   - Automatically called by NextAuth.js when a user session is created or updated.
+    - Takes place after the `jwt` callback and allows you to synchronize the server-side session with the data present in the JWT.
+ 
+    Developers provide these callbacks as part of the NextAuth.js configuration, and the library internally invokes them as needed 
+    during the authentication process. This design allows for customization and extension of the authentication flow without requiring 
+    manual intervention.
+
+
+1. **Client-Side Component:**
+   - You call `useSession()` in a Next.js component on the client side.
+
+2. **NextAuth.js API Route:**
+   - Internally, `useSession()` makes requests to the `/api/auth/session` endpoint.
+
+3. **Authentication Status Check:**
+   - The API route at `/api/auth/session` checks the authentication status based on the user's session.
+
+4. **Session Information:**
+   - If the user is authenticated, the API route responds with information about the authenticated user, including properties such as `user.id`, `user.name`, etc.
+
+5. **Reactivity:**
+   - The component re-renders based on the updated session information obtained from the `/api/auth/session` API route.
+
+    While your application might work without these callbacks, not defining them means you are using the default behavior provided by 
+    NextAuth.js. By defining these callbacks, you gain the ability to customize and extend the authentication process to suit your 
+    specific needs.
+
+    Here are some common use cases for these callbacks:
+
+    - **Customizing Tokens and Sessions:** You might want to include additional user information or customize the token and session 
+    objects.
+
+    - **Enriching User Information:** If your authentication provider returns additional information about the user that is not included
+    in the default token or session, you can use these callbacks to enrich the user object.

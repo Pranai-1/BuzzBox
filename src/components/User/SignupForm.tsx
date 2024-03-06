@@ -1,9 +1,10 @@
 import axios from "axios";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import ReCAPTCHA from "react-google-recaptcha";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { failed, success } from "../../../public/toast";
 
 
 export default function SignupForm() {
@@ -19,7 +20,7 @@ export default function SignupForm() {
   const[captcha,setCaptcha]=useState<string|null>();
   const RECAPTCHA_SITE_KEY = process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY;
 
-  const handleChange = (value: any, type: string) => {
+  const handleChange = useCallback((value: any, type: string) => {
     switch (type) {
       case "Name":
         setName(value);
@@ -34,9 +35,9 @@ export default function SignupForm() {
         setNumberKey(value);
         break;
     }
-  };
+  },[])
 
-  const HandleSubmit = async () => {
+  const HandleSubmit = useCallback(async () => {
     if (name.length <3){
       setNameErrorMessage("Name must contain 3 characters");
       return
@@ -73,14 +74,20 @@ export default function SignupForm() {
       };
       try {
         const response = await axios.post("/api/signup", body);
-
-        toast.success("signup successful");
+       success("signup successful");
         router.push("/login");
-      } catch {
-        toast.error("signup failed");
+      } catch (error:any) {
+        if (error.response && error.response.data && error.response.data.error) {
+          console.log("Server error:", error.response.data.error);
+          failed( error.response.data.error);
+        } else {
+          console.error("Error:", error);
+          failed("signup failed");
+        }
       }
    
-  };
+  },[name,email,password,captcha,numberKey])
+
   return (
     <div className=" h-[707px] w-full bg-black absolute flex justify-center items-center">
       <div className="bg-white  w-[360px] md:w-[520px] flex flex-col gap-2 mb-5 p-5 rounded-xl justify-center">

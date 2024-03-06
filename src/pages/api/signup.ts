@@ -16,10 +16,11 @@ export default async function Handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  if (req.method === "POST") {
+
     const prisma = new PrismaClient();
     let body: any = req.body;
     let x = Number(body.numberKey);
+
     let signupBody: any = {
       name: body.name,
       email: body.email,
@@ -37,15 +38,20 @@ export default async function Handler(
     const saltRounds = 10;
 
     try {
-      const hashedPassword = await bcrypt.hash(password, saltRounds);
-
       const user = await prisma.user.findFirst({ where: { email } });
-
       if (user) {
         return res
           .status(409)
-          .json({ message: "User with this email already exists" });
+          .json({ error: "email already exists" });
       }
+      const isPresent=await prisma.user.findFirst({where:{numberKey}})
+      if(isPresent)
+      return res
+      .status(406)
+      .json({ error: "numberKey already exists" });
+
+
+      const hashedPassword = await bcrypt.hash(password, saltRounds);
       const result = await prisma.user.create({
         data: {
           name: name,
@@ -64,5 +70,5 @@ export default async function Handler(
       await prisma.$disconnect();
     }
   }
-  res.status(407).end();
-}
+
+

@@ -3,15 +3,18 @@ import { ContactType } from "@/pages/api/types";
 import axios from "axios";
 import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "react-toastify";
+import { failed, success } from "../../../public/toast";
 
 export default function AddChat({
   setAddNewChat,
   setChats,
-  id
+  id,
+  setDisableMenu
 }: {
   setAddNewChat: Dispatch<SetStateAction<boolean>>;
   setChats: Dispatch<SetStateAction<ContactType[]>>;
-  id:number
+  id:number;
+  setDisableMenu:any
 }) {
   const [contactName, setContactName] = useState("");
   const [contactNumberKey, setContactNumberKey] = useState(0);
@@ -40,10 +43,10 @@ export default function AddChat({
         const response= await axios.post("/api/contacts/addContacts", body); 
         setAddNewChat(false)
          setChats(response.data.chats);
-          toast.success("Chat added");
+         success("Chat added");
       } catch (error) {
         console.log(error);
-        toast.error("Error occured");
+        failed("Error occured");
       }
    
   }
@@ -56,9 +59,12 @@ export default function AddChat({
   }
 
   return (
-    <div className="h-max w-[300px] bg-slate-200 m-[100px] p-5 rounded-xl relative">
+    <div className="h-max w-max md:w-[540px] bg-slate-200 p-5 rounded-xl relative flex flex-col flex-wrap m-auto">
       <button
-        onClick={() => setAddNewChat(false)}
+        onClick={() => {
+          setAddNewChat(false)
+          setDisableMenu(false)
+        }}
         className="absolute top-2 right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center cursor-pointer"
       >
         X
@@ -94,7 +100,7 @@ export default function AddChat({
       )}
       <button
         className="p-2 font-normal text-xl bg-orange-500 rounded-xl text-white h-max pt-1 
-               items-center  text-center mt-1"
+               items-center  text-center mt-1 w-max mx-auto"
         onClick={HandleSubmit}
       >
         Add Chat

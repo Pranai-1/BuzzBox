@@ -18,7 +18,7 @@ export default function Handler({
 }) {
     
   return (
-    <div className="h-[50px] bg-slate-200 w-full cursor-pointer rounded-lg flex items-center p-2" onClick={()=>{
+    <div className="h-[50px] w-full cursor-pointer rounded-lg flex flex-wrap items-center justify-center md:p-2 text-white " onClick={()=>{
         handleClick()
         setOpenedRoomId(roomid)
         setOpenedRoomKey(roomkey)

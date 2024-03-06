@@ -1,19 +1,14 @@
-import { GetServerSideProps, NextApiRequest } from "next";
+import { GetServerSideProps } from "next";
 import { getServerAuthSession } from "./api/auth/authoptions";
-import { JSXElementConstructor, PromiseLikeOfReactNode, ReactElement, ReactNode, ReactPortal, SetStateAction, useEffect, useRef, useState } from "react";
+import {  useEffect, useState } from "react";
 import getContacts from "./api/helpers/getContacts";
 import { ContactType, ContactMessageType, OnlineUsers, RoomType, RoomMessage, RoomMessageType } from "./api/types";
 import Contacts from "@/components/Contacts";
 import AddChat from "@/components/UserProfile/AddChat";
 import Profile from "../components/UserProfile/profile";
-
 import { Socket, io } from "socket.io-client";
 import axios from "axios";
-
-import { number } from "zod";
-
 import WelcomeChat from "@/components/Base/WelcomeChat";
-import Navbar from "@/components/Base/navbar";
 import AddRoom from "@/components/Rooms/AddRoom";
 import getRooms from "./api/helpers/getRooms";
 import Rooms from "@/components/Rooms/Rooms";
@@ -23,6 +18,8 @@ import Options from "@/components/UserProfile/Options";
 import RenderRoomMessages from "@/components/Rooms/RenderRoomMessages";
 import RenderContactMessages from "@/Contacts/RenderContactMessages";
 import { Message } from "postcss";
+import Title from "@/components/Title";
+import MenuBar from "@/components/MenuBar";
 const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
  //const ENDPOINT="http://localhost:4000/"
@@ -60,14 +57,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 export default function Home({
   name,
   numberKey,
-  email,
   contacts,
   rooms,
   id
 }: {
   name: string;
   numberKey: number;
-  email: string;
   contacts: ContactType[];
   rooms:RoomType[];
   id:number
@@ -93,6 +88,10 @@ const[isOnline,setIsOnline]=useState<boolean>(false);
   const [socket, setSocket] = useState<Socket | null>(null);
  const[emptyChat,setemptyChat]=useState<boolean>(false)
  const[emptyRoom,setemptyRoom]=useState<boolean>(false)
+ const[showContacts,setShowContacts]=useState<boolean>(false)
+ const[showProfile,setShowProfile]=useState<boolean>(false)
+ const[disableMenu,setDisableMenu]=useState<boolean>(false)
+ const[showChats,setShowChats]=useState<boolean>(false)
 
 //This useEffect will setup a socket connection 
   useEffect(() => {
@@ -322,12 +321,132 @@ function handleChatClick() {
     setOpenChat(false);
     setOpenRoom(true)
   }
-
+ useEffect(() => {
+    const style = document.createElement('style');
+    style.innerHTML = `
+      .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+      }
+      
+      .scrollbar-hide {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+      }
+    `;
+    document.head.appendChild(style);
+    
+  }, []);
   return (
-    <div className="h-full w-full ">
-         
+    <div className="flex min-h-screen bg-gray-900 relative ">
+        <div className="md:hidden text-white text-xl font-bold fixed z-10 bottom-5 ring-2 ring-gray-400 rounded-lg p-2 flex left-10 cursor-pointer bg-red-400"
+            onClick={()=>{
+              if(showContacts){
+                setShowContacts(false)
+                setDisableMenu(false)
+              }else{
+                setShowContacts(true)
+                // setDisableMenu(true)
+              }
+          
+            }}>
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" className="w-6 h-6">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+            </svg>
+
+    </div>
+    <div className={`${disableMenu ? "hidden md:flex w-[140px] md:w-[29%] border-r border-gray-700 relative overflow-auto " 
+    : "md:w-[29%] w-[150px] border-r border-gray-700 relative md:flex h-[100vh] overflow-auto scrollbar-hide pr-36 md:pr-0"}`}>
+
+            <MenuBar
+                setShowContacts={setShowContacts}
+                setShowProfile={setShowProfile}
+                setAddNewChat={setAddNewChat}
+                setAddNewRoom={setAddNewRoom}
+                setDisableMenu={setDisableMenu}
+                setShowChats={setShowChats}
+                showContacts={showContacts}
+            />
+            <div className="w-[150px]  overflow-auto scrollbar-hide">
+            {showContacts && (
+                <div className="grid gap-5 flex-wrap mt-14 m-2 w-full max-h-[85vh] " >
+                    {chats.map((contact) => (
+                        <Contacts
+                            key={contact.id} 
+                            id={contact.id}
+                            name={contact.name}
+                            numberKey={contact.numberKey}
+                            handleClick={() => handleChatClick()}
+                            setOpenedChatName={setOpenedChatName}
+                            setOpenedChatNumberKey={setOpenedChatNumberKey}
+                            setOpenedChatId={setOpenedChatId}
+                        />
+                    ))}
+                </div>
+                
+            )}
+            {showContacts &&chatRooms.length>0 && (
+         <div className="flex flex-col gap-5 flex-wrap w-full mt-10" >
+           <p className="font-bold text-center text-red-700">Rooms:</p>
+           {chatRooms.map((room) => (
+             <Rooms
+               roomid={room.id}
+               roomkey={room.key}
+               handleClick={() => handleRoomClick()}
+               setOpenedRoomKey={setOpenedRoomKey}
+              setOpenedRoomId={setOpenedRoomId}
+               />
+           ))}
+           </div>
+      )}
+            </div> 
+    </div>
+
+     {showProfile ?(
+          <>
+              <Profile name={name} numberKey={numberKey} setShowProfile={setShowProfile} setDisableMenu={setDisableMenu}/>
+              </>
+            ) :addNewChat ? (
+              <AddChat setAddNewChat={setAddNewChat} setChats={setChats} id={id} setDisableMenu={setDisableMenu}/>
+            ) : addNewRoom ? (
+              <AddRoom setAddNewRoom={setAddNewRoom} setChatRooms={setChatRooms} id={id} setDisableMenu={setDisableMenu}/>
+              ) :openChat ? (
+                    <ContactMessages
+                      isOnline={isOnline}
+                      openedChatName={openedChatName}
+                      openedChatNumberKey={openedChatNumberKey}
+                      emptyChat={emptyChat}
+                      renderContactMessages={renderContactMessages}
+                      textToSend={textToSend}
+                      setTextToSend={setTextToSend}
+                      HandleSend={HandleSend}
+                    />
+                  ): openRoom ? (
+                    <RoomMessages
+                    openedRoomId={openedRoomId}
+                    openedRoomKey={openedRoomKey}
+                    emptyRoom={emptyRoom}
+                    renderRoomMessages={renderRoomMessages}
+                    textToSend={textToSend}
+                    setTextToSend={setTextToSend}
+                    HandleSend={HandleRoomSend}
+                  />
+            ) :(
+              <>
+              <WelcomeChat name={name} />
+        </>
+     )}
+  </div>
+
+  );
+}
+{/* <div className="flex fixed bottom-5 h-10 aspect-square lg:hidden justify-center items-center bg-gray-400 left-5 
+       rounded-lg text-gray-200 font-bold text-2xl">
+         &#8801;
+     </div> */}
+
+{/* <div className="h-full w-screen ">
           <div className="flex">
-        <div className="h-[641px] w-[400px] flex flex-col items-center p-2 pt-0 bg-gradient-to-b from-teal-400 to-purple-600
+        <div className="h-[645px] w-[400px] flex flex-col items-center p-2 pt-0 bg-gradient-to-b from-teal-400 to-purple-600
          overflow-y-auto overflow-x-hidden ">
     <div>
       <Profile name={name} numberKey={numberKey} />
@@ -400,9 +519,4 @@ function handleChatClick() {
   </div>
 )}
   </div>
-</div>
-
-  );
-}
-
-
+</div> */}

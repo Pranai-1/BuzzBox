@@ -32,33 +32,33 @@ export default function Handler(
       };
       
     return(
-        <div className="h-full w-full relative ">
-        <div className="h-[50px] w-full bg-slate-300 flex justify-between rounded-lg mt-1">
+        <div className="h-screen w-full relative ">
+        <div className="h-[50px] w-full ring-2 flex justify-between rounded-lg mt-1">
           <Online status={isOnline} name={openedChatName}/>
           <p className="p-2 ml-2 text-red-500 font-medium">Key-{openedChatNumberKey}</p>
         </div>
 
         {emptyChat ? (
-          <div className="h-[550px] w-full bg-slate-100 flex justify-center items-center">
+          <div className="h-[90vh] w-full bg-slate-100 flex justify-center items-center">
             <p>Loading Chats ......</p>
           </div>
         ) : (
           <ReactScrollToBottom>
-            <div className="h-[500px] w-full flex flex-col  rounded-xl" style={{ maxHeight: '550px' }}>
+            <div className="h-[90vh] w-full flex flex-col  rounded-xl" style={{ maxHeight: '550px' }}>
               {renderContactMessages()}
             </div>
           </ReactScrollToBottom>
         )}
 
-        <div className="h-[50px] w-full bg-slate-300 rounded absolute bottom-0 flex justify-center items-center">
-          <label className="bg-white h-[40px] w-2/3 rounded-lg p-2 flex items-center justify-between font-medium">
-            <input
-              className="h-[40px] w-full p-2 border-orange-500"
-              title="message"
-              placeholder="Enter your message here"
-              value={textToSend}
-              onChange={(e) =>setTextToSend(e.target.value) }
-              onKeyDown={handleKeyDown}
+<div className="h-[50px] w-full  rounded absolute bottom-4  flex justify-center items-center p-2 border-t-4 border-gray-200">
+          <label className="bg-white h-[40px] w-2/3 rounded-lg  flex items-center justify-between font-medium  cursor-pointer">
+          <input
+            className="h-[40px] w-full p-2 ring-2 ring-red-600 rounded-lg"
+            title="message"
+            placeholder="Enter your message here"
+            value={textToSend}
+            onChange={(e) =>setTextToSend(e.target.value) }
+            onKeyDown={handleKeyDown}
             />
             <div onClick={HandleSend}>
               <img src={sendIcon.src} className="h-[40px] cursor-pointer" alt="Send" />
@@ -67,4 +67,4 @@ export default function Handler(
         </div>
       </div>
     )
-}
+} {/*  */}

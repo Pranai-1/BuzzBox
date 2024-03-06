@@ -20,16 +20,16 @@ export default function Handler({
 }) {
   const char=name.charAt(0).toLocaleUpperCase()
   return (
-    <div className="h-[70px] bg-slate-200 w-full cursor-pointer rounded-lg flex items-center p-2" onClick={()=>{
+    <div className="h-[50px] w-full cursor-pointer rounded-lg flex flex-wrap items-center justify-center md:p-2 text-white  md " onClick={()=>{
       handleClick()
       setOpenedChatName(name)
       setOpenedChatNumberKey(numberKey)
       setOpenedChatId(id)
     }}>
-      <div className="w-10 h-10 bg-slate-400 rounded-full mr-2 ml-3 px-2 py-1 flex items-center justify-center">
-        <p className=" font-medium text-xl">{char}</p>
-      </div>
-      <p className="p-2 font-medium">{name}</p>
+      {/* <div className="bg-slate-400 rounded-full  lg:flex items-center justify-center hidden  md:hidden ">
+        <p className=" font-medium md:text-xl px-3 py-1">{char}</p>
+      </div> */}
+      <p className="p-2 font-medium flex flex-wrap">{name}</p>
     </div>
   );
 }

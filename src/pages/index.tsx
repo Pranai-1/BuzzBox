@@ -9,29 +9,25 @@ import Navbar from "@/components/Base/navbar";
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
+  let email:string=""
 console.log(session)
-  if (session) {
-    return {
-      redirect: {
-        destination: "/Home",
-        permanent: false,
-      },
-    };
+  if(session){
+    email=session.user.email
   }
   return {
-    props: {},
+    props: {email},
   };
 };
 
-export default function Index() {
+export default function Index({email}:{email:string }) {
 
   return (
     <div className="h-max w-full flex flex-col flex-wrap">
-       
+        <Navbar/>
     <div className="h-full md:h-[600px]  relative flex flex-col flex-wrap ">
- 
+  
       <Header/>
-      <IndexBody/>
+      <IndexBody email={email}/>
       <Footer/>
     </div>
     
