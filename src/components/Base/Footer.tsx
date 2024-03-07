@@ -1,6 +1,6 @@
 function Footer() {
   return (
-    <div className="h-max w-full bg-gray-800 text-white py-8 p-3 absolute top-[710px] md:top-[660px]">
+    <div className="h-max w-full bg-gray-800 text-white py-8 p-3 ">
       <div className="container mx-auto">
         <div className="flex flex-col md:flex-row justify-between items-center">
           <div className="text-center md:text-left mb-4 md:mb-0 ml-2">

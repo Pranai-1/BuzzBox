@@ -295,6 +295,7 @@ function handleChatClick() {
            <p className="font-bold text-center text-red-700">Rooms:</p>
            {chatRooms.map((room) => (
              <Rooms
+             key={room.id}
                roomid={room.id}
                roomkey={room.key}
                handleClick={() => handleRoomClick()}

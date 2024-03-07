@@ -21,26 +21,20 @@ export default function IndexBody({email}:{email:string}){
       </>
       ):(
        <>
-        <button
-        className="  bg-blue-700 rounded-xl md:p-3 font-medium text-white md:text-xl text-base  p-1 px-2"
-        onClick={() => router.push("/AnonLogin")}>
-   Anonymous Chat
-   </button> 
-   <button
-        className="bg-orange-600 rounded-xl md:p-3 font-medium text-white md:text-xl text-base  p-1 px-2"
-        onClick={() => router.push("/signup")}>
-    Create Account
-   </button> 
+      <button
+            className="bg-orange-600 rounded-xl md:p-3 font-medium text-white md:text-xl text-base  p-1 px-2"
+            onClick={() => router.push("/signup")}>
+        Create Account
+      </button> 
    </>
     
       )}
       </div>
       
    <div className="mt-3  md:bg-none md:mt-28 flex flex-wrap flex-col justify-center items-center">
-    <p className="text-blue-800 text-lg px-2 bg-purple-400 font-medium rounded-xl w-max md:mt-2 mt-6">Reach people like you</p>
-    <p className="text-slate-200 md:text-2xl  font-medium rounded-xl mt-3 text-center text-xl"> Anonymous Chat, Meet new people</p>
-    <p className=" text-gray-300 md:text-lg text-base  font-medium rounded-xl mt-3 text-center">Find female and male strangers worldwide, the new modern texting
-     alternative. </p>
+    <p className="text-blue-800 text-lg px-2 bg-purple-400 font-medium rounded-xl w-max md:mt-2 mt-6">We Care Your Privacy</p>
+    <p className="text-slate-200 md:text-2xl  font-medium rounded-xl mt-3 text-center text-xl"> We at BuzzBox aim to Empower connections through conversation</p>
+    <p className=" text-gray-300 md:text-lg text-base  font-medium rounded-xl mt-3 text-center">Spam and Bot free chatrooms </p>
     <p className="text-gray-300 md:text-lg text-base font-medium rounded-xl text-center">Connect with real people, enjoy ad free chats, and build 
     genuine relationships.</p>
    </div>   

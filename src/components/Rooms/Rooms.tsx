@@ -8,12 +8,14 @@ export default function Handler({
   handleClick,
   setOpenedRoomKey,
   setOpenedRoomId,
+
 }: {
   roomid: number;
   roomkey: number;
   handleClick:()=>void
   setOpenedRoomKey:Dispatch<SetStateAction<number>>,
-  setOpenedRoomId:Dispatch<SetStateAction<number>>
+  setOpenedRoomId:Dispatch<SetStateAction<number>>,
+
  
 }) {
     
@@ -25,7 +27,7 @@ export default function Handler({
 
     }}>
       
-      <p className="p-2 font-medium">Key: {roomkey}</p>
+      <p className="p-2 font-medium" >Key: {roomkey}</p>
     </div>
   );
 }
