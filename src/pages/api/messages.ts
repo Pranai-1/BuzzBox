@@ -20,22 +20,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(500).json({ response: "error", error: error});
     }
   }
-  // }else{  //didn't use db for room messages,so not needed
-  //   try {
-  //     for(const obj of message.receiverId){
-  //     const createdMessage = await prisma.messages.create({
-  //       data: {
-  //         senderId: message.senderId,
-  //         receiverId: obj.receiverId,
-  //         text: message.text,
-  //       },
-  //     });
-  //   }
-  //     res.status(200).json({ response: "success"});
-  //   } catch (error) {
-  //     res.status(500).json({ response: "error", error: error});
-  //   }
-  // }
   } else if (req.method === "GET") {
     try {
       const senderId = Number(req.headers.senderid);

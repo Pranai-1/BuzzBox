@@ -14,7 +14,7 @@ export default function Profile({
 }) {
   const[status,setStatus]=useState<string>("")
   return (
-    <div className="w-max m-auto rounded-xl text-white flex flex-wrap items-center shadow-lg justify-center">
+    <div className="w-max h-[600px] mx-auto rounded-xl text-white flex flex-wrap items-center shadow-lg justify-center">
     <div className="w-max h-max flex flex-col bg-gray-200 rounded-lg p-3 gap-4">
     <label className="text-gray-600 font-bold flex items-center gap-2">
       Username:

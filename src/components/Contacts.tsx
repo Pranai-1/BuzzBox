@@ -8,7 +8,7 @@ export default function Handler({
   handleClick,
   setOpenedChatName,
   setOpenedChatNumberKey,
-  setOpenedChatId
+  setOpenedChatId,
 }: {
   id: number;
   name: string;
