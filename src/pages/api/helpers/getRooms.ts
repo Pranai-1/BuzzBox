@@ -15,12 +15,12 @@ export default async function handler(numberKey: number) {
 
       if (roomsOfuser) {
         for (const obj of roomsOfuser) {
-          const contacts = await prisma.room.findFirst({
+          const keys = await prisma.room.findFirst({
             where: {
               id: obj.roomId,
             },
           });
-          arr.push(contacts);
+          arr.push(keys);
         }
       }
     }

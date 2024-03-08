@@ -1,15 +1,13 @@
 import { GetServerSideProps } from "next";
 import { getServerAuthSession } from "./api/auth/authoptions";
 import {  useCallback, useEffect, useMemo, useState } from "react";
-import getContacts from "./api/helpers/getContacts";
-import { ContactType, ContactMessageType, OnlineUsers, RoomType, RoomMessage, RoomMessageType, ContactMessage } from "./api/types";
+import { ContactType, ContactMessageType, OnlineUsers, RoomType, RoomMessage, RoomMessageType, ContactMessage, ContactUserType } from "./api/types";
 import Contacts from "@/components/Contacts";
 import AddChat from "@/components/UserProfile/AddChat";
 import Profile from "../components/UserProfile/profile";
 import { Socket, io } from "socket.io-client";
 import WelcomeChat from "@/components/Base/WelcomeChat";
 import AddRoom from "@/components/Rooms/AddRoom";
-import getRooms from "./api/helpers/getRooms";
 import Rooms from "@/components/Rooms/Rooms";
 import ContactMessages from "@/Contacts/ContactMessages";
 import RoomMessages from "@/components/Rooms/RoomMessages";
@@ -18,12 +16,14 @@ import RenderContactMessages from "@/Contacts/RenderContactMessages";
 import { Message } from "postcss";
 import MenuBar from "@/components/MenuBar";
 import styles from "../pages/[Home].module.css"
-import useGetDBMessages from "@/components/useGetDBMessages";
 import useGetUserId from "@/components/useGetUserId";
 import useIsOnline from "@/components/useIsOnline";
-import useRoomSend from "@/components/HandleRoomSend";
 import HandleRoomSend from "@/components/HandleRoomSend";
 import { HandleSend } from "@/components/HandleSend";
+import axios from "axios";
+import SetDBMessages from "@/components/SetDBMessages";
+import SetRooms from "@/components/SetRooms";
+import SetContacts from "@/components/SetContacts";
 const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
  //const ENDPOINT="http://localhost:4000/"
@@ -39,21 +39,18 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       },
     };
   }
-  const contacts = await getContacts(session.user.numberKey); //session also contains contacts,but that contacts doesn't have detail 
+  //const contacts = await getContacts(session.user.numberKey); //session also contains contacts,but that contacts doesn't have detail 
   //information,it has a contactId and userId like this [ { contactId: 70, userId: 25 } ],but we want [ { id: 70, userId: 25, name: 'pranai', numberKey: 123456 } ] 
   //like that.
   //instead of sending session.user.numberKey ,we can send session.user.id as well but we need to change the function of getContacts
   //we can even send session.user.contacts and get the data
 
-  const rooms = await getRooms(session.user.numberKey);
   return {
     props: {
       id:session.user.id,
       name: session.user.name,
       numberKey: session.user.numberKey,
       email: session.user.email,
-      contacts: contacts,
-      rooms:rooms
     },
   };
 };
@@ -61,21 +58,17 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 export default function Home({
   name,
   numberKey,
-  contacts,
-  rooms,
   id
 }: {
   name: string;
   numberKey: number;
-  contacts: ContactType[];
-  rooms:RoomType[];
   id:number
 }) {
-console.log(contacts)
+
   const [addNewChat, setAddNewChat] = useState(false);
   const [addNewRoom, setAddNewRoom] = useState(false);
-  const [chats, setChats] = useState(contacts);
-  const [chatRooms, setChatRooms] = useState(rooms);
+  const [chats, setChats] = useState<ContactType[]>([]);
+  const [chatRooms, setChatRooms] = useState<RoomType[]>([]);
   const [openChat, setOpenChat] = useState(false);
   const [openRoom, setOpenRoom] = useState(false);
   const [openedChatName, setOpenedChatName] = useState("");
@@ -94,6 +87,8 @@ console.log(contacts)
  const[showProfile,setShowProfile]=useState<boolean>(false)
  const[disableMenu,setDisableMenu]=useState<boolean>(false)
 
+
+
 //This is used to get theuserId of the openedchat
 let userIdOfOpenedChat=useGetUserId(openedChatId)
 
@@ -110,9 +105,25 @@ let objGetDBMsgs=useMemo(()=>{
   }
 
 },[userIdOfOpenedChat,id,openedChatId,setMessages])
-useGetDBMessages(objGetDBMsgs)
+SetDBMessages(objGetDBMsgs)
 
 
+let objSetChats=useMemo(()=>{
+  return{
+    id,
+    setChats
+  }
+},[id])
+SetContacts(objSetChats)
+
+
+let objSetChatRooms=useMemo(()=>{
+  return{
+    id,
+    setChatRooms
+  }
+},[id])
+SetRooms(objSetChatRooms)
 
 
 
@@ -206,7 +217,7 @@ useEffect(() => {
     };
   }   
 }, [socket, openedRoomId, onlineUsers, setRoomMessages]);
-console.log(messages)
+
 
 
 

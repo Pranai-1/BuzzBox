@@ -7,7 +7,7 @@ type DestructuredObj = {
   openedChatId: number;
 };
 
-export default function useGetDBMessages(props: DestructuredObj) {
+export default function SetDBMessages(props: DestructuredObj) {
     const { userIdOfOpenedChat, id,setMessages,openedChatId } = props;
     const getMessages = async () => {
       if (userIdOfOpenedChat !== 0) {
