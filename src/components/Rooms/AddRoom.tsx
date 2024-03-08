@@ -14,7 +14,7 @@ export default function AddRoom({
   setAddNewRoom: Dispatch<SetStateAction<boolean>>;
   setChatRooms: Dispatch<SetStateAction<RoomType[]>>;
   id:number;
-  setDisableMenu:any
+  setDisableMenu:Dispatch<SetStateAction<boolean>>
 }) {
   const [roomKey, setRoomKey] = useState(0);
   const [roomKeyErrorMessage, setRoomKeyErrorMessage] = useState<string>("");

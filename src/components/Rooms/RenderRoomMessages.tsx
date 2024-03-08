@@ -1,10 +1,10 @@
-import { RoomMessage, RoomMessageType } from "@/pages/api/types";
+import { ContactMessage, RoomMessage, RoomMessageType } from "@/pages/api/types";
 import { v4 as uuidv4 } from 'uuid';
 export default function RenderRoomMessages({roomMessages,openedRoomId,id}:{roomMessages:RoomMessageType,openedRoomId:number,id:number}){
   const uniqueKey = uuidv4();
     const currentRoomMessages = roomMessages[openedRoomId] || [];
    console.log(currentRoomMessages)
-    return currentRoomMessages.map((message: any, index: number) => {
+    return currentRoomMessages.map((message:RoomMessage) => {
       const uniqueKey = uuidv4();
       const isSentByYou = message.senderId === id;
       return (

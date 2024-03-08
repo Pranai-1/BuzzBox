@@ -14,7 +14,7 @@ export default function AddChat({
   setAddNewChat: Dispatch<SetStateAction<boolean>>;
   setChats: Dispatch<SetStateAction<ContactType[]>>;
   id:number;
-  setDisableMenu:any
+  setDisableMenu: Dispatch<SetStateAction<boolean>>
 }) {
   const [contactName, setContactName] = useState("");
   const [contactNumberKey, setContactNumberKey] = useState(0);

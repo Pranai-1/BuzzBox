@@ -2,7 +2,7 @@ import { GetServerSideProps } from "next";
 import { getServerAuthSession } from "./api/auth/authoptions";
 import {  useCallback, useEffect, useMemo, useState } from "react";
 import getContacts from "./api/helpers/getContacts";
-import { ContactType, ContactMessageType, OnlineUsers, RoomType, RoomMessage, RoomMessageType } from "./api/types";
+import { ContactType, ContactMessageType, OnlineUsers, RoomType, RoomMessage, RoomMessageType, ContactMessage } from "./api/types";
 import Contacts from "@/components/Contacts";
 import AddChat from "@/components/UserProfile/AddChat";
 import Profile from "../components/UserProfile/profile";
@@ -97,6 +97,9 @@ console.log(contacts)
 //This is used to get theuserId of the openedchat
 let userIdOfOpenedChat=useGetUserId(openedChatId)
 
+let objIsOnline=useMemo(()=>{return{userIdOfOpenedChat,onlineUsers}},[userIdOfOpenedChat,onlineUsers])
+let isOnline=useIsOnline(objIsOnline)
+
 //This is used to receive the messages from the db 
 let objGetDBMsgs=useMemo(()=>{
   return{
@@ -108,6 +111,9 @@ let objGetDBMsgs=useMemo(()=>{
 
 },[userIdOfOpenedChat,id,openedChatId,setMessages])
 useGetDBMessages(objGetDBMsgs)
+
+
+
 
 
 //This useEffect will setup a socket connection 
@@ -139,7 +145,7 @@ useEffect(()=>{
   //Below Handlesend method will takes care of sending the messages to the socket server
   useEffect(() => {
     const handleMessage = (res: Message) => {
-      setMessages((prev: any) => ({
+      setMessages((prev:any) => ({
         ...prev,
         [openedChatId]: [...(prev[openedChatId] || []), res],
       }));
@@ -165,7 +171,7 @@ useEffect(()=>{
     return{
       textToSend,userIdOfOpenedChat,id,setMessages,openedChatId,socket,setTextToSend
     }}
-  ,[socket,setTextToSend,openedRoomId,setRoomMessages,textToSend,id])
+  ,[openedRoomId,textToSend,id])
 
 
   //Here i am sending the message to the server
@@ -174,11 +180,23 @@ const helperSend=useCallback(async ()=>{
 },[objSend])
   
 
+
+let objRoomSend=useMemo(()=>{
+  return{
+    socket,setTextToSend,openedRoomId,setRoomMessages,textToSend,id
+  }}
+,[openedRoomId,textToSend,id])
+
+const helperRoom=useCallback(async()=>{ 
+  HandleRoomSend(objRoomSend)
+},[objRoomSend])
+
 useEffect(() => {
   const handleRoomMessage = (res: RoomMessage) => {
-    setRoomMessages((prev: any) => ({
+    setRoomMessages((prev:any) => ({
       ...prev,
       [res.roomId]: [...(prev[res.roomId] || []), res],
+     
     }));
   };
   if (socket) {
@@ -191,14 +209,6 @@ useEffect(() => {
 console.log(messages)
 
 
-let objRoomSend=useMemo(()=>{
-  return{socket,setTextToSend,openedRoomId,setRoomMessages,textToSend,id
-  }}
-,[socket,setTextToSend,openedRoomId,setRoomMessages,textToSend,id])
-
-const helperRoom=useCallback(async()=>{ 
-  HandleRoomSend(objRoomSend)
-},[objRoomSend])
 
 
 useEffect(()=>{
@@ -214,8 +224,6 @@ useEffect(()=>{
 },[openedRoomId])
 
 
-let objIsOnline=useMemo(()=>{return{userIdOfOpenedChat,onlineUsers}},[userIdOfOpenedChat,onlineUsers])
-let isOnline=useIsOnline(objIsOnline)
 
 
 
@@ -239,6 +247,7 @@ function handleChatClick() {
     setOpenChat(false);
     setOpenRoom(true)
   }
+
 
   return (
     <div className={`flex min-h-screen bg-gray-900 relative `} >

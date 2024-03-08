@@ -1,4 +1,6 @@
-export default function HandleRoomSend(obj:any)  {
+import { ContactMessage, RoomMessage, RoomMessageType, RoomSend } from "@/pages/api/types";
+
+export default function HandleRoomSend(obj:RoomSend)  {
     let{socket,setTextToSend,openedRoomId,setRoomMessages,textToSend,id}=obj
     if (textToSend.length !== 0 && openedRoomId!=0) {
       const message={
@@ -6,11 +8,13 @@ export default function HandleRoomSend(obj:any)  {
         roomId:openedRoomId,
         text:textToSend
       }
-      setRoomMessages((prev: any)=>({
+      setRoomMessages((prev: RoomMessageType) => ({
         ...prev,
         [openedRoomId]: [
           ...(prev[openedRoomId] || []),
-          message 
+          {
+            ...message
+          } as RoomMessage
         ]
       }));
     if(socket)

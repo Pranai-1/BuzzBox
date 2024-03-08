@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import logo from "../../../public/logo.png";
 
 export default function Profile({
@@ -9,8 +9,8 @@ export default function Profile({
 }: {
   name: string;
   numberKey: number;
-  setShowProfile:any;
-  setDisableMenu:any
+  setShowProfile: Dispatch<SetStateAction<boolean>>;
+  setDisableMenu: Dispatch<SetStateAction<boolean>>
 }) {
   const[status,setStatus]=useState<string>("")
   return (

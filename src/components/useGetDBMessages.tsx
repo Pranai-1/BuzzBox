@@ -1,12 +1,19 @@
-import { useEffect, useState } from "react";
+import { ContactMessageType } from "@/pages/api/types";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+type DestructuredObj = {
+  userIdOfOpenedChat: number;
+  id: number;
+  setMessages: Dispatch<SetStateAction<ContactMessageType>>;
+  openedChatId: number;
+};
 
-export default function useGetDBMessages(obj: any) {
-    const { userIdOfOpenedChat, id,setMessages,openedChatId } = obj;
+export default function useGetDBMessages(props: DestructuredObj) {
+    const { userIdOfOpenedChat, id,setMessages,openedChatId } = props;
     const getMessages = async () => {
       if (userIdOfOpenedChat !== 0) {
         let header = {
-          senderId: id,
-          receiverId: userIdOfOpenedChat
+          senderId: String(id),
+          receiverId: userIdOfOpenedChat+""
         };
         try {
           const response = await fetch("/api/messages", {

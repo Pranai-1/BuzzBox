@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcrypt";
+import { SignupBody } from "./types";
 
 const userInput = z.object({
   name: z.string().min(3).max(25),
@@ -22,7 +23,7 @@ export default async function Handler(
     let body: any = req.body;
     let x = Number(body.numberKey);
 
-    let signupBody: any = {
+    let signupBody: SignupBody = {
       name: body.name,
       email: body.email,
       password: body.password,

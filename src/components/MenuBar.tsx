@@ -2,9 +2,10 @@ import { signOut } from "next-auth/react"
 import { success } from "../../public/toast"
 import Title from "./Title"
 import Options from "./UserProfile/Options"
+import { MenuControl } from "@/pages/api/types"
 
-export default function MenuBar({setShowContacts,setShowProfile,setAddNewChat,setAddNewRoom,setDisableMenu,showContacts}:
-    {setShowContacts:any,setShowProfile:any,setAddNewChat:any,setAddNewRoom:any,setDisableMenu:any,showContacts:any}){
+export default function MenuBar(props:MenuControl){
+  const{setShowContacts,setShowProfile,setAddNewChat,setAddNewRoom,setDisableMenu,showContacts}=props
     return(
         <>
       <div className={`${showContacts ? 'hidden md:flex flex-col flex-wrap h-full  md:bg-black' : ' h-full w-[150px] bg-black'} `} > 
@@ -12,8 +13,8 @@ export default function MenuBar({setShowContacts,setShowProfile,setAddNewChat,se
      <p className="pt-[1px] bg-white w-full"></p>
     <div className=' h-max w-max p-2 flex font-medium text-xl text-white items-center text-center justify-center gap-2 mt-2 cursor-pointer'  
     onClick={()=>{
-        setShowContacts((prev:any)=>!prev)
-        // setDisableMenu((prev:any)=>!prev)
+        setShowContacts((prev:boolean)=>!prev)
+        // setDisableMenu((prev:boolean)=>!prev)
       }}>
       
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" 
@@ -24,8 +25,8 @@ export default function MenuBar({setShowContacts,setShowProfile,setAddNewChat,se
     </div>
     <div className="h-max w-max p-2 flex font-medium text-xl text-white items-center text-center justify-center gap-2 mt-2 cursor-pointer"
     onClick={()=>{
-        setShowProfile((prev:any)=>!prev)
-        setDisableMenu((prev:any)=>!prev)
+        setShowProfile((prev:boolean)=>!prev)
+        setDisableMenu((prev:boolean)=>!prev)
       }}>
     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
   <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />

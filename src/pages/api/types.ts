@@ -1,3 +1,6 @@
+import { Dispatch, SetStateAction } from "react";
+import { Socket } from "socket.io-client";
+
 export interface SignupBody {
   name: string;
   email: string;
@@ -73,5 +76,46 @@ export type RoomMessage={
   text:string
 }
 export type RoomMessageType = {
-  [key: number]: ContactMessage[]; 
+  [key: number]: RoomMessage[]; 
 }
+
+
+export type pricebox={
+
+    name:string,
+    text:string,
+    storage :number,
+    size:number,
+    support:number,
+    price:number
+
+}
+
+export interface RoomSend {
+  setRoomMessages: Dispatch<SetStateAction<RoomMessageType>>;
+  socket: Socket | null;
+    setTextToSend: Dispatch<SetStateAction<string>>;
+    openedRoomId: number;
+    textToSend: string;
+    id: number;
+}
+
+export interface Send {
+  textToSend: string;
+  userIdOfOpenedChat: number; 
+  id: number; 
+  setMessages: Dispatch<SetStateAction<ContactMessageType>>; 
+  openedChatId: number; 
+  socket: Socket | null; 
+  setTextToSend: Dispatch<SetStateAction<string>>;
+}
+
+
+export type MenuControl = {
+  setShowContacts:Dispatch<SetStateAction<boolean>>;
+  setShowProfile: Dispatch<SetStateAction<boolean>>;
+  setAddNewChat: Dispatch<SetStateAction<boolean>>;
+  setAddNewRoom: Dispatch<SetStateAction<boolean>>;
+  setDisableMenu:Dispatch<SetStateAction<boolean>>;
+  showContacts: boolean;
+};

@@ -1,4 +1,6 @@
-export default function PriceBox({Details}:{Details:any}){
+import { pricebox } from "@/pages/api/types";
+
+export default function PriceBox({Details}:{Details:pricebox}){
     return(
         <div className="flex flex-col p-6 mx-auto max-w-lg text-center  rounded-lg border  shadow border-gray-700 xl:p-8 bg-blue-600 text-white">
         <p className="mb-4 text-2xl font-semibold">{Details.name}</p>
