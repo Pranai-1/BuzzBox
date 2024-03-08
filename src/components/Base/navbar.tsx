@@ -22,10 +22,10 @@ export default function Navbar() {
     <div className=" w-full h-[50px] overflow-hidden flex justify-between items-cente bg-black md:bg-indigo-600">
        <Title/>
        <div>
-        <button className=" bg-green-600 p-2 mr-2 rounded-lg text-white font-medium text-lg mb-2"
+        {/* <button className=" bg-green-600 p-2 mr-2 rounded-lg text-white font-medium text-lg mb-2"
         onClick={()=>{
           ScrollToPricing()
-        }}>Membership</button>
+        }}>Membership</button> */}
       {sessionData?.user != null ? (
         <button
           className="p-2 font-medium text-xl bg-orange-500 rounded-xl text-white h-max pt-1 items-center m-1"
