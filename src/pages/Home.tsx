@@ -220,8 +220,6 @@ useEffect(() => {
 
 
 
-
-
 useEffect(()=>{
   if(openedRoomId!=0){
   if(socket){
