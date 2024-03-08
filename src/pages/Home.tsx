@@ -107,23 +107,36 @@ let objGetDBMsgs=useMemo(()=>{
 },[userIdOfOpenedChat,id,openedChatId,setMessages])
 SetDBMessages(objGetDBMsgs)
 
-
-let objSetChats=useMemo(()=>{
-  return{
-    id,
-    setChats
+useEffect(()=>{
+  let headers={
+    id
+}
+  async function helper(){
+      try{
+  const response=await axios.get("/api/room/getRooms",{headers})
+  setChatRooms(response.data.rooms)
+      }catch(error){
+        setChatRooms([])
+      }
   }
-},[id])
-SetContacts(objSetChats)
+  helper()
+},[])
 
-
-let objSetChatRooms=useMemo(()=>{
-  return{
-    id,
-    setChatRooms
+useEffect(()=>{
+  let headers={
+    id
+}
+  async function helper(){
+      try{
+          const response=await axios.get("/api/contacts/getcontacts",{headers})
+          setChats(response.data.chats)
+      }catch(error){
+          setChats([])
+      }
   }
-},[id])
-SetRooms(objSetChatRooms)
+  helper()
+},[])
+
 
 
 
