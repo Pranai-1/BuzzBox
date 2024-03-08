@@ -113,7 +113,7 @@ useEffect(()=>{
 }
   async function helper(){
       try{
-  const response=await axios.get("/api/room/getRooms",{headers})
+  const response=await axios.get("/api/rooms",{headers})
   setChatRooms(response.data.rooms)
       }catch(error){
         setChatRooms([])
@@ -128,7 +128,7 @@ useEffect(()=>{
 }
   async function helper(){
       try{
-          const response=await axios.get("/api/contacts/getcontacts",{headers})
+          const response=await axios.get("/api/contacts",{headers})
           setChats(response.data.chats)
       }catch(error){
           setChats([])
