@@ -1,11 +1,11 @@
 import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
-
+const prisma = new PrismaClient();
 export default async function handler(req:NextApiRequest,res:NextApiResponse) {
 
  const id=Number(req.headers["id"])
   console.log(id +"   "+ typeof id)
-  const prisma = new PrismaClient();
+
   let arr = [];
   try {
     const user = await prisma.user.findFirst({ where: { id } });
