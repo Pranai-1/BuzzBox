@@ -2,7 +2,7 @@ import { signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import { success } from "../../../public/toast";
 import Title from "../Title";
-import Pricing from "./Pricing";
+
 
 
 
@@ -10,7 +10,7 @@ import Pricing from "./Pricing";
 export default function Navbar() {
   const router = useRouter();
   const { data: sessionData } = useSession();
-  
+
   function ScrollToPricing() {
     const priceSection = document.getElementById('pricing');
     if (priceSection) {
