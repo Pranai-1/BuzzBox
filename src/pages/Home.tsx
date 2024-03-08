@@ -71,7 +71,7 @@ export default function Home({
   rooms:RoomType[];
   id:number
 }) {
-
+console.log(contacts)
   const [addNewChat, setAddNewChat] = useState(false);
   const [addNewRoom, setAddNewRoom] = useState(false);
   const [chats, setChats] = useState(contacts);
@@ -261,7 +261,7 @@ function handleChatClick() {
 
     </div>
     <div className={`${disableMenu ? "hidden md:flex w-[140px] md:w-[29%] border-r border-gray-700 relative overflow-auto " 
-    : `md:w-[29%] w-[150px] border-r border-gray-700 relative md:flex h-[100vh] overflow-auto  pr-36 md:pr-0
+    : `md:w-[29%] w-[150px] border-r border-gray-700 relative md:flex h-[100vh] overflow-auto ${styles.scrollbarhide} pr-36 md:pr-0
     ${openChat ?'hidden md:block':''}`}`}>
 
             <MenuBar
