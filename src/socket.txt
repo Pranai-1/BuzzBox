@@ -18,7 +18,8 @@ For example, you use `socket.on("getMessage", ...)` to listen for the "getMessag
 4. When the server emits the "getMessage" event, all connected clients, including the one that set up the `socket.on("getMessage", ...)
  listener, will receive the event.
 
-5. The callback function specified in `socket.on("getMessage", ...)` is executed when the "getMessage" event is received by the client. This allows you to handle the data sent by the server in response to that event.
+5. The callback function specified in `socket.on("getMessage", ...)` is executed when the "getMessage" event is received by the client.
+ This allows you to handle the data sent by the server in response to that event.
 
 Regarding the `useEffect` with the `socket` dependency, the `useEffect` is triggered whenever the `socket` dependency changes.
  This can happen when the component is first mounted, or if `socket` changes due to some other action in your application.

@@ -24,6 +24,8 @@ import axios from "axios";
 import SetDBMessages from "@/components/SetDBMessages";
 import SetRooms from "@/components/SetRooms";
 import SetContacts from "@/components/SetContacts";
+import getContacts from "./api/helpers/getContacts";
+import getRooms from "./api/helpers/getRooms";
 const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
  //const ENDPOINT="http://localhost:4000/"
@@ -39,18 +41,20 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       },
     };
   }
-  //const contacts = await getContacts(session.user.numberKey); //session also contains contacts,but that contacts doesn't have detail 
+  const contacts = await getContacts(session.user.numberKey); //session also contains contacts,but that contacts doesn't have detail 
   //information,it has a contactId and userId like this [ { contactId: 70, userId: 25 } ],but we want [ { id: 70, userId: 25, name: 'pranai', numberKey: 123456 } ] 
   //like that.
   //instead of sending session.user.numberKey ,we can send session.user.id as well but we need to change the function of getContacts
   //we can even send session.user.contacts and get the data
-
+  const rooms = await getRooms(session.user.numberKey);
   return {
     props: {
       id:session.user.id,
       name: session.user.name,
       numberKey: session.user.numberKey,
       email: session.user.email,
+      contacts,
+      rooms
     },
   };
 };
@@ -58,17 +62,21 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 export default function Home({
   name,
   numberKey,
-  id
+  id,
+  contacts,
+  rooms
 }: {
   name: string;
   numberKey: number;
-  id:number
+  id:number;
+  contacts:ContactType[],
+  rooms:RoomType[]
 }) {
 
   const [addNewChat, setAddNewChat] = useState(false);
   const [addNewRoom, setAddNewRoom] = useState(false);
-  const [chats, setChats] = useState<ContactType[]>([]);
-  const [chatRooms, setChatRooms] = useState<RoomType[]>([]);
+  const [chats, setChats] = useState<any[]>(contacts);
+  const [chatRooms, setChatRooms] = useState<any[]>(rooms);
   const [openChat, setOpenChat] = useState(false);
   const [openRoom, setOpenRoom] = useState(false);
   const [openedChatName, setOpenedChatName] = useState("");
@@ -96,16 +104,49 @@ let objIsOnline=useMemo(()=>{return{userIdOfOpenedChat,onlineUsers}},[userIdOfOp
 let isOnline=useIsOnline(objIsOnline)
 
 //This is used to receive the messages from the db 
-let objGetDBMsgs=useMemo(()=>{
-  return{
-  userIdOfOpenedChat,
-  id,
-  openedChatId,
-  setMessages
-  }
+// let objGetDBMsgs=useMemo(()=>{
+//   return{
+//   userIdOfOpenedChat,
+//   id,
+//   openedChatId,
+//   setMessages
+//   }
 
-},[userIdOfOpenedChat,id,openedChatId,setMessages])
-SetDBMessages(objGetDBMsgs)
+// },[userIdOfOpenedChat,id,openedChatId,setMessages])
+// SetDBMessages(objGetDBMsgs)
+
+const getMessages = async () => {
+  if (userIdOfOpenedChat !== 0) {
+    let header = {
+      senderId: String(id),
+      receiverId: userIdOfOpenedChat+""
+    };
+    try {
+      const response = await axios.get("/api/messages", {
+        headers: header
+      });
+      return response.data.messages;
+    } catch (error) {
+      console.error("Fetch error:", error);
+      throw error; // Rethrow the error to handle it outside
+    }
+  }
+  return []; // Return an empty array if userIdOfOpenedChat is 0
+};
+
+useEffect(() => {
+  getMessages()
+    .then(messages => {
+        setMessages((prev: any)=>({
+            ...prev,
+            [openedChatId]: [
+             ...messages 
+            ] }))
+    })
+    .catch(error => {
+      console.error("Error fetching messages:", error);
+    });
+}, [userIdOfOpenedChat]);
 
 useEffect(()=>{
   let headers={
@@ -120,7 +161,7 @@ useEffect(()=>{
       }
   }
   helper()
-},[])
+},[id])
 
 useEffect(()=>{
   let headers={
@@ -135,7 +176,7 @@ useEffect(()=>{
       }
   }
   helper()
-},[])
+},[id])
 
 
 
@@ -191,18 +232,36 @@ useEffect(()=>{
 
 
   
-  let objSend=useMemo(()=>{
-    return{
-      textToSend,userIdOfOpenedChat,id,setMessages,openedChatId,socket,setTextToSend
-    }}
-  ,[openedRoomId,textToSend,id])
+
 
 
   //Here i am sending the message to the server
-const helperSend=useCallback(async ()=>{
-  HandleSend(objSend)
-},[objSend])
-  
+const helperSend=async()=>{
+  if (textToSend.length !== 0 && userIdOfOpenedChat!=0) {
+    const message={
+      senderId:id,
+      receiverId:userIdOfOpenedChat,
+      text:textToSend
+    }
+    const response=await axios.post("/api/messages",message)
+ 
+    setMessages((prev: any)=>({
+      ...prev,
+      [openedChatId]: [
+        ...(prev[openedChatId] || []),
+        {
+           ... message 
+        } 
+       
+      ]
+    }))
+
+    
+  if(socket)
+    socket.emit("sendMessage",{messagetosend:message,userIdOfOpenedChat})
+    setTextToSend("");
+  }
+}
 
 
 let objRoomSend=useMemo(()=>{
@@ -212,8 +271,26 @@ let objRoomSend=useMemo(()=>{
 ,[openedRoomId,textToSend,id])
 
 const helperRoom=useCallback(async()=>{ 
-  HandleRoomSend(objRoomSend)
-},[objRoomSend])
+  if (textToSend.length !== 0 && openedRoomId!=0) {
+    const message={
+      senderId:id,
+      roomId:openedRoomId,
+      text:textToSend
+    }
+    setRoomMessages((prev: any) => ({
+      ...prev,
+      [openedRoomId]: [
+        ...(prev[openedRoomId] || []),
+        {
+          ...message
+        } 
+      ]
+    }));
+  if(socket)
+    socket.emit("sendRoomMessage",{messagetosend:message,roomId:openedRoomId})
+    setTextToSend("");
+  }
+},[socket,id,openedRoomId,textToSend])
 
 useEffect(() => {
   const handleRoomMessage = (res: RoomMessage) => {
