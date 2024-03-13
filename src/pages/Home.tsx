@@ -150,20 +150,20 @@ useEffect(() => {
 
 
 
-useEffect(()=>{
-  let headers={
-    id
-}
-  async function helper(){
-      try{
-  const response=await axios.get("/api/rooms",{headers})
-  setChatRooms(response.data.rooms)
-      }catch(error){
-        setChatRooms([])
-      }
-  }
-  helper()
-},[id])
+// useEffect(()=>{
+//   let headers={
+//     id
+// }
+//   async function helper(){
+//       try{
+//   const response=await axios.get("/api/rooms",{headers})
+//   setChatRooms(response.data.rooms)
+//       }catch(error){
+//         setChatRooms([])
+//       }
+//   }
+//   helper()
+// },[id])
 
 useEffect(()=>{
   let headers={
