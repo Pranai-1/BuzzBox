@@ -41,20 +41,20 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       },
     };
   }
-  const contacts = await getContacts(session.user.numberKey); //session also contains contacts,but that contacts doesn't have detail 
+  //const contacts = await getContacts(session.user.numberKey); //session also contains contacts,but that contacts doesn't have detail 
   //information,it has a contactId and userId like this [ { contactId: 70, userId: 25 } ],but we want [ { id: 70, userId: 25, name: 'pranai', numberKey: 123456 } ] 
   //like that.
   //instead of sending session.user.numberKey ,we can send session.user.id as well but we need to change the function of getContacts
   //we can even send session.user.contacts and get the data
-  const rooms = await getRooms(session.user.numberKey);
+  //const rooms = await getRooms(session.user.numberKey);
   return {
     props: {
       id:session.user.id,
       name: session.user.name,
       numberKey: session.user.numberKey,
       email: session.user.email,
-      contacts,
-      rooms
+     // contacts,
+      //rooms
     },
   };
 };
@@ -63,20 +63,20 @@ export default function Home({
   name,
   numberKey,
   id,
-  contacts,
-  rooms
+ // contacts,
+  //rooms
 }: {
   name: string;
   numberKey: number;
   id:number;
-  contacts:ContactType[],
-  rooms:RoomType[]
+  //contacts:ContactType[],
+  //rooms:RoomType[]
 }) {
 
   const [addNewChat, setAddNewChat] = useState(false);
   const [addNewRoom, setAddNewRoom] = useState(false);
-  const [chats, setChats] = useState<any[]>(contacts);
-  const [chatRooms, setChatRooms] = useState<any[]>(rooms);
+  const [chats, setChats] = useState<any[]>([]);
+  const [chatRooms, setChatRooms] = useState<any[]>([]);
   const [openChat, setOpenChat] = useState(false);
   const [openRoom, setOpenRoom] = useState(false);
   const [openedChatName, setOpenedChatName] = useState("");
@@ -147,6 +147,8 @@ useEffect(() => {
       console.error("Error fetching messages:", error);
     });
 }, [userIdOfOpenedChat]);
+
+
 
 useEffect(()=>{
   let headers={

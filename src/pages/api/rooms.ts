@@ -1,13 +1,16 @@
 import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
-const prisma=new PrismaClient()
+
+
+
 
 
 export default async function handler(req:NextApiRequest,res:NextApiResponse){
 
+if(req.method=="GET"){
+    const prisma=new PrismaClient()
   let arr=[]
  const id=Number(req.headers["id"])
-
     try{
     const user=await prisma.user.findFirst({
         where:{
@@ -39,5 +42,6 @@ export default async function handler(req:NextApiRequest,res:NextApiResponse){
     res.status(404).json({message:"failed",rooms:[]})
 }finally{
     prisma.$disconnect()
+}
 }
 }

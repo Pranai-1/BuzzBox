@@ -1,10 +1,10 @@
 import { PrismaClient } from "@prisma/client";
 import { NextApiRequest, NextApiResponse } from "next";
 
-const prisma = new PrismaClient();
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "POST") {
+    const prisma = new PrismaClient();
     const message = req.body;
     if(typeof message.receiverId=="number"){
     try {
@@ -18,9 +18,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       res.status(200).json({ response: "success", message: createdMessage });
     } catch (error) {
       res.status(500).json({ response: "error", error: error});
-    }
+    }finally{
+      prisma.$disconnect()
+  }
   }
   } else if (req.method === "GET") {
+    const prisma = new PrismaClient();
     try {
       const senderId = Number(req.headers.senderid);
       const receiverId = Number(req.headers.receiverid);

@@ -12,13 +12,13 @@ const userInput = z.object({
   numberKey: z.number().min(100000).max(999999),
 });
 
-const prisma = new PrismaClient();
 
 export default async function Handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
 
+  const prisma = new PrismaClient();
  
     let body: any = req.body;
     let x = Number(body.numberKey);
