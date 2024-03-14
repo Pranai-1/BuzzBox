@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 
 
 export default function Handler({
-  id,
+  userId,
   name,
   numberKey,
   handleClick,
@@ -10,7 +10,7 @@ export default function Handler({
   setOpenedChatNumberKey,
   setOpenedChatId,
 }: {
-  id: number;
+  userId: number;
   name: string;
   numberKey: number;
   handleClick:()=>void;
@@ -24,7 +24,7 @@ export default function Handler({
       handleClick()
       setOpenedChatName(name)
       setOpenedChatNumberKey(numberKey)
-      setOpenedChatId(id)
+      setOpenedChatId(userId)
     }}>
       {/* <div className="bg-slate-400 rounded-full  lg:flex items-center justify-center hidden  md:hidden ">
         <p className=" font-medium md:text-xl px-3 py-1">{char}</p>

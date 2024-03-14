@@ -29,7 +29,7 @@ import getRooms from "./api/helpers/getRooms";
 import { useSession } from "next-auth/react";
 //const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
- //const ENDPOINT="http://localhost:4000/"
+ const ENDPOINT="http://localhost:4000/"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -99,13 +99,16 @@ console.log(session.data)
  const[showProfile,setShowProfile]=useState<boolean>(false)
  const[disableMenu,setDisableMenu]=useState<boolean>(false)
 
-
+useEffect(()=>{
+  setChats(session?.data?.user.contacts)
+  setChatRooms(session?.data?.user.rooms)
+},[session?.data?.user])
 
 //This is used to get theuserId of the openedchat
 // let userIdOfOpenedChat=useGetUserId(openedChatId)
 
-// let objIsOnline=useMemo(()=>{return{userIdOfOpenedChat,onlineUsers}},[userIdOfOpenedChat,onlineUsers])
-// let isOnline=useIsOnline(objIsOnline)
+let objIsOnline=useMemo(()=>{return{openedChatId,onlineUsers}},[openedChatId,onlineUsers])
+let isOnline=useIsOnline(objIsOnline)
 
 //This is used to receive the messages from the db 
 // let objGetDBMsgs=useMemo(()=>{
@@ -119,238 +122,204 @@ console.log(session.data)
 // },[userIdOfOpenedChat,id,openedChatId,setMessages])
 // SetDBMessages(objGetDBMsgs)
 
-// const getMessages = async () => {
-//   if (userIdOfOpenedChat !== 0) {
-//     let header = {
-//       senderId: String(id),
-//       receiverId: userIdOfOpenedChat+""
-//     };
-//     try {
-//       const response = await axios.get("/api/messages", {
-//         headers: header
-//       });
-//       return response.data.messages;
-//     } catch (error) {
-//       console.error("Fetch error:", error);
-//       throw error; // Rethrow the error to handle it outside
-//     }
-//   }
-//   return []; // Return an empty array if userIdOfOpenedChat is 0
-// };
-
-// useEffect(() => {
-//   getMessages()
-//     .then(messages => {
-//         setMessages((prev: any)=>({
-//             ...prev,
-//             [openedChatId]: [
-//              ...messages 
-//             ] }))
-//     })
-//     .catch(error => {
-//       console.error("Error fetching messages:", error);
-//     });
-// }, [userIdOfOpenedChat]);
 
 
+useEffect(() => {
+  const getMessages = async () => {
+    let headers = {
+      senderId: String(id),
+      receiverId: openedChatId+""
+    };
+    try {
+      const response = await axios.get("/api/messages", {
+        headers
+      });
+      setMessages((prev: any)=>({
+        ...prev,
+        [openedChatId]: [
+         ...response.data.messages 
+        ] }))
+    } catch (error) {
+      console.error("Fetch error:", error);
+      setMessages((prev: any)=>({
+        ...prev,
+        [openedChatId]: [] })) 
+    }
+};
+  getMessages()
+}, [openedChatId]);
 
-// useEffect(()=>{
-//   let headers={
-//     id
-// }
-//   async function helper(){
-//       try{
-//   const response=await axios.get("/api/rooms",{headers})
-//   setChatRooms(response.data.rooms)
-//       }catch(error){
-//         setChatRooms([])
-//       }
-//   }
-//   helper()
-// },[id])
 
-// useEffect(()=>{
-//   let headers={
-//         id
-//     }
-//   console.log("Hello")
-//   async function fetchData(){
-//     const response=await axios.get("/api/hello",{headers})
-//     setChats(response.data.contacts)
-//     setChatRooms(response.data.rooms)
-//   }
-//   fetchData()
-// },[])
 
 
 console.log(chats)
 console.log(chatRooms)
 
-//This useEffect will setup a socket connection 
-  // useEffect(() => {
-  //   const newSocket = io(ENDPOINT, { transports: ["websocket"] });
-  //   setSocket(newSocket);
-  //   return () => {
-  //     newSocket.disconnect();
-  //   };
-  // }, []);
+// This useEffect will setup a socket connection 
+  useEffect(() => {
+    const newSocket = io(ENDPOINT, { transports: ["websocket"] });
+    setSocket(newSocket);
+    return () => {
+      newSocket.disconnect();
+    };
+  }, []);
   
 
-//This is used to add a new user which is ourselves to the onlineusers of the server and then server sends back all the onlineusers
-// useEffect(()=>{
-//   if (socket) {
-//     socket.emit("addNewUser", id);
-//    socket.on("getOnlineUsers", (res: OnlineUsers[]) => {
-//       setOnlineUsers(res);
-//   })
-// }
-// },[socket,id])
+// This is used to add a new user which is ourselves to the onlineusers of the server and then server sends back all the onlineusers
+useEffect(()=>{
+  if (socket) {
+    socket.emit("addNewUser", id);
+   socket.on("getOnlineUsers", (res: OnlineUsers[]) => {
+      setOnlineUsers(res);
+  })
+}
+},[socket,id])
 
-// console.log(onlineUsers)
+console.log(onlineUsers)
 
 
-  //This is used to establish a real time communication for messages,if user wants to chat with multiple persons at the same time
-  //this useEffect  takes care of this scenario.But,if the user is offline then there will be no communication,here we are receieving
-  //the messages from the server whenever i click on different users
-  //Below Handlesend method will takes care of sending the messages to the socket server
-//   useEffect(() => {
-//     const handleMessage = (res: Message) => {
-//       setMessages((prev:any) => ({
-//         ...prev,
-//         [openedChatId]: [...(prev[openedChatId] || []), res],
-//       }));
-//     };
+  // This is used to establish a real time communication for messages,if user wants to chat with multiple persons at the same time
+  // this useEffect  takes care of this scenario.But,if the user is offline then there will be no communication,here we are receieving
+  // the messages from the server whenever i click on different users
+  // Below Handlesend method will takes care of sending the messages to the socket server
+  useEffect(() => {
+    const handleMessage = (res: Message) => {
+      setMessages((prev:any) => ({
+        ...prev,
+        [openedChatId]: [...(prev[openedChatId] || []), res],
+      }));
+    };
   
-//     if (socket) {
-//       const userOnline = onlineUsers.find((user) => user.userId === userIdOfOpenedChat);// Check if the user is online and should listen for messages
-//       if (userOnline) {
-//         socket.on("getMessage", handleMessage);        // Add the event listener when the component mounts
-//       }
-//       return () => {
-//         if (userOnline) {
-//           socket.off("getMessage", handleMessage);// Remove the event listener when the component unmounts  
-//         }
-//       };
-//     } 
+    if (socket) {
+      const userOnline = onlineUsers.find((user) => user.userId === openedChatId);// Check if the user is online and should listen for messages
+      if (userOnline) {
+        socket.on("getMessage", handleMessage);        // Add the event listener when the component mounts
+      }
+      return () => {
+        if (userOnline) {
+          socket.off("getMessage", handleMessage);// Remove the event listener when the component unmounts  
+        }
+      };
+    } 
     
-//   }, [openedChatId, onlineUsers]);
+  }, [openedChatId, onlineUsers]);
 
 
   
 
 
 
-//   //Here i am sending the message to the server
-// const helperSend=async()=>{
-//   if (textToSend.length !== 0 && userIdOfOpenedChat!=0) {
-//     const message={
-//       senderId:id,
-//       receiverId:userIdOfOpenedChat,
-//       text:textToSend
-//     }
-//     const response=await axios.post("/api/messages",message)
+  //Here i am sending the message to the server
+const helperSend=async()=>{
+  if (textToSend.length !== 0 && openedChatId!=0) {
+    const message={
+      senderId:id,
+      receiverId:openedChatId,
+      text:textToSend
+    }
+    const response=await axios.post("/api/messages",message)
  
-//     setMessages((prev: any)=>({
-//       ...prev,
-//       [openedChatId]: [
-//         ...(prev[openedChatId] || []),
-//         {
-//            ... message 
-//         } 
+    setMessages((prev: any)=>({
+      ...prev,
+      [openedChatId]: [
+        ...(prev[openedChatId] || []),
+        {
+           ... message 
+        } 
        
-//       ]
-//     }))
+      ]
+    }))
 
     
-//   if(socket)
-//     socket.emit("sendMessage",{messagetosend:message,userIdOfOpenedChat})
-//     setTextToSend("");
-//   }
-// }
+  if(socket)
+    socket.emit("sendMessage",{messagetosend:message,openedChatId})
+    setTextToSend("");
+  }
+}
 
 
-// let objRoomSend=useMemo(()=>{
-//   return{
-//     socket,setTextToSend,openedRoomId,setRoomMessages,textToSend,id
-//   }}
-// ,[openedRoomId,textToSend,id])
+let objRoomSend=useMemo(()=>{
+  return{
+    socket,setTextToSend,openedRoomId,setRoomMessages,textToSend,id
+  }}
+,[openedRoomId,textToSend,id])
 
-// const helperRoom=useCallback(async()=>{ 
-//   if (textToSend.length !== 0 && openedRoomId!=0) {
-//     const message={
-//       senderId:id,
-//       roomId:openedRoomId,
-//       text:textToSend
-//     }
-//     setRoomMessages((prev: any) => ({
-//       ...prev,
-//       [openedRoomId]: [
-//         ...(prev[openedRoomId] || []),
-//         {
-//           ...message
-//         } 
-//       ]
-//     }));
-//   if(socket)
-//     socket.emit("sendRoomMessage",{messagetosend:message,roomId:openedRoomId})
-//     setTextToSend("");
-//   }
-// },[socket,id,openedRoomId,textToSend])
+const helperRoom=useCallback(async()=>{ 
+  if (textToSend.length !== 0 && openedRoomId!=0) {
+    const message={
+      senderId:id,
+      roomId:openedRoomId,
+      text:textToSend
+    }
+    setRoomMessages((prev: any) => ({
+      ...prev,
+      [openedRoomId]: [
+        ...(prev[openedRoomId] || []),
+        {
+          ...message
+        } 
+      ]
+    }));
+  if(socket)
+    socket.emit("sendRoomMessage",{messagetosend:message,roomId:openedRoomId})
+    setTextToSend("");
+  }
+},[socket,id,openedRoomId,textToSend])
 
-// useEffect(() => {
-//   const handleRoomMessage = (res: RoomMessage) => {
-//     setRoomMessages((prev:any) => ({
-//       ...prev,
-//       [res.roomId]: [...(prev[res.roomId] || []), res],
+useEffect(() => {
+  const handleRoomMessage = (res: RoomMessage) => {
+    setRoomMessages((prev:any) => ({
+      ...prev,
+      [res.roomId]: [...(prev[res.roomId] || []), res],
      
-//     }));
-//   };
-//   if (socket) {
-//       socket.on("getRoomMessage", handleRoomMessage);        
-//     return () => {  
-//         socket.off("getRoomMessage", handleRoomMessage);
-//     };
-//   }   
-// }, [socket, openedRoomId, onlineUsers, setRoomMessages]);
+    }));
+  };
+  if (socket) {
+      socket.on("getRoomMessage", handleRoomMessage);        
+    return () => {  
+        socket.off("getRoomMessage", handleRoomMessage);
+    };
+  }   
+}, [socket, openedRoomId, onlineUsers, setRoomMessages]);
 
 
 
-// useEffect(()=>{
-//   if(openedRoomId!=0){
-//   if(socket){
-//     let data={
-//       id,
-//      roomId: openedRoomId
-//     }
-//     socket.emit("AddUserToRoom",data)
-//   }
-// }
-// },[openedRoomId])
+useEffect(()=>{
+  if(openedRoomId!=0){
+  if(socket){
+    let data={
+      id,
+     roomId: openedRoomId
+    }
+    socket.emit("AddUserToRoom",data)
+  }
+}
+},[openedRoomId])
 
 
 
 
 
-//   const renderContactMessages = () => {
-//    return <RenderContactMessages messages={messages} openedChatId={openedChatId} id={id}/>
-//   };
+  const renderContactMessages = () => {
+   return <RenderContactMessages messages={messages} openedChatId={openedChatId} id={id}/>
+  };
   
-//   const renderRoomMessages = () => {
-//     return(
-//       <RenderRoomMessages roomMessages={roomMessages} openedRoomId={openedRoomId} id={id}/>
-//     )
-//   };
+  const renderRoomMessages = () => {
+    return(
+      <RenderRoomMessages roomMessages={roomMessages} openedRoomId={openedRoomId} id={id}/>
+    )
+  };
   
 
-// function handleChatClick() {
-//   setOpenChat(true);
-//   setOpenRoom(false)
-// }
+function handleChatClick() {
+  setOpenChat(true);
+  setOpenRoom(false)
+}
 
-//   function handleRoomClick() {
-//     setOpenChat(false);
-//     setOpenRoom(true)
-//   }
+  function handleRoomClick() {
+    setOpenChat(false);
+    setOpenRoom(true)
+  }
 
 
   return (
@@ -391,10 +360,10 @@ console.log(chatRooms)
                     {chats.map((obj:any) => (
                         <Contacts
                             key={obj.contact.id} 
-                            id={obj.contact.id}
+                            userId={obj.contact.userId}
                             name={obj.contact.name}
                             numberKey={obj.contact.numberKey}
-                            handleClick={() => console.log("handleChatClick()")}
+                            handleClick={() => handleChatClick()}
                             setOpenedChatName={setOpenedChatName}
                             setOpenedChatNumberKey={setOpenedChatNumberKey}
                             setOpenedChatId={setOpenedChatId}
@@ -411,7 +380,7 @@ console.log(chatRooms)
              key={obj.room.id}
                roomid={obj.room.id}
                roomkey={obj.room.key}
-               handleClick={() => console.log("handleRoomClick()")}
+               handleClick={() =>handleRoomClick()}
                setOpenedRoomKey={setOpenedRoomKey}
               setOpenedRoomId={setOpenedRoomId}
                />
@@ -430,27 +399,27 @@ console.log(chatRooms)
             ) : addNewRoom ? (
               <AddRoom setAddNewRoom={setAddNewRoom} setChatRooms={setChatRooms} id={id} setDisableMenu={setDisableMenu}/>
               ) :openChat ? (
-                <></>
-                  //   <ContactMessages
-                  //     isOnline={isOnline}
-                  //     openedChatName={openedChatName}
-                  //     openedChatNumberKey={openedChatNumberKey}
-                  //     emptyChat={emptyChat}
-                  //     renderContactMessages={renderContactMessages}
-                  //     textToSend={textToSend}
-                  //     setTextToSend={setTextToSend}
-                  //     HandleSend={helperSend}
-                  //   />
-                  // ): openRoom ? (
-                  //   <RoomMessages
-                  //   openedRoomId={openedRoomId}
-                  //   openedRoomKey={openedRoomKey}
-                  //   emptyRoom={emptyRoom}
-                  //   renderRoomMessages={renderRoomMessages}
-                  //   textToSend={textToSend}
-                  //   setTextToSend={setTextToSend}
-                  //   HandleSend={helperRoom}
-                  // />
+                // <></>
+                    <ContactMessages
+                      isOnline={isOnline}
+                      openedChatName={openedChatName}
+                      openedChatNumberKey={openedChatNumberKey}
+                      emptyChat={emptyChat}
+                      renderContactMessages={renderContactMessages}
+                      textToSend={textToSend}
+                      setTextToSend={setTextToSend}
+                      HandleSend={helperSend}
+                    />
+                  ): openRoom ? (
+                    <RoomMessages
+                    openedRoomId={openedRoomId}
+                    openedRoomKey={openedRoomKey}
+                    emptyRoom={emptyRoom}
+                    renderRoomMessages={renderRoomMessages}
+                    textToSend={textToSend}
+                    setTextToSend={setTextToSend}
+                    HandleSend={helperRoom}
+                  />
             ) :(
               <>
               <WelcomeChat name={name} />
