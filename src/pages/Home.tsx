@@ -1,3 +1,5 @@
+"use client"
+
 import { GetServerSideProps } from "next";
 import { getServerAuthSession } from "./api/auth/authoptions";
 import {  useCallback, useEffect, useMemo, useState } from "react";
@@ -38,27 +40,27 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
  
   return {
     props: {
-      id:session.user.id,
-      name: session.user.name,
-      numberKey: session.user.numberKey,
-      email: session.user.email,
+      // id:session.user.id,
+      // name: session.user.name,
+      // numberKey: session.user.numberKey,
+      // email: session.user.email,
     },
   };
 };
 
 export default function Home({
-  name,
-  numberKey,
-  id,
+
 }: {
-  name: string;
-  numberKey: number;
-  id:number;
+
 }) {
 
   const session=useSession()
 console.log(session.data)
 
+
+ const[id,setId]=useState<number>(7)
+ const[numberKey,setNumberKey]=useState<number>(123456)
+ const[name,setName]=useState<string>("pranai")
   const [addNewChat, setAddNewChat] = useState(false);
   const [addNewRoom, setAddNewRoom] = useState(false);
   const [chats, setChats] = useState<ContactUserType[]>([]);
@@ -87,15 +89,16 @@ console.log(session.data)
     let headers={
       id
     }
-    const response=await axios.get("/api/hello",{headers})
-    // setChats(response.data.user.contacts)
-    // setChatRooms(response?.data?.user.rooms)
-    setChats([])
-    setChatRooms([])
+    const response=await axios.get("/api/getContacts",{headers})
+    setChats(response.data.user.contacts)
+    setChatRooms(response?.data?.user.rooms)
+    // setChats([])
+    // setChatRooms([])
     }
     getChats()
     },[])
 
+   
 
 let objIsOnline=useMemo(()=>{return{openedChatId,onlineUsers}},[openedChatId,onlineUsers])
 let isOnline=useIsOnline(objIsOnline)
