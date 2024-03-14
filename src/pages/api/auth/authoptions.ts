@@ -1,7 +1,7 @@
 import { DefaultSession, NextAuthOptions, getServerSession } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, RoomUser } from "@prisma/client";
 import { GetServerSidePropsContext } from "next";
 import { ContactType, ContactUserType, User } from "../types";
 
@@ -14,6 +14,7 @@ declare module "next-auth" {
       name: string;
       email: string;
       contacts: ContactUserType[];
+      rooms:RoomUser[];
       password: string;
       numberKey: number;
     } & DefaultSession["user"];
@@ -23,6 +24,7 @@ declare module "next-auth" {
     name: string;
     email: string;
     contacts: ContactUserType[];
+    rooms:RoomUser[]
     password: string;
     numberKey: number;
   }
@@ -40,6 +42,7 @@ export const authOptions: NextAuthOptions = {
         token.name = user.name;
         token.email = user.email;
         token.contacts = user.contacts;
+        token.rooms = user.rooms;
         token.numberKey = user.numberKey;
       }
       return token;
@@ -50,6 +53,7 @@ export const authOptions: NextAuthOptions = {
         session.user.name = token.name as string;
         session.user.email = token.email as string;
         session.user.contacts = token.contacts as ContactUserType[];
+        session.user.rooms = token.rooms as RoomUser[];
         session.user.numberKey = token.numberKey as number;
       }
       return session;
@@ -66,18 +70,29 @@ export const authOptions: NextAuthOptions = {
         };
 
         try {
+          const data=await prisma.user.findFirst({
+            where: { email},})
+            if(!data)
+            return null
           const user = await prisma.user.findFirst({
-            where: { email },
+            where: { email},
             select: {
               id: true,
               name: true,
               email: true,
               password: true,
-              contacts: true,
               numberKey: true,
+              contacts: {
+                where: { userId: data?.id },
+                include: { contact: true }
+              },
+              rooms:{
+                where:{userId:data?.id},
+                include:{room:true}
+              }
             },
           });
-       console.log(user)
+      console.log(user)    
           if (!user) {
             return null;
           }
@@ -93,6 +108,7 @@ export const authOptions: NextAuthOptions = {
             name: user.name,
             email: user.email,
             contacts: user.contacts,
+            rooms:user.rooms,
             password: user.password,
             numberKey: user.numberKey,
           };

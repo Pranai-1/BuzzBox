@@ -8,17 +8,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+  const id=Number(req.headers["id"])
+  console.log(id)
   try {
-    const user = await prisma.user.findFirst({ where: { id: 7 } });
-    const user1 = await prisma.user.findFirst({
-      where: { email: "pranai@gmail.com" },
-      include: {
-        contacts: {
-          where: { userId: 7 },
-          include: { contact: true }
-        },
-      },
-    });
+    const user = await prisma.user.findFirst({ where: { id } });
+   
 
     if (user) {
       const contacts = await prisma.contactUser.findMany({
@@ -31,8 +25,8 @@ export default async function handler(
         include: { room: true }
       });
 
-      console.log(contacts);
-      console.log(rooms);
+      // console.log(contacts);
+      // console.log(rooms);
 
       res.status(200).json({ contacts, rooms });
     } else {

@@ -1,3 +1,4 @@
+import { RoomUser } from "@prisma/client";
 import { Dispatch, SetStateAction } from "react";
 import { Socket } from "socket.io-client";
 
@@ -19,6 +20,7 @@ export type User = {
   email: string;
   password: string;
   contacts: ContactUserType[];
+  rooms:RoomUser[]
   numberKey: number;
 };
 

@@ -74,10 +74,13 @@ export default function Home({
   //rooms:RoomType[]
 }) {
 
+  const session=useSession()
+console.log(session.data)
+
   const [addNewChat, setAddNewChat] = useState(false);
   const [addNewRoom, setAddNewRoom] = useState(false);
-  const [chats, setChats] = useState<any[]>([]);
-  const [chatRooms, setChatRooms] = useState<any[]>([]);
+  const [chats, setChats] = useState<any>(session?.data?.user.contacts);
+  const [chatRooms, setChatRooms] = useState<any>(session?.data?.user.rooms);
   const [openChat, setOpenChat] = useState(false);
   const [openRoom, setOpenRoom] = useState(false);
   const [openedChatName, setOpenedChatName] = useState("");
@@ -96,8 +99,7 @@ export default function Home({
  const[showProfile,setShowProfile]=useState<boolean>(false)
  const[disableMenu,setDisableMenu]=useState<boolean>(false)
 
-const session=useSession()
-console.log(session.data)
+
 
 //This is used to get theuserId of the openedchat
 // let userIdOfOpenedChat=useGetUserId(openedChatId)
@@ -167,27 +169,18 @@ console.log(session.data)
 //   helper()
 // },[id])
 
-useEffect(()=>{
-  console.log("Hello")
-  async function fetchData(){
-    const response=await axios.get("/api/hello")
-    setChats(response.data.contacts)
-    setChatRooms(response.data.rooms)
-  }
-  fetchData()
+// useEffect(()=>{
 //   let headers={
-//     id
-// }
-//   async function helper(){
-//       try{
-//           const response=await axios.get("api/contacts",{headers})
-//           console.log(response.data)
-//       }catch(error){
-//           //setChats([])
-//       }
+//         id
+//     }
+//   console.log("Hello")
+//   async function fetchData(){
+//     const response=await axios.get("/api/hello",{headers})
+//     setChats(response.data.contacts)
+//     setChatRooms(response.data.rooms)
 //   }
-//   helper()
-},[])
+//   fetchData()
+// },[])
 
 
 console.log(chats)
@@ -395,12 +388,12 @@ console.log(chatRooms)
             <div className={` ${openChat ?'hidden md:block':''} w-[150px]  overflow-auto ${styles.scrollbarhide}`}>
             {showContacts && (
                 <div className="grid gap-5 flex-wrap mt-14 m-2 w-full max-h-[85vh] " >
-                    {chats.map((contact) => (
+                    {chats.map((obj:any) => (
                         <Contacts
-                            key={contact.id} 
-                            id={contact.id}
-                            name={contact.name}
-                            numberKey={contact.numberKey}
+                            key={obj.contact.id} 
+                            id={obj.contact.id}
+                            name={obj.contact.name}
+                            numberKey={obj.contact.numberKey}
                             handleClick={() => console.log("handleChatClick()")}
                             setOpenedChatName={setOpenedChatName}
                             setOpenedChatNumberKey={setOpenedChatNumberKey}
@@ -413,11 +406,11 @@ console.log(chatRooms)
             {showContacts &&chatRooms.length>0 && (
          <div className="flex flex-col gap-5 flex-wrap w-full mt-10" >
            <p className="font-bold text-center text-red-700">Rooms:</p>
-           {chatRooms.map((room) => (
+           {chatRooms.map((obj:any) => (
              <Rooms
-             key={room.id}
-               roomid={room.id}
-               roomkey={room.key}
+             key={obj.room.id}
+               roomid={obj.room.id}
+               roomkey={obj.room.key}
                handleClick={() => console.log("handleRoomClick()")}
                setOpenedRoomKey={setOpenedRoomKey}
               setOpenedRoomId={setOpenedRoomId}
