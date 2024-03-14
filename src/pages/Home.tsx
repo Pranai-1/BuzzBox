@@ -19,9 +19,9 @@ import styles from "../pages/[Home].module.css"
 import useIsOnline from "@/components/useIsOnline";
 import axios from "axios";
 import { useSession } from "next-auth/react";
-const ENDPOINT="https://buzzbox-socket.onrender.com/"
+//const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
- //const ENDPOINT="http://localhost:4000/"
+ const ENDPOINT="http://localhost:4000/"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
@@ -89,39 +89,8 @@ useEffect(()=>{
 let objIsOnline=useMemo(()=>{return{openedChatId,onlineUsers}},[openedChatId,onlineUsers])
 let isOnline=useIsOnline(objIsOnline)
 
-
-
-
-useEffect(() => {
-  const getMessages = async () => {
-    let headers = {
-      senderId: String(id),
-      receiverId: openedChatId+""
-    };
-    try {
-      const response = await axios.get("/api/messages", {
-        headers
-      });
-      setMessages((prev: any)=>({
-        ...prev,
-        [openedChatId]: [
-         ...response.data.messages 
-        ] }))
-    } catch (error) {
-      console.error("Fetch error:", error);
-      setMessages((prev: any)=>({
-        ...prev,
-        [openedChatId]: [] })) 
-    }
-};
- // getMessages()
-}, [openedChatId]);
-
-
-
-
-console.log(chats)
-console.log(chatRooms)
+// console.log(chats)
+// console.log(chatRooms)
 
 // This useEffect will setup a socket connection 
   useEffect(() => {
@@ -143,7 +112,7 @@ useEffect(()=>{
 }
 },[socket,id])
 
-console.log(onlineUsers)
+//console.log(onlineUsers)
 
 
   // This is used to establish a real time communication for messages,if user wants to chat with multiple persons at the same time
@@ -152,6 +121,7 @@ console.log(onlineUsers)
   // Below Handlesend method will takes care of sending the messages to the socket server
   useEffect(() => {
     const handleMessage = (res: Message) => {
+
       setMessages((prev:any) => ({
         ...prev,
         [openedChatId]: [...(prev[openedChatId] || []), res],
@@ -170,11 +140,7 @@ console.log(onlineUsers)
       };
     } 
     
-  }, [openedChatId, onlineUsers]);
-
-
-  
-
+  }, [openedChatId,onlineUsers]);
 
 
   //Here i am sending the message to the server
@@ -185,13 +151,6 @@ const helperSend=async()=>{
       receiverId:openedChatId,
       text:textToSend
     }
-    // try{
-    //   const response=await axios.post("/api/messages",message)
-    // }catch(error){
-    //   console.log(error)
-    // }
-
- 
     setMessages((prev: any)=>({
       ...prev,
       [openedChatId]: [
@@ -202,7 +161,11 @@ const helperSend=async()=>{
        
       ]
     }))
-
+    try{
+      const response=await axios.post("/api/storeMessage",message)
+    }catch(error){
+      console.log(error)
+    }
     
   if(socket)
     socket.emit("sendMessage",{messagetosend:message,openedChatId})
@@ -270,6 +233,32 @@ useEffect(()=>{
 
 
 console.log(messages)
+
+useEffect(() => {
+  const getMessages = async () => {
+    let headers = {
+      senderId: String(id),
+      receiverId: openedChatId+""
+    };
+    try {
+      const response = await axios.get("/api/getMessages", {
+        headers
+      });
+      console.log(response.data)
+      setMessages((prev: any)=>({
+        ...prev,
+        [openedChatId]: [
+         ...response.data.messages 
+        ] }))
+    } catch (error) {
+      console.error("Fetch error:", error);
+      setMessages((prev: any)=>({
+        ...prev,
+        [openedChatId]: [] })) 
+    }
+};
+  getMessages()
+}, [openedChatId]);
 
 
   const renderContactMessages = () => {
