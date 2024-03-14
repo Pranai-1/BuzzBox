@@ -11,17 +11,17 @@ export default async function handler(
   const id=Number(req.headers["id"])
   console.log(id)
   try {
-    const user = await prisma.user.findFirst({ where: { id } });
+    //const user = await prisma.user.findFirst({ where: { id } });
    
 
-    if (user) {
+    // if (user) {
       const contacts = await prisma.contactUser.findMany({
-        where: { userId: user.id },
+        where: { userId: 7 },
         include: { contact: true }
       });
 
       const rooms = await prisma.roomUser.findMany({
-        where: { userId: user.id },
+        where: { userId: 7 },
         include: { room: true }
       });
 
@@ -29,9 +29,9 @@ export default async function handler(
       console.log(rooms);
 
       res.status(200).json({ contacts, rooms });
-    } else {
-      res.status(404).json({ message: "User not found" });
-    }
+    // } else {
+    //   res.status(404).json({ message: "User not found" });
+    // }
   } catch (error) {
     console.error("Error in API route:", error);
     res.status(500).json({ message: "Internal Server Error" });
