@@ -3,7 +3,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 const prisma = new PrismaClient();
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const id: number = Number(req.headers.id);
+    const id = Number(req.headers.id);
 
     try {
         const data = await prisma.user.findFirst({ where: { id } });

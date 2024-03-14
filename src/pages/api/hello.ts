@@ -25,8 +25,8 @@ export default async function handler(
         include: { room: true }
       });
 
-      // console.log(contacts);
-      // console.log(rooms);
+      console.log(contacts);
+      console.log(rooms);
 
       res.status(200).json({ contacts, rooms });
     } else {

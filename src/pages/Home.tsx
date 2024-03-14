@@ -82,17 +82,19 @@ console.log(session.data)
  const[disableMenu,setDisableMenu]=useState<boolean>(false)
 
 
-useEffect(()=>{
-async function getChats(){
-let headers={
-  id
-}
-const response=await axios.get("/api/getContacts",{headers})
-setChats(response.data.user.contacts)
-setChatRooms(response?.data?.user.rooms)
-}
-getChats()
-},[])
+    useEffect(()=>{
+    async function getChats(){
+    let headers={
+      id
+    }
+    const response=await axios.get("/api/hello",{headers})
+    // setChats(response.data.user.contacts)
+    // setChatRooms(response?.data?.user.rooms)
+    setChats([])
+    setChatRooms([])
+    }
+    getChats()
+    },[])
 
 
 let objIsOnline=useMemo(()=>{return{openedChatId,onlineUsers}},[openedChatId,onlineUsers])
