@@ -40,27 +40,27 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
  
   return {
     props: {
-      // id:session.user.id,
-      // name: session.user.name,
-      // numberKey: session.user.numberKey,
-      // email: session.user.email,
+      id:session.user.id,
+      name: session.user.name,
+      numberKey: session.user.numberKey,
+      email: session.user.email,
     },
   };
 };
 
 export default function Home({
-
+  name,
+  numberKey,
+  id,
 }: {
-
+  name: string;
+  numberKey: number;
+  id:number;
 }) {
 
   const session=useSession()
 console.log(session.data)
 
-
- const[id,setId]=useState<number>(7)
- const[numberKey,setNumberKey]=useState<number>(123456)
- const[name,setName]=useState<string>("pranai")
   const [addNewChat, setAddNewChat] = useState(false);
   const [addNewRoom, setAddNewRoom] = useState(false);
   const [chats, setChats] = useState<ContactUserType[]>([]);
@@ -98,7 +98,6 @@ console.log(session.data)
     getChats()
     },[])
 
-   
 
 let objIsOnline=useMemo(()=>{return{openedChatId,onlineUsers}},[openedChatId,onlineUsers])
 let isOnline=useIsOnline(objIsOnline)
@@ -134,12 +133,12 @@ useEffect(()=>{
   // Below Handlesend method will takes care of sending the messages to the socket server
   useEffect(() => {
     const handleMessage = (res: Message) => {
-   if(res.senderId==openedChatId){
+
       setMessages((prev:any) => ({
         ...prev,
         [openedChatId]: [...(prev[openedChatId] || []), res],
       }));
-    };
+  
   }
   
     if (socket) {
@@ -154,8 +153,9 @@ useEffect(()=>{
       };
     } 
     
-  }, [openedChatId,onlineUsers]);
+  }, [socket,openedChatId,onlineUsers]);
 
+  console.log(onlineUsers)
 
   //Here i am sending the message to the server
 const helperSend=async()=>{
