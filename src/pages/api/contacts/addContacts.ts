@@ -44,7 +44,7 @@ export default async function handler(
               data: {
                 name: contactName,
                 numberKey: contactNumberKey,
-                userId:id
+                userId:findUserToAdd.id
               },
             });
             if (contact) {

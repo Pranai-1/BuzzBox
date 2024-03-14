@@ -3,8 +3,10 @@ import { success } from "../../public/toast"
 import Title from "./Title"
 import Options from "./UserProfile/Options"
 import { MenuControl } from "@/pages/api/types"
+import { useRouter } from "next/router"
 
 export default function MenuBar(props:MenuControl){
+  const router=useRouter()
   const{setShowContacts,setShowProfile,setAddNewChat,setAddNewRoom,setDisableMenu,showContacts}=props
     return(
         <>
@@ -33,18 +35,18 @@ export default function MenuBar(props:MenuControl){
 </svg>
 <span>profile</span>
 </div>
-<div className="h-max w-max p-2 flex font-medium text-xl text-white items-center text-center justify-center gap-2 fixed md:bottom-5 bottom-16 cursor-pointer"
+<button className="h-max w-max p-2 flex font-medium text-xl text-white items-center text-center justify-center gap-2 fixed md:bottom-5 bottom-16 cursor-pointer"
  onClick={() => {
     void signOut();
     success("Logged out successfully");
+    router.push("/")
   }}
 >
 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
   <path strokeLinecap="round" strokeLinejoin="round" d="M8.25 9V5.25A2.25 2.25 0 0 1 10.5 3h6a2.25 2.25 0 0 1 2.25 2.25v13.5A2.25 2.25 0 0 1 16.5 21h-6a2.25 2.25 0 0 1-2.25-2.25V15m-3 0-3-3m0 0 3-3m-3 3H15" />
 </svg>
-
-<span>Logout</span>
-</div>
+Logout
+</button>
 <Options setAddNewChat={setAddNewChat} setAddNewRoom={setAddNewRoom} setDisableMenu={setDisableMenu}/>
      </div>
         </>

@@ -2,9 +2,9 @@ import { pricebox } from "@/pages/api/types";
 
 export default function PriceBox({Details}:{Details:pricebox}){
     return(
-        <div className="flex flex-col pl-6  md:mx-auto text-center w-[300px]  rounded-lg  border-gray-700 xl:p-8 bg-blue-600 text-white">
+        <div key={Details.name} className="flex flex-col pl-6  md:mx-auto text-center w-[300px]  rounded-lg  border-gray-700 xl:p-8 bg-blue-600 text-white">
         <p className="mb-4 text-2xl font-semibold">{Details.name}</p>
-            <p className="font-light  sm:text-lg text-gray-100">{Details.text}</p>
+            {/* <p className="font-light  sm:text-lg text-gray-100">{Details.text}</p>
         <div className="flex justify-center items-baseline my-8">
             <span className="mr-2 text-5xl font-extrabold">${Details.price}</span>
             <span className=" text-gray-100">/month</span>
@@ -50,7 +50,7 @@ export default function PriceBox({Details}:{Details:pricebox}){
             </div>
         </ul>
             <a href="#" className="text-black bg-orange-500    font-medium rounded-lg text-sm px-5 py-2.5 text-center mt-2  
-            ">Get started</a>
+            ">Get started</a> */}
         </div>
     )
 }
