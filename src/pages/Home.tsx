@@ -286,7 +286,7 @@ function handleChatClick() {
     setOpenRoom(true)
   }
 
-console.log(chatRooms)
+console.log(messages)
   return (
     <div className={`flex min-h-screen bg-gray-900 relative `} >
         <div className="md:hidden text-white text-xl font-bold fixed z-10 bottom-5 ring-2 ring-gray-400 rounded-lg p-2 flex left-1 cursor-pointer bg-red-400"
@@ -343,7 +343,7 @@ console.log(chatRooms)
                 </div>
                 
             )}
-            {showContacts &&chatRooms.length>0 && (
+            {showContacts && chatRooms.length>0 && (
          <div className="flex flex-col gap-5 flex-wrap w-full mt-10" >
            <p className="font-bold text-center text-red-700">Rooms:</p>
            {chatRooms.map((obj:any) => (
