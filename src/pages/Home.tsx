@@ -1,7 +1,7 @@
 import { GetServerSideProps } from "next";
 import { getServerAuthSession } from "./api/auth/authoptions";
 import {  useCallback, useEffect, useMemo, useState } from "react";
-import { ContactType, ContactMessageType, OnlineUsers, RoomType, RoomMessage, RoomMessageType, ContactMessage, ContactUserType } from "./api/types";
+import {  ContactMessageType, OnlineUsers, RoomMessage, RoomMessageType } from "./api/types";
 import Contacts from "@/components/Contacts";
 import AddChat from "@/components/UserProfile/AddChat";
 import Profile from "../components/UserProfile/profile";
@@ -16,16 +16,8 @@ import RenderContactMessages from "@/Contacts/RenderContactMessages";
 import { Message } from "postcss";
 import MenuBar from "@/components/MenuBar";
 import styles from "../pages/[Home].module.css"
-import useGetUserId from "@/components/useGetUserId";
 import useIsOnline from "@/components/useIsOnline";
-import HandleRoomSend from "@/components/HandleRoomSend";
-import { HandleSend } from "@/components/HandleSend";
 import axios from "axios";
-import SetDBMessages from "@/components/SetDBMessages";
-import SetRooms from "@/components/SetRooms";
-import SetContacts from "@/components/SetContacts";
-import getContacts from "./api/helpers/getContacts";
-import getRooms from "./api/helpers/getRooms";
 import { useSession } from "next-auth/react";
 const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
@@ -42,20 +34,13 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
       },
     };
   }
-  //const contacts = await getContacts(session.user.numberKey); //session also contains contacts,but that contacts doesn't have detail 
-  //information,it has a contactId and userId like this [ { contactId: 70, userId: 25 } ],but we want [ { id: 70, userId: 25, name: 'pranai', numberKey: 123456 } ] 
-  //like that.
-  //instead of sending session.user.numberKey ,we can send session.user.id as well but we need to change the function of getContacts
-  //we can even send session.user.contacts and get the data
-  //const rooms = await getRooms(session.user.numberKey);
+ 
   return {
     props: {
       id:session.user.id,
       name: session.user.name,
       numberKey: session.user.numberKey,
       email: session.user.email,
-     // contacts,
-      //rooms
     },
   };
 };
@@ -64,14 +49,10 @@ export default function Home({
   name,
   numberKey,
   id,
- // contacts,
-  //rooms
 }: {
   name: string;
   numberKey: number;
   id:number;
-  //contacts:ContactType[],
-  //rooms:RoomType[]
 }) {
 
   const session=useSession()
@@ -104,23 +85,10 @@ useEffect(()=>{
   setChatRooms(session?.data?.user.rooms)
 },[session?.data?.user])
 
-//This is used to get theuserId of the openedchat
-// let userIdOfOpenedChat=useGetUserId(openedChatId)
 
 let objIsOnline=useMemo(()=>{return{openedChatId,onlineUsers}},[openedChatId,onlineUsers])
 let isOnline=useIsOnline(objIsOnline)
 
-//This is used to receive the messages from the db 
-// let objGetDBMsgs=useMemo(()=>{
-//   return{
-//   userIdOfOpenedChat,
-//   id,
-//   openedChatId,
-//   setMessages
-//   }
-
-// },[userIdOfOpenedChat,id,openedChatId,setMessages])
-// SetDBMessages(objGetDBMsgs)
 
 
 
@@ -301,7 +269,7 @@ useEffect(()=>{
 },[openedRoomId])
 
 
-
+console.log(messages)
 
 
   const renderContactMessages = () => {
