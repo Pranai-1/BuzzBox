@@ -27,9 +27,9 @@ import SetContacts from "@/components/SetContacts";
 import getContacts from "./api/helpers/getContacts";
 import getRooms from "./api/helpers/getRooms";
 import { useSession } from "next-auth/react";
-//const ENDPOINT="https://buzzbox-socket.onrender.com/"
+const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
- const ENDPOINT="http://localhost:4000/"
+ //const ENDPOINT="http://localhost:4000/"
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const session = await getServerAuthSession(ctx);
