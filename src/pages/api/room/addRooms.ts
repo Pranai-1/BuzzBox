@@ -51,31 +51,25 @@ let arr=[]
       return res.status(409).json({ message: "User is already present in the room" });
     }
 
-    const addUserInRoom = await prisma.roomUser.create({
+    const roomUser = await prisma.roomUser.create({
       data: {
         userId: id,
         roomId: room.id,
       },
     });
 
-    if (addUserInRoom) {
-      const roomsOfThisUser = await prisma.roomUser.findMany({
-        where: {
-          userId: id,
-        },
-      });
-      if(roomsOfThisUser){
-        for(const obj of roomsOfThisUser){
-        const roomDetails=await prisma.room.findFirst({
-            where:{
-            id:obj.roomId
-            }
-        })
-        arr.push(roomDetails)
+    if (roomUser) {
+    const addedRoom={
+      id:roomUser.id,
+      userId:id,
+      roomId:room.id,
+      room:{
+        id:room.id,
+        key:roomKey
       }
     }
 
-      return res.status(200).json({ message: 'Success', rooms: arr });
+      return res.status(200).json({ message: 'Success', addedRoom });
     } else {
       return res.status(500).json({ message: "Failed to add user to the room" });
     }

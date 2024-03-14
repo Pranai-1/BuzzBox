@@ -1,5 +1,5 @@
 import getContacts from "@/pages/api/helpers/getContacts";
-import { ContactType } from "@/pages/api/types";
+import { ContactType, ContactUserType } from "@/pages/api/types";
 import axios from "axios";
 import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "react-toastify";
@@ -12,7 +12,7 @@ export default function AddChat({
   setDisableMenu
 }: {
   setAddNewChat: Dispatch<SetStateAction<boolean>>;
-  setChats: Dispatch<SetStateAction<ContactType[]>>;
+  setChats: Dispatch<SetStateAction<ContactUserType[]>>;
   id:number;
   setDisableMenu: Dispatch<SetStateAction<boolean>>
 }) {
@@ -42,7 +42,8 @@ export default function AddChat({
       try {
         const response= await axios.post("/api/contacts/addContacts", body); 
         setAddNewChat(false)
-         setChats(response.data.chats);
+        const x:ContactUserType=response.data.addedChat
+         setChats((prev)=>[...prev,x]);
          success("Chat added");
       } catch (error) {
         console.log(error);

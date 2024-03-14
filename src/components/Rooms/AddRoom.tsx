@@ -4,6 +4,7 @@ import axios from "axios";
 import { Dispatch, SetStateAction, useState } from "react";
 import { toast } from "react-toastify";
 import { failed, success } from "../../../public/toast";
+import { RoomUser } from ".prisma/client";
 
 export default function AddRoom({
   setAddNewRoom,
@@ -12,7 +13,7 @@ export default function AddRoom({
   setDisableMenu
 }: {
   setAddNewRoom: Dispatch<SetStateAction<boolean>>;
-  setChatRooms: Dispatch<SetStateAction<RoomType[]>>;
+  setChatRooms: Dispatch<SetStateAction<RoomUser[]>>;
   id:number;
   setDisableMenu:Dispatch<SetStateAction<boolean>>
 }) {
@@ -34,8 +35,9 @@ export default function AddRoom({
       try {
         const response=await axios.post("/api/room/addRooms", body); 
       setAddNewRoom(false)
-      console.log(response.data.rooms)
-         setChatRooms(response.data.rooms);
+      const x:RoomUser=response.data.addedRoom
+      console.log(x)
+      setChatRooms((prev)=>[...prev,x]);
           success("Joined Room");
       } catch (error) {
         console.log(error);

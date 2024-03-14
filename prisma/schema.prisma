@@ -22,7 +22,8 @@ model User {
 
 model Contact {
   id        Int      @id @default(autoincrement())
-  userId    Int
+  contactUserId    Int
+  addedUserId      Int
   name      String
   numberKey Int
   users     ContactUser[]  // A relationship field that associates contacts with the users who have them as contacts. 

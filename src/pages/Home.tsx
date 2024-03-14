@@ -1,7 +1,7 @@
 import { GetServerSideProps } from "next";
 import { getServerAuthSession } from "./api/auth/authoptions";
 import {  useCallback, useEffect, useMemo, useState } from "react";
-import {  ContactMessageType, OnlineUsers, RoomMessage, RoomMessageType } from "./api/types";
+import {  ContactMessageType, ContactUserType, OnlineUsers, RoomMessage, RoomMessageType } from "./api/types";
 import Contacts from "@/components/Contacts";
 import AddChat from "@/components/UserProfile/AddChat";
 import Profile from "../components/UserProfile/profile";
@@ -19,6 +19,7 @@ import styles from "../pages/[Home].module.css"
 import useIsOnline from "@/components/useIsOnline";
 import axios from "axios";
 import { useSession } from "next-auth/react";
+import { RoomUser } from "@prisma/client";
 //const ENDPOINT="https://buzzbox-socket.onrender.com/"
 
  const ENDPOINT="http://localhost:4000/"
@@ -60,8 +61,8 @@ console.log(session.data)
 
   const [addNewChat, setAddNewChat] = useState(false);
   const [addNewRoom, setAddNewRoom] = useState(false);
-  const [chats, setChats] = useState<any>(session?.data?.user.contacts);
-  const [chatRooms, setChatRooms] = useState<any>(session?.data?.user.rooms);
+  const [chats, setChats] = useState<ContactUserType[]>([]);
+  const [chatRooms, setChatRooms] = useState<RoomUser[]>([]);
   const [openChat, setOpenChat] = useState(false);
   const [openRoom, setOpenRoom] = useState(false);
   const [openedChatName, setOpenedChatName] = useState("");
@@ -80,17 +81,24 @@ console.log(session.data)
  const[showProfile,setShowProfile]=useState<boolean>(false)
  const[disableMenu,setDisableMenu]=useState<boolean>(false)
 
+
 useEffect(()=>{
-  setChats(session?.data?.user.contacts)
-  setChatRooms(session?.data?.user.rooms)
-},[session?.data?.user])
+async function getChats(){
+let headers={
+  id
+}
+const response=await axios.get("/api/getContacts",{headers})
+setChats(response.data.user.contacts)
+setChatRooms(response?.data?.user.rooms)
+}
+getChats()
+},[])
 
 
 let objIsOnline=useMemo(()=>{return{openedChatId,onlineUsers}},[openedChatId,onlineUsers])
 let isOnline=useIsOnline(objIsOnline)
 
-// console.log(chats)
-// console.log(chatRooms)
+
 
 // This useEffect will setup a socket connection 
   useEffect(() => {
@@ -112,7 +120,7 @@ useEffect(()=>{
 }
 },[socket,id])
 
-//console.log(onlineUsers)
+
 
 
   // This is used to establish a real time communication for messages,if user wants to chat with multiple persons at the same time
@@ -121,12 +129,13 @@ useEffect(()=>{
   // Below Handlesend method will takes care of sending the messages to the socket server
   useEffect(() => {
     const handleMessage = (res: Message) => {
-
+   if(res.senderId==openedChatId){
       setMessages((prev:any) => ({
         ...prev,
         [openedChatId]: [...(prev[openedChatId] || []), res],
       }));
     };
+  }
   
     if (socket) {
       const userOnline = onlineUsers.find((user) => user.userId === openedChatId);// Check if the user is online and should listen for messages
@@ -158,7 +167,6 @@ const helperSend=async()=>{
         {
            ... message 
         } 
-       
       ]
     }))
     try{
@@ -173,13 +181,9 @@ const helperSend=async()=>{
   }
 }
 
-let objRoomSend=useMemo(()=>{
-  return{
-    socket,setTextToSend,openedRoomId,setRoomMessages,textToSend,id
-  }}
-,[openedRoomId,textToSend,id])
 
-const helperRoom=useCallback(async()=>{ 
+
+const HandleRoomSend=useCallback(async()=>{ 
   if (textToSend.length !== 0 && openedRoomId!=0) {
     const message={
       senderId:id,
@@ -215,7 +219,7 @@ useEffect(() => {
         socket.off("getRoomMessage", handleRoomMessage);
     };
   }   
-}, [socket, openedRoomId, onlineUsers, setRoomMessages]);
+}, [openedRoomId, onlineUsers]);
 
 
 
@@ -232,19 +236,19 @@ useEffect(()=>{
 },[openedRoomId])
 
 
-console.log(messages)
+console.log(openedChatId)
 
 useEffect(() => {
   const getMessages = async () => {
     let headers = {
-      senderId: String(id),
-      receiverId: openedChatId+""
+      senderId: id,
+      receiverId: openedChatId
     };
     try {
       const response = await axios.get("/api/getMessages", {
         headers
       });
-      console.log(response.data)
+  
       setMessages((prev: any)=>({
         ...prev,
         [openedChatId]: [
@@ -260,7 +264,7 @@ useEffect(() => {
   getMessages()
 }, [openedChatId]);
 
-
+console.log(chatRooms)
   const renderContactMessages = () => {
    return <RenderContactMessages messages={messages} openedChatId={openedChatId} id={id}/>
   };
@@ -282,7 +286,7 @@ function handleChatClick() {
     setOpenRoom(true)
   }
 
-
+console.log(chatRooms)
   return (
     <div className={`flex min-h-screen bg-gray-900 relative `} >
         <div className="md:hidden text-white text-xl font-bold fixed z-10 bottom-5 ring-2 ring-gray-400 rounded-lg p-2 flex left-1 cursor-pointer bg-red-400"
@@ -318,10 +322,16 @@ function handleChatClick() {
             <div className={` ${openChat ?'hidden md:block':''} w-[150px]  overflow-auto ${styles.scrollbarhide}`}>
             {showContacts && (
                 <div className="grid gap-5 flex-wrap mt-14 m-2 w-full max-h-[85vh] " >
-                    {chats.map((obj:any) => (
+                  <p className="font-medium text-gray-300 flex justify-center">Contacts:</p>
+                  
+                    {chats.length==0 ?
+                    (
+                      <p className="text-orange-500 flex md:justify-center">No contacts found</p>
+                    ):(
+                    chats.map((obj:any) => (
                         <Contacts
                             key={obj.contact.id} 
-                            userId={obj.contact.userId}
+                            userId={obj.contact.contactUserId}
                             name={obj.contact.name}
                             numberKey={obj.contact.numberKey}
                             handleClick={() => handleChatClick()}
@@ -329,7 +339,7 @@ function handleChatClick() {
                             setOpenedChatNumberKey={setOpenedChatNumberKey}
                             setOpenedChatId={setOpenedChatId}
                         />
-                    ))}
+                    )))}
                 </div>
                 
             )}
@@ -358,9 +368,10 @@ function handleChatClick() {
             ) :addNewChat ? (
               <AddChat setAddNewChat={setAddNewChat} setChats={setChats} id={id} setDisableMenu={setDisableMenu}/>
             ) : addNewRoom ? (
-              <AddRoom setAddNewRoom={setAddNewRoom} setChatRooms={setChatRooms} id={id} setDisableMenu={setDisableMenu}/>
+        
+               <AddRoom setAddNewRoom={setAddNewRoom} setChatRooms={setChatRooms} id={id} setDisableMenu={setDisableMenu}/>
               ) :openChat ? (
-                // <></>
+              
                     <ContactMessages
                       isOnline={isOnline}
                       openedChatName={openedChatName}
@@ -379,7 +390,7 @@ function handleChatClick() {
                     renderRoomMessages={renderRoomMessages}
                     textToSend={textToSend}
                     setTextToSend={setTextToSend}
-                    HandleSend={helperRoom}
+                    HandleSend={HandleRoomSend}
                   />
             ) :(
               <>

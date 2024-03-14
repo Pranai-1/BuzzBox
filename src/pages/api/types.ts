@@ -27,7 +27,8 @@ export type User = {
 export type ContactType = {
   id: number;
   name: string;
-  userId:number
+  addedUserId:number;
+  contactUserId:number;
   numberKey: number;
 };
 

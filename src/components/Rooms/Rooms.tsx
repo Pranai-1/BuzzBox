@@ -27,7 +27,7 @@ export default function Handler({
 
     }}>
       
-      <p className="p-2 font-medium" >Key: {roomkey}</p>
+      <p key={roomid} className="p-2 font-medium" >Key: {roomkey}</p>
     </div>
   );
 }

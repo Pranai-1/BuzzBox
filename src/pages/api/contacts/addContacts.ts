@@ -14,7 +14,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  if (req.method === "POST") {
+
     try {
       let arr=[]
       const body = req.body;
@@ -33,7 +33,7 @@ export default async function handler(
           const existingContact = await prisma.contact.findFirst({
             where: {
               numberKey: contactNumberKey,
-              userId:id
+              addedUserId:id
             },
           });
           if (existingContact) {
@@ -44,7 +44,8 @@ export default async function handler(
               data: {
                 name: contactName,
                 numberKey: contactNumberKey,
-                userId:findUserToAdd.id
+                addedUserId:user.id,
+                contactUserId:findUserToAdd.id
               },
             });
             if (contact) {
@@ -60,15 +61,17 @@ export default async function handler(
                     userId: user?.id,
                   },
                 });
-                for (const obj of contacts) {
-                  const contacts = await prisma.contact.findFirst({
-                    where: {
-                      id: obj.contactId,
-                    },
-                  });
-                  arr.push(contacts);
+                const addedChat={
+                  contactId:contactUser.contactId,
+                  userId:id,
+                  contact:{
+                    id:contact.id,
+                    userId:findUserToAdd.id,
+                    name:contactName,
+                    numberKey:contactNumberKey
+                  }
                 }
-                res.status(201).json({ message: "Chat Added",chats:arr });
+                res.status(201).json({ message: "Chat Added",addedChat });
               } else {
                 res.status(409).json({ message: "Failed" });
               }
@@ -90,5 +93,5 @@ export default async function handler(
     }finally{
       prisma.$disconnect()
   }
-  }
+  
 }
