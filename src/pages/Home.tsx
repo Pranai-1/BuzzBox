@@ -322,11 +322,11 @@ console.log(messages)
             <div className={` ${openChat ?'hidden md:block':''} w-[150px]  overflow-auto ${styles.scrollbarhide}`}>
             {showContacts && (
                 <div className="grid gap-5 flex-wrap mt-14 m-2 w-full max-h-[85vh] " >
-                  <p className="font-medium text-gray-300 flex justify-center">Contacts:</p>
+                  <p className="font-medium  text-orange-500 flex justify-center">Contacts:</p>
                   
                     {chats.length==0 ?
                     (
-                      <p className="text-orange-500 flex md:justify-center">No contacts found</p>
+                      <p className="text-gray-300 flex md:justify-center">No contacts found</p>
                     ):(
                     chats.map((obj:any) => (
                         <Contacts
