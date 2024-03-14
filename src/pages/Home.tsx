@@ -146,7 +146,7 @@ useEffect(() => {
         [openedChatId]: [] })) 
     }
 };
-  getMessages()
+ // getMessages()
 }, [openedChatId]);
 
 
@@ -217,11 +217,11 @@ const helperSend=async()=>{
       receiverId:openedChatId,
       text:textToSend
     }
-    try{
-      const response=await axios.post("/api/messages",message)
-    }catch(error){
-      console.log(error)
-    }
+    // try{
+    //   const response=await axios.post("/api/messages",message)
+    // }catch(error){
+    //   console.log(error)
+    // }
 
  
     setMessages((prev: any)=>({
