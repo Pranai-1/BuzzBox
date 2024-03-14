@@ -217,7 +217,12 @@ const helperSend=async()=>{
       receiverId:openedChatId,
       text:textToSend
     }
-    const response=await axios.post("/api/messages",message)
+    try{
+      const response=await axios.post("/api/messages",message)
+    }catch(error){
+      console.log(error)
+    }
+
  
     setMessages((prev: any)=>({
       ...prev,
